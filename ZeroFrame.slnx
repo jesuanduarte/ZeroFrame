@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="ZeroFrame.Infra.Data/ZeroFrame.Infra.Data.csproj" />
+  <Project Path="ZeroFrame.Application/ZeroFrame.Application.csproj" />
+  <Project Path="ZeroFrame.Domain/ZeroFrame.Domain.csproj" />
+  <Project Path="ZeroFrame.Infra.IoC/ZeroFrame.Infra.IoC.csproj" />
+  <Project Path="ZeroFrame.API/ZeroFrame.API.csproj" />
+</Solution>
