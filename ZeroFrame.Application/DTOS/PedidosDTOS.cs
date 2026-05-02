@@ -14,6 +14,10 @@ namespace ZeroFrame.Application.DTOS.Pedidos
         public int UsuarioId { get; set; }
         public DateTime DataPedido { get; set; }
         public string Status { get; set; } = string.Empty;
+        public int TotalItens { get; set; }
+        public decimal Subtotal { get; set; }
+        public decimal Desconto { get; set; }
+        public decimal Frete { get; set; }
         public decimal ValorTotal { get; set; }
         public List<ItemPedidoGetDto> Itens { get; set; } = new();
     }

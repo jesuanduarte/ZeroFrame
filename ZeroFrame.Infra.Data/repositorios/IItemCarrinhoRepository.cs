@@ -22,6 +22,8 @@ namespace ZeroFrame.Infra.Data.repositorios
             return await _context.item_Carrinhos
                 .Include(i => i.Carrinho)
                 .Include(i => i.VariacaoProduto)
+                    .ThenInclude(v => v!.Produto)
+                        .ThenInclude(p => p!.Categoria)
                 .ToListAsync();
         }
 
@@ -30,6 +32,8 @@ namespace ZeroFrame.Infra.Data.repositorios
             return await _context.item_Carrinhos
                 .Include(i => i.Carrinho)
                 .Include(i => i.VariacaoProduto)
+                    .ThenInclude(v => v!.Produto)
+                        .ThenInclude(p => p!.Categoria)
                 .FirstOrDefaultAsync(i => i.Id == id);
         }
 
@@ -39,6 +43,7 @@ namespace ZeroFrame.Infra.Data.repositorios
                 .Include(i => i.Carrinho)
                 .Include(i => i.VariacaoProduto)
                     .ThenInclude(v => v!.Produto)
+                        .ThenInclude(p => p!.Categoria)
                 .Where(i => i.CarrinhoId == carrinhoId)
                 .ToListAsync();
         }
@@ -49,6 +54,7 @@ namespace ZeroFrame.Infra.Data.repositorios
                 .Include(i => i.Carrinho)
                 .Include(i => i.VariacaoProduto)
                     .ThenInclude(v => v!.Produto)
+                        .ThenInclude(p => p!.Categoria)
                 .FirstOrDefaultAsync(i =>
                     i.CarrinhoId == carrinhoId &&
                     i.VariacaoProdutoId == variacaoProdutoId);

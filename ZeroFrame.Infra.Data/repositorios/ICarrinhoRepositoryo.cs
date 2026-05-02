@@ -22,6 +22,9 @@ namespace ZeroFrame.Infra.Data.repositorios
             return await _context.carrinhos
                 .Include(c => c.Usuario)
                 .Include(c => c.Itens)
+                    .ThenInclude(i => i.VariacaoProduto)
+                        .ThenInclude(v => v!.Produto)
+                            .ThenInclude(p => p!.Categoria)
                 .ToListAsync();
         }
 
@@ -30,6 +33,9 @@ namespace ZeroFrame.Infra.Data.repositorios
             return await _context.carrinhos
                 .Include(c => c.Usuario)
                 .Include(c => c.Itens)
+                    .ThenInclude(i => i.VariacaoProduto)
+                        .ThenInclude(v => v!.Produto)
+                            .ThenInclude(p => p!.Categoria)
                 .FirstOrDefaultAsync(c => c.Id == id);
         }
 
@@ -38,6 +44,9 @@ namespace ZeroFrame.Infra.Data.repositorios
             return await _context.carrinhos
                 .Include(c => c.Usuario)
                 .Include(c => c.Itens)
+                    .ThenInclude(i => i.VariacaoProduto)
+                        .ThenInclude(v => v!.Produto)
+                            .ThenInclude(p => p!.Categoria)
                 .FirstOrDefaultAsync(c => c.UsuarioId == usuarioId && c.Ativo);
         }
 

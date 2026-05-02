@@ -24,6 +24,9 @@ namespace ZeroFrame.Infra.Data.repositorios
             return await _context.pedidos
                 .Include(p => p.Usuario)
                 .Include(p => p.Itens)
+                    .ThenInclude(i => i.VariacaoProduto)
+                        .ThenInclude(v => v!.Produto)
+                            .ThenInclude(p => p!.Categoria)
                 .Include(p => p.Pagamento)
                 .FirstOrDefaultAsync(p => p.Id == id);
         }
@@ -32,6 +35,9 @@ namespace ZeroFrame.Infra.Data.repositorios
         {
             return await _context.pedidos
                 .Include(p => p.Itens)
+                    .ThenInclude(i => i.VariacaoProduto)
+                        .ThenInclude(v => v!.Produto)
+                            .ThenInclude(p => p!.Categoria)
                 .Include(p => p.Pagamento)
                 .Where(p => p.UsuarioId == usuarioId)
                 .ToListAsync();

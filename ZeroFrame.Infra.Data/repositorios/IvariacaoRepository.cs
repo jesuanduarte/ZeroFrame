@@ -23,6 +23,7 @@ namespace ZeroFrame.Infra.Data.repositorios
         {
             return await _context.variacaoprodutos
                 .Include(v => v.Produto)
+                    .ThenInclude(p => p!.Categoria)
                 .ToListAsync();
         }
 
@@ -30,6 +31,7 @@ namespace ZeroFrame.Infra.Data.repositorios
         {
             return await _context.variacaoprodutos
                 .Include(v => v.Produto)
+                    .ThenInclude(p => p!.Categoria)
                 .FirstOrDefaultAsync(v => v.Id == id);
         }
 

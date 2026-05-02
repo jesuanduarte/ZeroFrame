@@ -13,6 +13,7 @@ namespace ZeroFrame.Application.DTOS.Pagamento
         public string Metodo { get; set; } = string.Empty;
         public string Status { get; set; } = string.Empty;
         public int PedidoId { get; set; }
+        public decimal Valor { get; set; }
     }
 
     public class PagamentoPostDto
@@ -25,6 +26,13 @@ namespace ZeroFrame.Application.DTOS.Pagamento
         [Required(ErrorMessage = "O campo PedidoId é obrigatório.")]
         [Range(1, int.MaxValue, ErrorMessage = "O PedidoId deve ser válido.")]
         public int PedidoId { get; set; }
+        
+    }
+    public class PagamentoPedidoPostDto
+    {
+        [Required(ErrorMessage = "O campo Método é obrigatório.")]
+        [MaxLength(50, ErrorMessage = "O campo Método deve conter no máximo 50 caracteres.")]
+        public string Metodo { get; set; } = string.Empty;
     }
 
     public class PagamentoPutDto

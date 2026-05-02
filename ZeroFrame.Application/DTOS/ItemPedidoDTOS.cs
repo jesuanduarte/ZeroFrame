@@ -11,8 +11,17 @@ namespace ZeroFrame.Application.DTOS.ItemPedido
         //GET — Buscar/Ler dados
         public int Id { get; set; }
         public int VariacaoProdutoId { get; set; }
+        public int ProdutoId { get; set; }
+        public string NomeProduto { get; set; } = string.Empty;
+        public string ImagemUrl { get; set; } = string.Empty;
+        public string CategoriaNome { get; set; } = string.Empty;
+        public string Marca { get; set; } = string.Empty;
+        public string Origem { get; set; } = string.Empty;
+        public string Tamanho { get; set; } = string.Empty;
+        public string Cor { get; set; } = string.Empty;
         public int Quantidade { get; set; }
         public decimal PrecoUnitario { get; set; }
+        public decimal Subtotal { get; set; }
     }
 
     public class ItemPedidoPostDto

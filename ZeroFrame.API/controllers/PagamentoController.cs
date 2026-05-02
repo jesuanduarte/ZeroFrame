@@ -5,7 +5,7 @@ using ZeroFrame.Application.Interfaces;
 namespace ZeroFrame.API.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api")]
     public class PagamentoController : ControllerBase
     {
         private readonly IPagamentoService _pagamentoService;
@@ -15,7 +15,34 @@ namespace ZeroFrame.API.Controllers
             _pagamentoService = pagamentoService;
         }
 
-        [HttpGet("{id}")]
+        // POST: api/pedidos/{pedidoId}/pagamento
+        // Registra um pagamento simples para finalizar o pedido.
+        [HttpPost("pedidos/{pedidoId:int}/pagamento")]
+        public async Task<ActionResult<PagamentoGetDto>> CriarPagamentoDoPedido(
+            int pedidoId,
+            PagamentoPedidoPostDto pagamentoPedidoPostDto)
+        {
+            try
+            {
+                var pagamentoCriado = await _pagamentoService.CriarPagamentoDoPedidoAsync(
+                    pedidoId,
+                    pagamentoPedidoPostDto);
+
+                return CreatedAtAction(
+                    nameof(ObterPagamentoPorId),
+                    new { id = pagamentoCriado.Id },
+                    pagamentoCriado
+                );
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        // GET: api/pagamentos/{id}
+        // Busca um pagamento pelo Id.
+        [HttpGet("pagamentos/{id:int}")]
         public async Task<ActionResult<PagamentoGetDto>> ObterPagamentoPorId(int id)
         {
             var pagamento = await _pagamentoService.ObterPorIdAsync(id);
@@ -26,7 +53,9 @@ namespace ZeroFrame.API.Controllers
             return Ok(pagamento);
         }
 
-        [HttpGet("pedido/{pedidoId}")]
+        // GET: api/pedidos/{pedidoId}/pagamento
+        // Busca o pagamento associado a um pedido.
+        [HttpGet("pedidos/{pedidoId:int}/pagamento")]
         public async Task<ActionResult<PagamentoGetDto>> ObterPagamentoPorPedido(int pedidoId)
         {
             var pagamento = await _pagamentoService.ObterPorPedidoIdAsync(pedidoId);
@@ -37,19 +66,9 @@ namespace ZeroFrame.API.Controllers
             return Ok(pagamento);
         }
 
-        [HttpPost]
-        public async Task<ActionResult<PagamentoGetDto>> CriarPagamento(PagamentoPostDto pagamentoPostDto)
-        {
-            var pagamentoCriado = await _pagamentoService.CriarAsync(pagamentoPostDto);
-
-            return CreatedAtAction(
-                nameof(ObterPagamentoPorId),
-                new { id = pagamentoCriado.Id },
-                pagamentoCriado
-            );
-        }
-
-        [HttpPut("{id}")]
+        // PUT: api/pagamentos/{id}
+        // Atualiza o status de um pagamento.
+        [HttpPut("pagamentos/{id:int}")]
         public async Task<ActionResult> AtualizarPagamento(int id, PagamentoPutDto pagamentoPutDto)
         {
             if (id != pagamentoPutDto.Id)

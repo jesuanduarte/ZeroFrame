@@ -14,10 +14,28 @@ namespace ZeroFrame.Application.DTOS.Produto
         public string Nome { get; set; } = string.Empty;
         public string Descricao { get; set; } = string.Empty;
         public decimal Preco { get; set; }
+        public decimal? PrecoOriginal { get; set; }
+        public bool EmPromocao { get; set; }
+        public string ImagemUrl { get; set; } = string.Empty;
         public int CategoriaId { get; set; }
+        public string CategoriaNome { get; set; } = string.Empty;
+        public string Marca { get; set; } = string.Empty;
+        public string Origem { get; set; } = string.Empty;
         public bool Ativo { get; set; }
         public List<VariacaoGetDto> Variacoes { get; set; } = new();
     }
+    public class ProdutoFiltroDto
+    {
+        public string? Busca { get; set; }
+        public string? Categoria { get; set; }
+        public string? Marca { get; set; }
+        public string? Origem { get; set; }
+        public string? Tamanho { get; set; }
+        public string? Cor { get; set; }
+        public decimal? PrecoMin { get; set; }
+        public decimal? PrecoMax { get; set; }
+    }
+
 
     public class ProdutoPostDto
     {

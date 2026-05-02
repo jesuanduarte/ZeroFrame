@@ -1,6 +1,6 @@
 using ZeroFrame.Application.DTOS.ItemCarrinho;
-using ZeroFrame.Application.Interfaces;
 using ZeroFrame.domain.entidades;
+using ZeroFrame.Application.Interfaces;
 using ZeroFrame.domain.Interface;
 
 namespace ZeroFrame.Application.Servicos
@@ -75,6 +75,7 @@ namespace ZeroFrame.Application.Servicos
             };
 
             await _itemCarrinhoRepository.AdicionarAsync(item);
+            item.VariacaoProduto = variacao;
             return MapearItemCarrinhoGetDto(item);
         }
 
@@ -118,14 +119,75 @@ namespace ZeroFrame.Application.Servicos
 
         private static ItemCarrinhoGetDto MapearItemCarrinhoGetDto(ItemCarrinho item)
         {
+            var variacao = item.VariacaoProduto;
+            var produto = variacao?.Produto;
+
             return new ItemCarrinhoGetDto
             {
                 Id = item.Id,
                 CarrinhoId = item.CarrinhoId,
                 VariacaoProdutoId = item.VariacaoProdutoId,
+                ProdutoId = produto?.Id ?? 0,
+                NomeProduto = produto?.Nome ?? string.Empty,
+                ImagemUrl = produto == null ? string.Empty : ObterImagemUrl(produto),
+                CategoriaNome = produto?.Categoria?.Nome ?? string.Empty,
+                Marca = produto == null ? string.Empty : ObterMarca(produto),
+                Origem = produto == null ? string.Empty : ObterOrigem(produto),
+                Tamanho = variacao?.Tamanho ?? string.Empty,
+                Cor = variacao?.Cor ?? string.Empty,
                 Quantidade = item.Quantidade,
-                PrecoUnitario = item.PrecoUnitario
+                PrecoUnitario = item.PrecoUnitario,
+                Subtotal = item.Quantidade * item.PrecoUnitario
             };
+        }
+
+        private static string ObterImagemUrl(Produto produto)
+        {
+            var nomeNormalizado = produto.Nome.ToLowerInvariant();
+
+            if (nomeNormalizado.Contains("jordan") || nomeNormalizado.Contains("latte"))
+                return "/assets/products/aj1-high-latte.png";
+
+            if (nomeNormalizado.Contains("camisa") || nomeNormalizado.Contains("oversized"))
+                return "/assets/products/camisa-over-black.png";
+
+            if (nomeNormalizado.Contains("bermuda"))
+                return "/assets/products/bermuda-jeans.jpg";
+
+            if (nomeNormalizado.Contains("moletom") || nomeNormalizado.Contains("blusa"))
+                return "/assets/products/blusa-moletom.jpg";
+
+            if (nomeNormalizado.Contains("calca") || nomeNormalizado.Contains("calça") || nomeNormalizado.Contains("jeans"))
+                return "/assets/products/calca-levis-clara.png";
+
+            if (nomeNormalizado.Contains("corrente") || nomeNormalizado.Contains("ice"))
+                return "/assets/products/corrente-ice.png";
+
+            if (nomeNormalizado.Contains("adidas") || nomeNormalizado.Contains("tenis") || nomeNormalizado.Contains("tênis"))
+                return "/assets/products/tenis2.png";
+
+            return "/assets/products/camisa-over-black.png";
+        }
+
+        private static string ObterMarca(Produto produto)
+        {
+            var nomeNormalizado = produto.Nome.ToLowerInvariant();
+
+            if (nomeNormalizado.Contains("nike") || nomeNormalizado.Contains("jordan"))
+                return "Nike";
+
+            if (nomeNormalizado.Contains("adidas"))
+                return "Adidas";
+
+            if (nomeNormalizado.Contains("levis") || nomeNormalizado.Contains("levi"))
+                return "Levi's";
+
+            return "Zero Frame";
+        }
+
+        private static string ObterOrigem(Produto produto)
+        {
+            return ObterMarca(produto) == "Zero Frame" ? "Original" : "Multimarcas";
         }
     }
 }

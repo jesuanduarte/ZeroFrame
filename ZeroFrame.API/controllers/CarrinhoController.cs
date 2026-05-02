@@ -1,84 +1,143 @@
 using Microsoft.AspNetCore.Mvc;
 using ZeroFrame.Application.DTOS;
+using ZeroFrame.Application.DTOS.ItemCarrinho;
 using ZeroFrame.Application.Interfaces;
 
 namespace ZeroFrame.API.Controllers
 {
+   
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/usuarios/{usuarioId:int}/carrinho")]
     public class CarrinhoController : ControllerBase
     {
+        // Serviço responsável pelas regras do carrinho.
         private readonly ICarrinhoService _carrinhoService;
+        private readonly IItemCarrinhoService _itemCarrinhoService;
 
-        public CarrinhoController(ICarrinhoService carrinhoService)
+        public CarrinhoController(
+            ICarrinhoService carrinhoService,
+            IItemCarrinhoService itemCarrinhoService)
         {
             _carrinhoService = carrinhoService;
+            _itemCarrinhoService = itemCarrinhoService;
         }
 
+        // GET: api/usuarios/{usuarioId}/carrinho
+        // Busca o carrinho ativo do usuário.
+        // Caso o usuário ainda não tenha um carrinho ativo, o serviço pode criar um automaticamente.
         [HttpGet]
-        public async Task<ActionResult<List<CarrinhoGetDto>>> ObterTodosCarrinhos()
-        {
-            var carrinhos = await _carrinhoService.ObterTodosAsync();
-            return Ok(carrinhos);
-        }
-
-        [HttpGet("{id}")]
-        public async Task<ActionResult<CarrinhoGetDto>> ObterCarrinhoPorId(int id)
-        {
-            var carrinho = await _carrinhoService.ObterPorIdAsync(id);
-
-            if (carrinho == null)
-                return NotFound("Carrinho nao encontrado.");
-
-            return Ok(carrinho);
-        }
-
-        [HttpPost("usuario/{usuarioId}/ativo")]
-        public async Task<ActionResult<CarrinhoGetDto>> ObterOuCriarCarrinhoAtivoPorUsuario(int usuarioId)
+        public async Task<ActionResult<CarrinhoGetDto>> ObterCarrinhoAtivoDoUsuario(int usuarioId)
         {
             var carrinho = await _carrinhoService.ObterOuCriarAtivoPorUsuarioAsync(usuarioId);
             return Ok(carrinho);
         }
 
-        [HttpPost]
-        public async Task<ActionResult<CarrinhoGetDto>> CriarCarrinho(CarrinhoPostDto carrinhoPostDto)
+        // GET: api/usuarios/{usuarioId}/carrinho/itens
+        // Busca todos os itens existentes dentro do carrinho ativo do usuário.
+        [HttpGet("itens")]
+        public async Task<ActionResult<List<ItemCarrinhoGetDto>>> ObterItensDoCarrinho(int usuarioId)
         {
-            var carrinhoCriado = await _carrinhoService.CriarAsync(carrinhoPostDto);
-
-            return CreatedAtAction(
-                nameof(ObterCarrinhoPorId),
-                new { id = carrinhoCriado.Id },
-                carrinhoCriado
-            );
+            var carrinho = await _carrinhoService.ObterOuCriarAtivoPorUsuarioAsync(usuarioId);
+            var itens = await _itemCarrinhoService.ObterPorCarrinhoAsync(carrinho.Id);
+            return Ok(itens);
         }
 
-        [HttpPut("{id}")]
-        public async Task<ActionResult> AtualizarCarrinho(int id, CarrinhoPutDto carrinhoPutDto)
+        // POST: api/usuarios/{usuarioId}/carrinho/itens
+        // Adiciona um novo item ao carrinho ativo do usuário.
+        [HttpPost("itens")]
+        public async Task<ActionResult<ItemCarrinhoGetDto>> AdicionarItemAoCarrinho(
+            int usuarioId,
+            ItemCarrinhoUsuarioPostDto itemCarrinhoUsuarioPostDto)
         {
-            if (id != carrinhoPutDto.Id)
-                return BadRequest("Id da rota diferente do Id do carrinho.");
+            // Busca ou cria o carrinho ativo do usuário antes de adicionar o item.
+            var carrinho = await _carrinhoService.ObterOuCriarAtivoPorUsuarioAsync(usuarioId);
 
-            var carrinho = await _carrinhoService.ObterPorIdAsync(id);
+            // Monta o DTO usado pelo serviço de item carrinho.
+            // O usuário não precisa informar o CarrinhoId diretamente,
+            // pois ele é obtido a partir do carrinho ativo.
+            var itemCarrinhoPostDto = new ItemCarrinhoPostDto
+            {
+                CarrinhoId = carrinho.Id,
+                VariacaoProdutoId = itemCarrinhoUsuarioPostDto.VariacaoProdutoId,
+                Quantidade = itemCarrinhoUsuarioPostDto.Quantidade
+            };
 
-            if (carrinho == null)
-                return NotFound("Carrinho nao encontrado.");
+            try
+            {
+                // Cria o item no carrinho.
+                var itemCriado = await _itemCarrinhoService.CriarAsync(itemCarrinhoPostDto);
 
-            await _carrinhoService.AtualizarAsync(carrinhoPutDto);
+                // Retorna status 201 Created informando que o item foi criado com sucesso.
+                return CreatedAtAction(
+                    nameof(ObterItensDoCarrinho),
+                    new { usuarioId },
+                    itemCriado
+                );
+            }
+            catch (InvalidOperationException ex)
+            {
+                // Retorna erro 400 caso alguma regra de negócio seja violada.
+                return BadRequest(ex.Message);
+            }
+        }
 
+        // PUT: api/usuarios/{usuarioId}/carrinho/itens/{itemId}
+        // Atualiza um item específico do carrinho do usuário.
+        [HttpPut("itens/{itemId:int}")]
+        public async Task<ActionResult> AtualizarItemDoCarrinho(
+            int usuarioId,
+            int itemId,
+            ItemCarrinhoPutDto itemCarrinhoPutDto)
+        {
+            // Busca o carrinho ativo do usuário.
+            var carrinho = await _carrinhoService.ObterOuCriarAtivoPorUsuarioAsync(usuarioId);
+
+            // Busca o item informado pelo id.
+            var item = await _itemCarrinhoService.ObterPorIdAsync(itemId);
+
+            // Verifica se o item existe e se pertence ao carrinho do usuário.
+            if (item == null || item.CarrinhoId != carrinho.Id)
+                return NotFound("Item do carrinho nao encontrado.");
+
+            // Garante que o DTO será atualizado com o id vindo da rota.
+            itemCarrinhoPutDto.Id = itemId;
+
+            try
+            {
+                // Atualiza o item do carrinho.
+                await _itemCarrinhoService.AtualizarAsync(itemCarrinhoPutDto);
+            }
+            catch (InvalidOperationException ex)
+            {
+                // Retorna erro 400 caso alguma regra de negócio seja violada.
+                return BadRequest(ex.Message);
+            }
+
+            // Retorna 204 No Content indicando que a atualização foi feita com sucesso.
             return NoContent();
         }
 
-        [HttpDelete("{id}")]
-        public async Task<ActionResult> DeletarCarrinho(int id)
+        // DELETE: api/usuarios/{usuarioId}/carrinho/itens/{itemId}
+        // Remove um item específico do carrinho do usuário.
+        [HttpDelete("itens/{itemId:int}")]
+        public async Task<ActionResult> RemoverItemDoCarrinho(int usuarioId, int itemId)
         {
-            var carrinho = await _carrinhoService.ObterPorIdAsync(id);
+            // Busca o carrinho ativo do usuário.
+            var carrinho = await _carrinhoService.ObterOuCriarAtivoPorUsuarioAsync(usuarioId);
 
-            if (carrinho == null)
-                return NotFound("Carrinho nao encontrado.");
+            // Busca o item informado pelo id.
+            var item = await _itemCarrinhoService.ObterPorIdAsync(itemId);
 
-            await _carrinhoService.RemoverAsync(id);
+            // Verifica se o item existe e se pertence ao carrinho do usuário.
+            if (item == null || item.CarrinhoId != carrinho.Id)
+                return NotFound("Item do carrinho nao encontrado.");
 
+            // Remove o item do carrinho.
+            await _itemCarrinhoService.RemoverAsync(itemId);
+
+            // Retorna 204 No Content indicando que a remoção foi feita com sucesso.
             return NoContent();
         }
     }
 }
+

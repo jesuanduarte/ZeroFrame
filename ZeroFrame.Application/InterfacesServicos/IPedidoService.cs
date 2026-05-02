@@ -11,6 +11,7 @@ namespace ZeroFrame.Application.Interfaces
         Task<List<PedidosGetDto>> ObterPorUsuarioAsync(int usuario);
         Task<PedidosGetDto> CriarAsync(PedidosPostDto pedidosPostDto);
         Task<PedidosGetDto> CriarAPartirDoCarrinhoAsync(int carrinhoId);
+        Task<PedidosGetDto> CriarAPartirDoCarrinhoAtivoDoUsuarioAsync(int usuarioId);
         Task AtualizarAsync(PedidosPutDto pedidosPutDto);
         Task CancelarAsync(int id);
     }

@@ -1,5 +1,4 @@
 using ZeroFrame.Application.DTOS.Pagamento;
-using ZeroFrame.Application.DTOS.Usuario;
 using ZeroFrame.Application.Interfaces;
 using ZeroFrame.domain.entidades;
 using ZeroFrame.domain.Interface;
@@ -12,11 +11,15 @@ namespace ZeroFrame.Application.Servicos
     public class PagamentoService : IPagamentoService
     {
         private readonly IPagamentoRepository _pagamentoRepository;
+        private readonly IPedidoRepository _pedidoRepository;
 
-        // Recebe o repositório por injeção de dependência.
-        public PagamentoService(IPagamentoRepository pagamentoRepository)
+        // Recebe os repositórios por injeção de dependência.
+        public PagamentoService(
+            IPagamentoRepository pagamentoRepository,
+            IPedidoRepository pedidoRepository)
         {
             _pagamentoRepository = pagamentoRepository;
+            _pedidoRepository = pedidoRepository;
         }
 
         // Busca um pagamento pelo Id.
@@ -27,13 +30,7 @@ namespace ZeroFrame.Application.Servicos
             if (pagamento == null)
                 return null;
 
-            return new PagamentoGetDto
-            {
-                Id = pagamento.Id,
-                Metodo = pagamento.Metodo,
-                Status = pagamento.Status,
-                PedidoId = pagamento.PedidoId
-            };
+            return MapearPagamentoGetDto(pagamento);
         }
 
         // Busca um pagamento pelo Id do pedido.
@@ -44,34 +41,47 @@ namespace ZeroFrame.Application.Servicos
             if (pagamento == null)
                 return null;
 
-            return new PagamentoGetDto
-            {
-                Id = pagamento.Id,
-                Metodo = pagamento.Metodo,
-                Status = pagamento.Status,
-                PedidoId = pagamento.PedidoId
-            };
+            return MapearPagamentoGetDto(pagamento);
         }
 
         // Cria um novo pagamento.
         public async Task<PagamentoGetDto> CriarAsync(PagamentoPostDto pagamentoPostDto)
         {
+            return await CriarPagamentoDoPedidoAsync(
+                pagamentoPostDto.PedidoId,
+                new PagamentoPedidoPostDto { Metodo = pagamentoPostDto.Metodo });
+        }
+
+        // Cria um pagamento simples para finalizar um pedido.
+        public async Task<PagamentoGetDto> CriarPagamentoDoPedidoAsync(int pedidoId, PagamentoPedidoPostDto pagamentoPedidoPostDto)
+        {
+            var pedido = await _pedidoRepository.ObterPorIdAsync(pedidoId);
+
+            if (pedido == null)
+                throw new InvalidOperationException("Pedido nao encontrado.");
+
+            if (pedido.Status == "Cancelado")
+                throw new InvalidOperationException("Pedido cancelado nao pode receber pagamento.");
+
+            var pagamentoExistente = await _pagamentoRepository.ObterPorPedidoIdAsync(pedidoId);
+
+            if (pagamentoExistente != null)
+                throw new InvalidOperationException("Este pedido ja possui pagamento registrado.");
+
             var pagamento = new Pagamento
             {
-                Metodo = pagamentoPostDto.Metodo,
-                PedidoId = pagamentoPostDto.PedidoId,
-                Status = "Pendente"
+                Metodo = pagamentoPedidoPostDto.Metodo,
+                PedidoId = pedidoId,
+                Pedido = pedido,
+                Status = "Aprovado"
             };
+
+            pedido.Status = "Pago";
 
             await _pagamentoRepository.AdicionarAsync(pagamento);
+            await _pedidoRepository.AtualizarAsync(pedido);
 
-            return new PagamentoGetDto
-            {
-                Id = pagamento.Id,
-                Metodo = pagamento.Metodo,
-                Status = pagamento.Status,
-                PedidoId = pagamento.PedidoId
-            };
+            return MapearPagamentoGetDto(pagamento);
         }
 
         // Atualiza o status do pagamento.
@@ -85,6 +95,18 @@ namespace ZeroFrame.Application.Servicos
             pagamento.Status = pagamentoPutDto.Status;
 
             await _pagamentoRepository.AtualizarAsync(pagamento);
+        }
+
+        private static PagamentoGetDto MapearPagamentoGetDto(Pagamento pagamento)
+        {
+            return new PagamentoGetDto
+            {
+                Id = pagamento.Id,
+                Metodo = pagamento.Metodo,
+                Status = pagamento.Status,
+                PedidoId = pagamento.PedidoId,
+                Valor = pagamento.Pedido?.ValorTotal ?? 0m
+            };
         }
     }
 }

@@ -52,6 +52,58 @@ namespace ZeroFrame.Application.Servicos
                 Ativo = usuario.Ativo
             };
         }
+        public async Task<UsuarioLoginResponseDto?> AutenticarAsync(UsuarioLoginDto usuarioLoginDto)
+        {
+            var usuario = await _usuarioRepository.ObterPorEmailAsync(usuarioLoginDto.Email.Trim());
+
+            if (usuario == null || !usuario.Ativo)
+                return null;
+
+            if (usuario.Senha != usuarioLoginDto.Senha)
+                return null;
+
+            return new UsuarioLoginResponseDto
+            {
+                UsuarioId = usuario.Id,
+                Nome = usuario.Nome,
+                Email = usuario.Email,
+                Telefone = usuario.Telefone,
+                Ativo = usuario.Ativo
+            };
+        }
+        public async Task<UsuarioGetDto> CriarCadastroSimplesAsync(UsuarioCadastroSimplesDto usuarioCadastroSimplesDto)
+        {
+            if (usuarioCadastroSimplesDto.Senha != usuarioCadastroSimplesDto.ConfirmarSenha)
+                throw new InvalidOperationException("Senha e confirmacao de senha nao conferem.");
+
+            var email = usuarioCadastroSimplesDto.Email.Trim();
+            var usuarioExistente = await _usuarioRepository.ObterPorEmailAsync(email);
+
+            if (usuarioExistente != null)
+                throw new InvalidOperationException("Ja existe um usuario cadastrado com este email.");
+
+            var nomePadrao = email.Split('@')[0];
+
+            var usuario = new Usuario
+            {
+                Nome = nomePadrao,
+                Email = email,
+                Senha = usuarioCadastroSimplesDto.Senha,
+                Telefone = "Nao informado",
+                Ativo = true
+            };
+
+            await _usuarioRepository.CriarAsync(usuario);
+
+            return new UsuarioGetDto
+            {
+                Id = usuario.Id,
+                Nome = usuario.Nome,
+                Email = usuario.Email,
+                Telefone = usuario.Telefone,
+                Ativo = usuario.Ativo
+            };
+        }
 
         // Cria um novo usuário.
         public async Task<UsuarioGetDto> CriarAsync(UsuarioPostDto usuarioPostDto)
