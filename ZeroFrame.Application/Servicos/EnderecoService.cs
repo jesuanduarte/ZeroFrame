@@ -11,11 +11,13 @@ namespace ZeroFrame.Application.Servicos
     public class EnderecoService : IEnderecoService
     {
         private readonly IEnderecoRepository _enderecoRepository;
+        private readonly IUsuarioRepository _usuarioRepository;
 
         // Recebe o repositório por injeção de dependência.
-        public EnderecoService(IEnderecoRepository enderecoRepository)
+        public EnderecoService(IEnderecoRepository enderecoRepository, IUsuarioRepository usuarioRepository)
         {
             _enderecoRepository = enderecoRepository;
+            _usuarioRepository = usuarioRepository;
         }
 
         // Busca todos os endereços cadastrados.
@@ -40,9 +42,21 @@ namespace ZeroFrame.Application.Servicos
             return MapearEnderecoGetDto(endereco);
         }
 
+
+        public async Task<EnderecoGetDto?> ObterPorUsuarioIdAsync(int usuarioId)
+        {
+            var endereco = await _enderecoRepository.ObterPorUsuarioIdAsync(usuarioId);
+
+            if (endereco == null)
+                return null;
+
+            return MapearEnderecoGetDto(endereco);
+        }
         // Cria um novo endereço.
         public async Task<EnderecoGetDto> CriarAsync(EnderecoPostDto enderecoPostDto)
         {
+            await ValidarUsuarioAsync(enderecoPostDto.UsuarioId);
+
             // Converte o DTO recebido em entidade.
             var endereco = new Endereco
             {
@@ -68,7 +82,9 @@ namespace ZeroFrame.Application.Servicos
 
             // Se não existir, encerra o método.
             if (endereco == null)
-                return;
+                throw new KeyNotFoundException("Endereco nao encontrado");
+
+            await ValidarUsuarioAsync(enderecoPutDto.UsuarioId);
 
             // Atualiza os dados do endereço.
             endereco.Rua = enderecoPutDto.Rua;
@@ -88,6 +104,14 @@ namespace ZeroFrame.Application.Servicos
             await _enderecoRepository.RemoverAsync(id);
         }
 
+
+        private async Task ValidarUsuarioAsync(int usuarioId)
+        {
+            var usuario = await _usuarioRepository.ObterPorIdAsync(usuarioId);
+
+            if (usuario == null)
+                throw new KeyNotFoundException("Usuario nao encontrado");
+        }
         // Converte a entidade Endereco para EnderecoGetDto.
         private static EnderecoGetDto MapearEnderecoGetDto(Endereco endereco)
         {

@@ -5,17 +5,23 @@ using ZeroFrame.domain.Interface;
 
 namespace ZeroFrame.Application.Servicos
 {
-    // Serviço responsável pelas regras de negócio do ItemPedido
+    // Serviço responsável pelas regras de negócio do ItemPedido.
     public class ItemPedidoService : IItemPedidoService
     {
         private readonly IItemPedidoRepository _itemPedidoRepository;
+        private readonly IPedidoRepository _pedidoRepository;
+        private readonly IVariacaoRepository _variacaoRepository;
 
-        public ItemPedidoService(IItemPedidoRepository itemPedidoRepository)
+        public ItemPedidoService(
+            IItemPedidoRepository itemPedidoRepository,
+            IPedidoRepository pedidoRepository,
+            IVariacaoRepository variacaoRepository)
         {
             _itemPedidoRepository = itemPedidoRepository;
+            _pedidoRepository = pedidoRepository;
+            _variacaoRepository = variacaoRepository;
         }
 
-        // Busca um item pelo Id
         public async Task<ItemPedidoGetDto?> ObterPorIdAsync(int id)
         {
             var item = await _itemPedidoRepository.ObterPorIdAsync(id);
@@ -23,81 +29,178 @@ namespace ZeroFrame.Application.Servicos
             if (item == null)
                 return null;
 
-            return new ItemPedidoGetDto
-            {
-                Id = item.Id,
-                VariacaoProdutoId = item.VariacaoProdutoId,
-                Quantidade = item.Quantidade,
-                PrecoUnitario = item.PrecoUnitario
-            };
+            return MapearItemPedidoGetDto(item);
         }
 
-        // Busca itens por pedido
         public async Task<List<ItemPedidoGetDto>> ObterPorPedidoAsync(int pedidoId)
         {
+            await ObterPedidoOuFalharAsync(pedidoId);
+
             var itens = await _itemPedidoRepository.ObterPorPedidoAsync(pedidoId);
 
-            return itens.Select(item => new ItemPedidoGetDto
-            {
-                Id = item.Id,
-                VariacaoProdutoId = item.VariacaoProdutoId,
-                Quantidade = item.Quantidade,
-                PrecoUnitario = item.PrecoUnitario
-            }).ToList();
+            return itens.Select(MapearItemPedidoGetDto).ToList();
         }
 
-        // Cria item do pedido
         public async Task<ItemPedidoGetDto> CriarAsync(ItemPedidoPostDto dto)
         {
+            var pedido = await ObterPedidoOuFalharAsync(dto.PedidoId);
+            var variacao = await ObterVariacaoOuFalharAsync(dto.VariacaoProdutoId);
+
+            ValidarQuantidade(dto.Quantidade);
+            ValidarEstoque(variacao, dto.Quantidade);
+
             var item = new ItemPedido
             {
-                VariacaoProdutoId = dto.VariacaoProdutoId,
+                PedidoId = pedido.Id,
+                VariacaoProdutoId = variacao.Id,
+                VariacaoProduto = variacao,
                 Quantidade = dto.Quantidade,
-                PrecoUnitario = 0
+                PrecoUnitario = variacao.Produto!.Preco
             };
+
+            variacao.Estoque -= dto.Quantidade;
 
             await _itemPedidoRepository.AdicionarAsync(item);
+            await _variacaoRepository.AtualizarAsync(variacao);
+            await RecalcularTotalPedidoAsync(pedido.Id);
 
-            return new ItemPedidoGetDto
-            {
-                Id = item.Id,
-                VariacaoProdutoId = item.VariacaoProdutoId,
-                Quantidade = item.Quantidade,
-                PrecoUnitario = item.PrecoUnitario
-            };
+            return MapearItemPedidoGetDto(item);
         }
 
-        // Atualiza item
         public async Task AtualizarAsync(ItemPedidoPutDto dto)
         {
             var item = await _itemPedidoRepository.ObterPorIdAsync(dto.Id);
 
             if (item == null)
-                return;
+                throw new KeyNotFoundException("Item do pedido nao encontrado");
 
-            item.VariacaoProdutoId = dto.VariacaoProdutoId;
+            var pedido = await ObterPedidoOuFalharAsync(dto.PedidoId);
+            var novaVariacao = await ObterVariacaoOuFalharAsync(dto.VariacaoProdutoId);
+
+            if (item.PedidoId != pedido.Id)
+                throw new InvalidOperationException("Item nao pertence ao pedido informado.");
+
+            ValidarQuantidade(dto.Quantidade);
+
+            if (item.VariacaoProdutoId == dto.VariacaoProdutoId)
+            {
+                var diferencaQuantidade = dto.Quantidade - item.Quantidade;
+                ValidarEstoque(novaVariacao, diferencaQuantidade);
+                novaVariacao.Estoque -= diferencaQuantidade;
+            }
+            else
+            {
+                var variacaoAnterior = await ObterVariacaoOuFalharAsync(item.VariacaoProdutoId);
+                variacaoAnterior.Estoque += item.Quantidade;
+                await _variacaoRepository.AtualizarAsync(variacaoAnterior);
+
+                ValidarEstoque(novaVariacao, dto.Quantidade);
+                novaVariacao.Estoque -= dto.Quantidade;
+            }
+
+            item.PedidoId = pedido.Id;
+            item.VariacaoProdutoId = novaVariacao.Id;
+            item.VariacaoProduto = novaVariacao;
             item.Quantidade = dto.Quantidade;
+            item.PrecoUnitario = novaVariacao.Produto!.Preco;
 
+            await _variacaoRepository.AtualizarAsync(novaVariacao);
             await _itemPedidoRepository.AtualizarAsync(item);
+            await RecalcularTotalPedidoAsync(pedido.Id);
         }
 
-        // Remove item
         public async Task RemoverAsync(int id)
         {
+            var item = await _itemPedidoRepository.ObterPorIdAsync(id);
+
+            if (item == null)
+                throw new KeyNotFoundException("Item do pedido nao encontrado");
+
+            var variacao = await _variacaoRepository.ObterPorIdAsync(item.VariacaoProdutoId);
+
+            if (variacao != null)
+            {
+                variacao.Estoque += item.Quantidade;
+                await _variacaoRepository.AtualizarAsync(variacao);
+            }
+
+            var pedidoId = item.PedidoId;
             await _itemPedidoRepository.RemoverAsync(id);
+            await RecalcularTotalPedidoAsync(pedidoId);
         }
 
         public async Task<List<ItemPedidoGetDto>> ObterTodosAsync()
         {
             var itens = await _itemPedidoRepository.ObterTodosAsync();
 
-            return itens.OfType<ItemPedido>().Select(item => new ItemPedidoGetDto
+            return itens.Select(MapearItemPedidoGetDto).ToList();
+        }
+
+        private async Task<Pedidos> ObterPedidoOuFalharAsync(int pedidoId)
+        {
+            var pedido = await _pedidoRepository.ObterPorIdAsync(pedidoId);
+
+            if (pedido == null)
+                throw new KeyNotFoundException("Pedido nao encontrado");
+
+            return pedido;
+        }
+
+        private async Task<VariacaoProdutos> ObterVariacaoOuFalharAsync(int variacaoProdutoId)
+        {
+            var variacao = await _variacaoRepository.ObterPorIdAsync(variacaoProdutoId);
+
+            if (variacao == null)
+                throw new KeyNotFoundException("Variacao do produto nao encontrada");
+
+            if (variacao.Produto == null)
+                throw new InvalidOperationException("Produto da variacao nao encontrado.");
+
+            return variacao;
+        }
+
+        private static void ValidarQuantidade(int quantidade)
+        {
+            if (quantidade <= 0)
+                throw new InvalidOperationException("A quantidade deve ser maior que zero.");
+        }
+
+        private static void ValidarEstoque(VariacaoProdutos variacao, int quantidade)
+        {
+            if (quantidade <= 0)
+                return;
+
+            if (quantidade > variacao.Estoque)
+                throw new InvalidOperationException("Estoque insuficiente para esta variacao.");
+        }
+
+        private async Task RecalcularTotalPedidoAsync(int pedidoId)
+        {
+            var pedido = await ObterPedidoOuFalharAsync(pedidoId);
+
+            pedido.ValorTotal = pedido.Itens.Sum(item => item.Quantidade * item.PrecoUnitario);
+            await _pedidoRepository.AtualizarAsync(pedido);
+        }
+
+        private static ItemPedidoGetDto MapearItemPedidoGetDto(ItemPedido item)
+        {
+            var variacao = item.VariacaoProduto;
+            var produto = variacao?.Produto;
+
+            return new ItemPedidoGetDto
             {
                 Id = item.Id,
+                PedidoId = item.PedidoId,
                 VariacaoProdutoId = item.VariacaoProdutoId,
+                ProdutoId = produto?.Id ?? 0,
+                NomeProduto = produto?.Nome ?? string.Empty,
+                CategoriaNome = produto?.Categoria?.Nome ?? string.Empty,
+                Tamanho = variacao?.Tamanho ?? string.Empty,
+                Cor = variacao?.Cor ?? string.Empty,
                 Quantidade = item.Quantidade,
-                PrecoUnitario = item.PrecoUnitario
-            }).ToList();
+                PrecoUnitario = item.PrecoUnitario,
+                Subtotal = item.Quantidade * item.PrecoUnitario
+            };
         }
     }
 }

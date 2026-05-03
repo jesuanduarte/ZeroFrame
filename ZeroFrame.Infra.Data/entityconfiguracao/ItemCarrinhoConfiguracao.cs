@@ -7,7 +7,7 @@ using ZeroFrame.domain.entidades;
 
 namespace ZeroFrame.Infra.Data.entityconfiguracao
 {
-    // Configuração da entidade no banco de dados.
+    // Configuração da entidade no banco de dados 
     public class ItemCarrinhoConfiguracao: IEntityTypeConfiguration<ItemCarrinho>
     {
         public void Configure(EntityTypeBuilder<ItemCarrinho> builder)

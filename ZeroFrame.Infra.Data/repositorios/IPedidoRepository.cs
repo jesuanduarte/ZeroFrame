@@ -19,6 +19,7 @@ namespace ZeroFrame.Infra.Data.repositorios
             _context = context;
         }
 
+        // Busca um pedido pelo Id, incluindo as informações do usuário, itens e pagamento.
         public async Task<Pedidos?> ObterPorIdAsync(int id)
         {
             return await _context.pedidos
@@ -31,6 +32,7 @@ namespace ZeroFrame.Infra.Data.repositorios
                 .FirstOrDefaultAsync(p => p.Id == id);
         }
 
+        // Busca todos os pedidos de um usuário
         public async Task<List<Pedidos>> ObterPorUsuarioAsync(int usuarioId)
         {
             return await _context.pedidos
@@ -43,23 +45,27 @@ namespace ZeroFrame.Infra.Data.repositorios
                 .ToListAsync();
         }
 
+        // Cria um novo pedido no banco de dados.
         public async Task CriarPedidoAsync(Pedidos pedido)
         {
             await _context.pedidos.AddAsync(pedido);
             await _context.SaveChangesAsync();
         }
 
+        // Atualiza um pedido existente no banco de dados.
         public async Task AtualizarPedidoAsync(Pedidos pedido)
         {
             _context.pedidos.Update(pedido);
             await _context.SaveChangesAsync();
         }
 
+        // Método público que chama o método privado para atualizar um pedido.
         public async Task AtualizarAsync(Pedidos pedido)
         {
             await AtualizarPedidoAsync(pedido);
         }
 
+        // Cancela um pedido existente no banco de dados.
         public async Task CancelarPedidoAsync(int id)
         {
             var pedido = await _context.pedidos.FindAsync(id);

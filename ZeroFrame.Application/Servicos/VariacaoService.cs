@@ -11,11 +11,13 @@ namespace ZeroFrame.Application.Servicos
     public class VariacaoService : IVariacaoService
     {
         private readonly IVariacaoRepository _variacaoRepository;
+        private readonly IProdutoRepository _produtoRepository;
 
         // Recebe o repositório por injeção de dependência.
-        public VariacaoService(IVariacaoRepository variacaoRepository)
+        public VariacaoService(IVariacaoRepository variacaoRepository, IProdutoRepository produtoRepository)
         {
             _variacaoRepository = variacaoRepository;
+            _produtoRepository = produtoRepository;
         }
 
         // Busca todas as variações de produtos cadastradas.
@@ -24,14 +26,7 @@ namespace ZeroFrame.Application.Servicos
             var variacoesProdutos = await _variacaoRepository.ObterTodosAsync();
 
             // Converte a lista de entidades para lista de DTOs.
-            return variacoesProdutos.Select(variacaoProduto => new VariacaoGetDto
-            {
-                Id = variacaoProduto.Id,
-                Tamanho = variacaoProduto.Tamanho,
-                Cor = variacaoProduto.Cor,
-                Estoque = variacaoProduto.Estoque,
-                ProdutoId = variacaoProduto.ProdutoId
-            }).ToList();
+            return variacoesProdutos.Select(MapearVariacaoGetDto).ToList();
         }
 
         // Busca uma variação de produto pelo Id.
@@ -44,19 +39,23 @@ namespace ZeroFrame.Application.Servicos
                 return null;
 
             // Converte a entidade encontrada para DTO.
-            return new VariacaoGetDto
-            {
-                Id = variacaoProduto.Id,
-                Tamanho = variacaoProduto.Tamanho,
-                Cor = variacaoProduto.Cor,
-                Estoque = variacaoProduto.Estoque,
-                ProdutoId = variacaoProduto.ProdutoId
-            };
+            return MapearVariacaoGetDto(variacaoProduto);
         }
 
+
+        public async Task<List<VariacaoGetDto>> ObterPorProdutoIdAsync(int produtoId)
+        {
+            await ValidarProdutoAsync(produtoId);
+
+            var variacoesProdutos = await _variacaoRepository.ObterPorProdutoIdAsync(produtoId);
+
+            return variacoesProdutos.Select(MapearVariacaoGetDto).ToList();
+        }
         // Cria uma nova variação de produto.
         public async Task<VariacaoGetDto> CriarAsync(VariacaoPostDto variacaoPostDto)
         {
+            await ValidarProdutoAsync(variacaoPostDto.ProdutoId);
+
             // Converte o DTO recebido em entidade.
             var variacaoProduto = new VariacaoProdutos
             {
@@ -82,19 +81,41 @@ namespace ZeroFrame.Application.Servicos
         // Atualiza uma variação de produto existente.
         public async Task AtualizarAsync(VariacaoPutDto variacaoPutDto)
         {
-            // Converte o DTO de atualização em entidade.
-            var variacaoProduto = new VariacaoProdutos
-            {
-                Id = variacaoPutDto.Id,
-                Tamanho = variacaoPutDto.Tamanho,
-                Cor = variacaoPutDto.Cor,
-                Estoque = variacaoPutDto.Estoque,
-                ProdutoId = variacaoPutDto.ProdutoId
-            };
+            var variacaoProduto = await _variacaoRepository.ObterPorIdAsync(variacaoPutDto.Id);
+
+            if (variacaoProduto == null)
+                return;
+
+            await ValidarProdutoAsync(variacaoPutDto.ProdutoId);
+
+            variacaoProduto.Tamanho = variacaoPutDto.Tamanho;
+            variacaoProduto.Cor = variacaoPutDto.Cor;
+            variacaoProduto.Estoque = variacaoPutDto.Estoque;
+            variacaoProduto.ProdutoId = variacaoPutDto.ProdutoId;
 
             await _variacaoRepository.AtualizarAsync(variacaoProduto);
         }
 
+
+        private async Task ValidarProdutoAsync(int produtoId)
+        {
+            var produto = await _produtoRepository.ObterPorIdAsync(produtoId);
+
+            if (produto == null)
+                throw new InvalidOperationException("Produto nao encontrado.");
+        }
+
+        private static VariacaoGetDto MapearVariacaoGetDto(VariacaoProdutos variacaoProduto)
+        {
+            return new VariacaoGetDto
+            {
+                Id = variacaoProduto.Id,
+                Tamanho = variacaoProduto.Tamanho,
+                Cor = variacaoProduto.Cor,
+                Estoque = variacaoProduto.Estoque,
+                ProdutoId = variacaoProduto.ProdutoId
+            };
+        }
         // Remove uma variação de produto pelo Id.
         public async Task RemoverAsync(int id)
         {

@@ -222,6 +222,7 @@ namespace ZeroFrame.Application.Servicos
             return new ItemPedidoGetDto
             {
                 Id = item.Id,
+                PedidoId = item.PedidoId,
                 VariacaoProdutoId = item.VariacaoProdutoId,
                 ProdutoId = produto?.Id ?? 0,
                 NomeProduto = produto?.Nome ?? string.Empty,

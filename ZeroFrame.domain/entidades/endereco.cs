@@ -14,7 +14,6 @@ namespace ZeroFrame.domain.entidades
         public string CEP { get; set; } = string.Empty;
         public bool Ativo { get; set; } = true;
         public int UsuarioId { get; set; }
-        public List<Endereco> Enderecos { get; set; } = new();
         public Usuario? Usuario { get; set; }
     }
 

@@ -64,6 +64,7 @@ namespace ZeroFrame.Application.DTOS.Produto
         public string Nome { get; set; } = string.Empty;
         public string Descricao { get; set; } = string.Empty;
         public decimal Preco { get; set; }
+        [Range(1, int.MaxValue, ErrorMessage = "O CategoriaId deve ser válido.")]
         public int CategoriaId { get; set; }
         public bool Ativo { get; set; }
     }

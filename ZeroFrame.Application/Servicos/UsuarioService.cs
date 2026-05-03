@@ -1,3 +1,4 @@
+using ZeroFrame.Application.DTOS.Endereco;
 using ZeroFrame.Application.DTOS.Usuario;
 using ZeroFrame.Application.Interfaces;
 using ZeroFrame.domain.entidades;
@@ -25,14 +26,7 @@ namespace ZeroFrame.Application.Servicos
             if (usuario == null)
                 return null;
 
-            return new UsuarioGetDto
-            {
-                Id = usuario.Id,
-                Nome = usuario.Nome,
-                Email = usuario.Email,
-                Telefone = usuario.Telefone,
-                Ativo = usuario.Ativo
-            };
+            return MapearUsuarioGetDto(usuario);
         }
 
         // Busca um usuário pelo email.
@@ -43,14 +37,7 @@ namespace ZeroFrame.Application.Servicos
             if (usuario == null)
                 return null;
 
-            return new UsuarioGetDto
-            {
-                Id = usuario.Id,
-                Nome = usuario.Nome,
-                Email = usuario.Email,
-                Telefone = usuario.Telefone,
-                Ativo = usuario.Ativo
-            };
+            return MapearUsuarioGetDto(usuario);
         }
         public async Task<UsuarioLoginResponseDto?> AutenticarAsync(UsuarioLoginDto usuarioLoginDto)
         {
@@ -71,40 +58,6 @@ namespace ZeroFrame.Application.Servicos
                 Ativo = usuario.Ativo
             };
         }
-        public async Task<UsuarioGetDto> CriarCadastroSimplesAsync(UsuarioCadastroSimplesDto usuarioCadastroSimplesDto)
-        {
-            if (usuarioCadastroSimplesDto.Senha != usuarioCadastroSimplesDto.ConfirmarSenha)
-                throw new InvalidOperationException("Senha e confirmacao de senha nao conferem.");
-
-            var email = usuarioCadastroSimplesDto.Email.Trim();
-            var usuarioExistente = await _usuarioRepository.ObterPorEmailAsync(email);
-
-            if (usuarioExistente != null)
-                throw new InvalidOperationException("Ja existe um usuario cadastrado com este email.");
-
-            var nomePadrao = email.Split('@')[0];
-
-            var usuario = new Usuario
-            {
-                Nome = nomePadrao,
-                Email = email,
-                Senha = usuarioCadastroSimplesDto.Senha,
-                Telefone = "Nao informado",
-                Ativo = true
-            };
-
-            await _usuarioRepository.CriarAsync(usuario);
-
-            return new UsuarioGetDto
-            {
-                Id = usuario.Id,
-                Nome = usuario.Nome,
-                Email = usuario.Email,
-                Telefone = usuario.Telefone,
-                Ativo = usuario.Ativo
-            };
-        }
-
         // Cria um novo usuário.
         public async Task<UsuarioGetDto> CriarAsync(UsuarioPostDto usuarioPostDto)
         {
@@ -119,14 +72,7 @@ namespace ZeroFrame.Application.Servicos
 
             await _usuarioRepository.CriarAsync(usuario);
 
-            return new UsuarioGetDto
-            {
-                Id = usuario.Id,
-                Nome = usuario.Nome,
-                Email = usuario.Email,
-                Telefone = usuario.Telefone,
-                Ativo = usuario.Ativo
-            };
+            return MapearUsuarioGetDto(usuario);
         }
 
         // Atualiza os dados básicos de um usuário.
@@ -148,7 +94,27 @@ namespace ZeroFrame.Application.Servicos
         {
             await _usuarioRepository.RemoverAsync(id);
         }
+        private static UsuarioGetDto MapearUsuarioGetDto(Usuario usuario)
+        {
+            return new UsuarioGetDto
+            {
+                Id = usuario.Id,
+                Nome = usuario.Nome,
+                Email = usuario.Email,
+                Telefone = usuario.Telefone,
+                Ativo = usuario.Ativo,
+                Enderecos = usuario.Enderecos.Select(endereco => new EnderecoGetDto
+                {
+                    Id = endereco.Id,
+                    Rua = endereco.Rua,
+                    Numero = endereco.Numero,
+                    Cidade = endereco.Cidade,
+                    Estado = endereco.Estado,
+                    Cep = endereco.CEP,
+                    Ativo = endereco.Ativo,
+                    UsuarioId = endereco.UsuarioId
+                }).ToList()
+            };
+        }
     }
 }
-
-

@@ -10,6 +10,7 @@ namespace ZeroFrame.Application.DTOS.ItemPedido
     {
         //GET — Buscar/Ler dados
         public int Id { get; set; }
+        public int PedidoId { get; set; }
         public int VariacaoProdutoId { get; set; }
         public int ProdutoId { get; set; }
         public string NomeProduto { get; set; } = string.Empty;
@@ -24,9 +25,35 @@ namespace ZeroFrame.Application.DTOS.ItemPedido
         public decimal Subtotal { get; set; }
     }
 
+
+    public class PedidoItemPostDto
+    {
+        [Required(ErrorMessage = "O campo VariacaoProdutoId é obrigatório.")]
+        [Range(1, int.MaxValue, ErrorMessage = "O VariacaoProdutoId deve ser válido.")]
+        public int VariacaoProdutoId { get; set; }
+
+        [Required(ErrorMessage = "O campo Quantidade é obrigatório.")]
+        [Range(1, int.MaxValue, ErrorMessage = "A quantidade deve ser maior que zero.")]
+        public int Quantidade { get; set; }
+    }
+
+    public class PedidoItemPutDto
+    {
+        [Required(ErrorMessage = "O campo VariacaoProdutoId é obrigatório.")]
+        [Range(1, int.MaxValue, ErrorMessage = "O VariacaoProdutoId deve ser válido.")]
+        public int VariacaoProdutoId { get; set; }
+
+        [Required(ErrorMessage = "O campo Quantidade é obrigatório.")]
+        [Range(1, int.MaxValue, ErrorMessage = "A quantidade deve ser maior que zero.")]
+        public int Quantidade { get; set; }
+    }
     public class ItemPedidoPostDto
     {
         //POST — Criar dados
+        [Required(ErrorMessage = "O campo PedidoId é obrigatório.")]
+        [Range(1, int.MaxValue, ErrorMessage = "O PedidoId deve ser válido.")]
+        public int PedidoId { get; set; }
+
         [Required(ErrorMessage = "O campo VariacaoProdutoId é obrigatório.")]
         [Range(1, int.MaxValue, ErrorMessage = "O VariacaoProdutoId deve ser válido.")]
         public int VariacaoProdutoId { get; set; }
@@ -41,6 +68,7 @@ namespace ZeroFrame.Application.DTOS.ItemPedido
     {
         //PUT — Atualizar dados
         public int Id { get; set; }
+        public int PedidoId { get; set; }
         public int VariacaoProdutoId { get; set; }
         public int Quantidade { get; set; }
     }

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.ComponentModel.DataAnnotations;
+using ZeroFrame.Application.DTOS.Endereco;
 
 namespace ZeroFrame.Application.DTOS.Usuario
 {
@@ -14,6 +15,7 @@ namespace ZeroFrame.Application.DTOS.Usuario
         public string Email { get; set; } = string.Empty;
         public string Telefone { get; set; } = string.Empty;
         public bool Ativo { get; set; }
+        public List<EnderecoGetDto> Enderecos { get; set; } = new();
     }
 
     public class UsuarioPostDto

@@ -17,6 +17,7 @@ namespace ZeroFrame.Infra.Data.repositorios
             _context = context;
         }
 
+        // Busca um item específico do pedido pelo Id do próprio ItemPedido.
         public async Task<ItemPedido?> ObterPorIdAsync(int id)
         {
             return await _context.itemPedidos
@@ -25,6 +26,7 @@ namespace ZeroFrame.Infra.Data.repositorios
                 .FirstOrDefaultAsync(i => i.Id == id);
         }
 
+        // // Busca todos os itens que pertencem a um pedido específico.
         public async Task<List<ItemPedido>> ObterPorPedidoAsync(int pedidoId)
         {
             return await _context.itemPedidos
@@ -33,6 +35,7 @@ namespace ZeroFrame.Infra.Data.repositorios
                 .ToListAsync();
         }
 
+        // busca todos os itens do pedido
         public async Task<List<ItemPedido>> ObterTodosAsync()
         {
             return await _context.itemPedidos
@@ -41,18 +44,21 @@ namespace ZeroFrame.Infra.Data.repositorios
                 .ToListAsync();
         }
 
+        // adiciona um item do pedido
         public async Task AdicionarAsync(ItemPedido itemPedido)
         {
             await _context.itemPedidos.AddAsync(itemPedido);
             await _context.SaveChangesAsync();
         }
 
+        // atualiza um item do pedido
         public async Task AtualizarAsync(ItemPedido itemPedido)
         {
             _context.itemPedidos.Update(itemPedido);
             await _context.SaveChangesAsync();
         }
 
+        // remove um item do pedido
         public async Task RemoverAsync(int id)
         {
             var itemPedido = await _context.itemPedidos.FindAsync(id);

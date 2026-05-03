@@ -7,7 +7,7 @@ using System.Text;
 
 namespace ZeroFrame.Infra.Data.entityconfiguracao
 {
-    // Configuração da entidade no banco de dados.
+        // Configuração da entidade no banco de dados.
     public class Variacaoprodutosconfiguracao : IEntityTypeConfiguration<VariacaoProdutos>
     {
         public void Configure(EntityTypeBuilder<VariacaoProdutos> builder)

@@ -16,7 +16,7 @@ namespace ZeroFrame.Infra.Data.repositorios
         {
             _context = context;
         }
-
+        // busca os itens do carrinho
         public async Task<List<ItemCarrinho>> ObterTodosAsync()
         {
             return await _context.item_Carrinhos
@@ -27,6 +27,7 @@ namespace ZeroFrame.Infra.Data.repositorios
                 .ToListAsync();
         }
 
+        // busca um item do carrinho por id
         public async Task<ItemCarrinho?> ObterPorIdAsync(int id)
         {
             return await _context.item_Carrinhos
@@ -37,6 +38,7 @@ namespace ZeroFrame.Infra.Data.repositorios
                 .FirstOrDefaultAsync(i => i.Id == id);
         }
 
+        // busca os itens do carrinho por id do carrinho
         public async Task<List<ItemCarrinho>> ObterPorCarrinhoAsync(int carrinhoId)
         {
             return await _context.item_Carrinhos
@@ -48,6 +50,7 @@ namespace ZeroFrame.Infra.Data.repositorios
                 .ToListAsync();
         }
 
+        // busca um carrinho por id e id da variação do produto
         public async Task<ItemCarrinho?> ObterPorCarrinhoEVariacaoAsync(int carrinhoId, int variacaoProdutoId)
         {
             return await _context.item_Carrinhos
@@ -60,18 +63,21 @@ namespace ZeroFrame.Infra.Data.repositorios
                     i.VariacaoProdutoId == variacaoProdutoId);
         }
 
+        // Adiciona um novo item no carrinho
         public async Task AdicionarAsync(ItemCarrinho itemCarrinho)
         {
             await _context.item_Carrinhos.AddAsync(itemCarrinho);
             await _context.SaveChangesAsync();
         }
 
+        // Atualiza um item do carrinho
         public async Task AtualizarAsync(ItemCarrinho itemCarrinho)
         {
             _context.item_Carrinhos.Update(itemCarrinho);
             await _context.SaveChangesAsync();
         }
 
+        // Remove um item do carrinho
         public async Task RemoverAsync(int id)
         {
             var itemCarrinho = await _context.item_Carrinhos.FindAsync(id);

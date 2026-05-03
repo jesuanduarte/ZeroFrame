@@ -8,6 +8,7 @@ using System.Text;
 namespace ZeroFrame.Infra.Data.entityconfiguracao
 {
     // Configuração da entidade no banco de dados.
+
     public class Produtoconfiguracao: IEntityTypeConfiguration<Produto>
     {
         public void Configure(EntityTypeBuilder<Produto> builder)

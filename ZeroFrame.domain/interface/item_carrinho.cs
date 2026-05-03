@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 
 namespace ZeroFrame.domain.Interface
 {
+    // Interface que define o contrato do repositório de itens de carrinho.
+    // Ela estabelece quais operações deverão existir na implementação.
     public interface IItemCarrinhoRepository
     {
         Task<List<ItemCarrinho>> ObterTodosAsync();

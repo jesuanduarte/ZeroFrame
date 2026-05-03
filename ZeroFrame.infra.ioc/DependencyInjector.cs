@@ -30,9 +30,9 @@ namespace ZeroFrame.infra.ioc
             services.AddScoped<IItemPedidoRepository, ItemPedidoRepository>();
             services.AddScoped<IEnderecoRepository, EnderecoRepository>();
             services.AddScoped<ICategoriaRepository, CategoriaRepository>();
-            services.AddScoped<ICarrinhoRepository, CarrinhoRepository>(); 
-            
-            
+            services.AddScoped<ICarrinhoRepository, CarrinhoRepository>();
+
+            // Serviços de aplicação, regras de negócio e lógica de processamento.
             services.AddScoped<IUsuarioService, UsuarioService>();
             services.AddScoped<IProdutoService, ProdutoService>();
             services.AddScoped<IVariacaoService, VariacaoService>();

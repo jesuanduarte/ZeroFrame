@@ -7,6 +7,7 @@ using ZeroFrame.domain.entidades;
 
 namespace ZeroFrame.Infra.Data.entityconfiguracao
 {
+    // Configuração da entidade no banco de dados.
     public class ItemPedidoConfiguracao : IEntityTypeConfiguration<ItemPedido>
     {
         public void Configure(EntityTypeBuilder<ItemPedido> builder)

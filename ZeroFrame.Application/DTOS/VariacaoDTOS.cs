@@ -16,6 +16,35 @@ namespace ZeroFrame.Application.DTOS
         public int ProdutoId { get; set; }
     }
 
+
+    public class VariacaoProdutoPostDto
+    {
+        [Required(ErrorMessage = "O campo Tamanho é obrigatório.")]
+        [MaxLength(50, ErrorMessage = "O campo Tamanho deve conter no máximo 50 caracteres.")]
+        public string Tamanho { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "O campo Cor é obrigatório.")]
+        [MaxLength(50, ErrorMessage = "O campo Cor deve conter no máximo 50 caracteres.")]
+        public string Cor { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "O campo Estoque é obrigatório.")]
+        [Range(0, int.MaxValue, ErrorMessage = "O campo Estoque não pode ser negativo.")]
+        public int Estoque { get; set; }
+    }
+
+    public class VariacaoProdutoPutDto
+    {
+        [Required(ErrorMessage = "O campo Tamanho é obrigatório.")]
+        [MaxLength(50, ErrorMessage = "O campo Tamanho deve conter no máximo 50 caracteres.")]
+        public string Tamanho { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "O campo Cor é obrigatório.")]
+        [MaxLength(50, ErrorMessage = "O campo Cor deve conter no máximo 50 caracteres.")]
+        public string Cor { get; set; } = string.Empty;
+
+        [Range(0, int.MaxValue, ErrorMessage = "O campo Estoque não pode ser negativo.")]
+        public int Estoque { get; set; }
+    }
     public class VariacaoPostDto
     {
         //POST — Criar dados

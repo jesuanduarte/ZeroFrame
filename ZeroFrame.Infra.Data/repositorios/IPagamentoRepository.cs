@@ -19,6 +19,7 @@ namespace ZeroFrame.Infra.Data.repositorios
             _context = context;
         }
 
+        // Busca um pagamento pelo Id
         public async Task<Pagamento?> ObterPorIdAsync(int id)
         {
             return await _context.Pagamentos
@@ -26,6 +27,7 @@ namespace ZeroFrame.Infra.Data.repositorios
                 .FirstOrDefaultAsync(p => p.Id == id);
         }
 
+        // Busca um pagamento pelo Id do pedido
         public async Task<Pagamento?> ObterPorPedidoIdAsync(int pedidoId)
         {
             return await _context.Pagamentos
@@ -33,12 +35,14 @@ namespace ZeroFrame.Infra.Data.repositorios
                 .FirstOrDefaultAsync(p => p.PedidoId == pedidoId);
         }
 
+        // Busca todos os pagamentos
         public async Task AdicionarAsync(Pagamento pagamento)
         {
             await _context.Pagamentos.AddAsync(pagamento);
             await _context.SaveChangesAsync();
         }
 
+        // Atualiza um pagamento existente
         public async Task AtualizarAsync(Pagamento pagamento)
         {
             _context.Pagamentos.Update(pagamento);

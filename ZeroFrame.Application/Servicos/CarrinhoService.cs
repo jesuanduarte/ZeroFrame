@@ -12,11 +12,13 @@ namespace ZeroFrame.Application.Servicos
     public class CarrinhoService : ICarrinhoService
     {
         private readonly ICarrinhoRepository _carrinhoRepository;
+        private readonly IUsuarioRepository _usuarioRepository;
 
         // Recebe o repositório por injeção de dependência.
-        public CarrinhoService(ICarrinhoRepository carrinhoRepository)
+        public CarrinhoService(ICarrinhoRepository carrinhoRepository, IUsuarioRepository usuarioRepository)
         {
             _carrinhoRepository = carrinhoRepository;
+            _usuarioRepository = usuarioRepository;
         }
 
         // Busca todos os carrinhos cadastrados.
@@ -44,6 +46,8 @@ namespace ZeroFrame.Application.Servicos
 
         public async Task<CarrinhoGetDto> ObterOuCriarAtivoPorUsuarioAsync(int usuarioId)
         {
+            await ValidarUsuarioAsync(usuarioId);
+
             var carrinho = await _carrinhoRepository.ObterAtivoPorUsuarioAsync(usuarioId);
 
             if (carrinho == null)
@@ -62,6 +66,8 @@ namespace ZeroFrame.Application.Servicos
         // Cria um novo carrinho.
         public async Task<CarrinhoGetDto> CriarAsync(CarrinhoPostDto carrinhoPostDto)
         {
+            await ValidarUsuarioAsync(carrinhoPostDto.UsuarioId);
+
             // Converte o DTO recebido em entidade.
             var carrinho = new Carrinho
             {
@@ -102,6 +108,14 @@ namespace ZeroFrame.Application.Servicos
             await _carrinhoRepository.RemoverAsync(id);
         }
 
+
+        private async Task ValidarUsuarioAsync(int usuarioId)
+        {
+            var usuario = await _usuarioRepository.ObterPorIdAsync(usuarioId);
+
+            if (usuario == null)
+                throw new KeyNotFoundException("Usuario nao encontrado");
+        }
         // Converte a entidade Carrinho para CarrinhoGetDto.
         private static CarrinhoGetDto MapearCarrinhoGetDto(Carrinho carrinho)
         {

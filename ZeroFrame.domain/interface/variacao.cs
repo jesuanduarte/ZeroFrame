@@ -11,6 +11,7 @@ namespace ZeroFrame.domain.Interface
     {
         Task<List<VariacaoProdutos>> ObterTodosAsync();
         Task<VariacaoProdutos?> ObterPorIdAsync(int id);
+        Task<List<VariacaoProdutos>> ObterPorProdutoIdAsync(int produtoId);
         Task AdicionarAsync(VariacaoProdutos variacaoProdutos);
         Task AtualizarAsync(VariacaoProdutos variacaoProdutos);
         Task RemoverAsync(int id);

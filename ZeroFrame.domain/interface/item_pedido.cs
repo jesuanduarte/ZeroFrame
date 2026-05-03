@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 
 namespace ZeroFrame.domain.Interface
 {
+    // Interface que define o contrato do repositório de itens de pedido.
+    // Ela estabelece quais operações deverão existir na implementação.
     public interface IItemPedidoRepository
     {
         Task<ItemPedido?> ObterPorIdAsync(int id);

@@ -19,30 +19,37 @@ namespace ZeroFrame.Infra.Data.repositorios
             _context = context;
         }
 
+        // Busca um usuário pelo email.
         public async Task<Usuario?> ObterPorEmailAsync(string email)
         {
             return await _context.Usuarios
+                .Include(u => u.Enderecos)
                 .FirstOrDefaultAsync(u => u.Email == email);
         }
 
+        // Busca um usuário pelo ID.
         public async Task<Usuario?> ObterPorIdAsync(int id)
         {
             return await _context.Usuarios
+                .Include(u => u.Enderecos)
                 .FirstOrDefaultAsync(u => u.Id == id);
         }
 
+        // Busca todos os usuários.
         public async Task CriarAsync(Usuario usuario)
         {
             await _context.Usuarios.AddAsync(usuario);
             await _context.SaveChangesAsync();
         }
 
+        // Atualiza um usuário existente.
         public async Task AtualizarAsync(Usuario usuario)
         {
             _context.Usuarios.Update(usuario);
             await _context.SaveChangesAsync();
         }
 
+        // Remove um usuário pelo ID. 
         public async Task RemoverAsync(int id)
         {
             var usuario = await _context.Usuarios.FindAsync(id);

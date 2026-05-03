@@ -10,7 +10,6 @@ namespace ZeroFrame.Application.Interfaces
         Task<UsuarioGetDto?> ObterPorIdAsync(int id);
         Task<UsuarioGetDto?> ObterPorEmailAsync(string email);
         Task<UsuarioLoginResponseDto?> AutenticarAsync(UsuarioLoginDto usuarioLoginDto);
-        Task<UsuarioGetDto> CriarCadastroSimplesAsync(UsuarioCadastroSimplesDto usuarioCadastroSimplesDto);
         Task<UsuarioGetDto> CriarAsync(UsuarioPostDto usuarioPostDto);
         Task AtualizarAsync(UsuarioPutDto usuarioPutDto);
         Task RemoverAsync(int id);

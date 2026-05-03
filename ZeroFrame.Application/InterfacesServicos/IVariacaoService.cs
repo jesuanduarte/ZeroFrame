@@ -9,6 +9,7 @@ namespace ZeroFrame.Application.Interfaces
     {
         Task<List<VariacaoGetDto>> ObterTodosAsync();
         Task<VariacaoGetDto?> ObterPorIdAsync(int id);
+        Task<List<VariacaoGetDto>> ObterPorProdutoIdAsync(int produtoId);
         Task<VariacaoGetDto> CriarAsync(VariacaoPostDto variacaoPostDto);
         Task AtualizarAsync(VariacaoPutDto variacaoPutDto);
         Task RemoverAsync(int id);

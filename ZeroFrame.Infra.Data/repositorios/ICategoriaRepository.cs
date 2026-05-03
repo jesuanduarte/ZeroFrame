@@ -12,10 +12,9 @@ namespace ZeroFrame.Infra.Data.repositorios
     // Ela contém os métodos responsáveis por manipular os dados no sistema.
     public class CategoriaRepository : ICategoriaRepository
     {
-        // Recebe o contexto do banco de dados por injeção de dependência.
-        // Esse contexto permite que o repositório acesse e manipule as tabelas
-        private readonly ApplicationDbContext _context;
 
+        private readonly ApplicationDbContext _context;
+       
         public CategoriaRepository(ApplicationDbContext context)
         {
             _context = context;

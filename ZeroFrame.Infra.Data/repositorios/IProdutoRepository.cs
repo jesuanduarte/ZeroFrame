@@ -17,6 +17,7 @@ namespace ZeroFrame.Infra.Data.repositorios
             _context = context;
         }
 
+        //busca todos os produtos
         public async Task<List<Produto>> ObterTodosAsync()
         {
             return await _context.produtos
@@ -25,6 +26,7 @@ namespace ZeroFrame.Infra.Data.repositorios
                 .ToListAsync();
         }
 
+        // busca um produto por id
         public async Task<Produto?> ObterPorIdAsync(int id)
         {
             return await _context.produtos
@@ -33,18 +35,21 @@ namespace ZeroFrame.Infra.Data.repositorios
                 .FirstOrDefaultAsync(p => p.Id == id);
         }
 
+        // busca produtos por categoria
         public async Task AdicionarAsync(Produto produto)
         {
             await _context.produtos.AddAsync(produto);
             await _context.SaveChangesAsync();
         }
 
+        // atualiza um produto
         public async Task AtualizarAsync(Produto produto)
         {
             _context.produtos.Update(produto);
             await _context.SaveChangesAsync();
         }
 
+        // remove um produto
         public async Task RemoverAsync(int id)
         {
             var produto = await _context.produtos.FindAsync(id);

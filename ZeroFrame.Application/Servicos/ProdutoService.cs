@@ -9,10 +9,12 @@ namespace ZeroFrame.Application.Servicos
     public class ProdutoService : IProdutoService
     {
         private readonly IProdutoRepository _produtoRepository;
+        private readonly ICategoriaRepository _categoriaRepository;
 
-        public ProdutoService(IProdutoRepository produtoRepository)
+        public ProdutoService(IProdutoRepository produtoRepository, ICategoriaRepository categoriaRepository)
         {
             _produtoRepository = produtoRepository;
+            _categoriaRepository = categoriaRepository;
         }
 
         public async Task<List<ProdutoGetDto>> ObterTodosAsync()
@@ -42,6 +44,8 @@ namespace ZeroFrame.Application.Servicos
 
         public async Task<ProdutoGetDto> CriarAsync(ProdutoPostDto produtoPostDto)
         {
+            await ValidarCategoriaAsync(produtoPostDto.CategoriaId);
+
             var produto = new Produto
             {
                 Nome = produtoPostDto.Nome,
@@ -63,6 +67,8 @@ namespace ZeroFrame.Application.Servicos
             if (produto == null)
                 return;
 
+            await ValidarCategoriaAsync(produtoPutDto.CategoriaId);
+
             produto.Nome = produtoPutDto.Nome;
             produto.Descricao = produtoPutDto.Descricao;
             produto.Preco = produtoPutDto.Preco;
@@ -76,6 +82,15 @@ namespace ZeroFrame.Application.Servicos
         {
             await _produtoRepository.RemoverAsync(id);
         }
+
+        private async Task ValidarCategoriaAsync(int categoriaId)
+        {
+            var categoria = await _categoriaRepository.ObterPorIdAsync(categoriaId);
+
+            if (categoria == null)
+                throw new InvalidOperationException("Categoria nao encontrada.");
+        }
+
         private static bool AtendeFiltro(Produto produto, ProdutoFiltroDto filtro)
         {
             return AtendeBusca(produto, filtro.Busca)
