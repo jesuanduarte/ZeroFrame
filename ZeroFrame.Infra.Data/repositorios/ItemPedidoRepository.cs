@@ -17,20 +17,24 @@ namespace ZeroFrame.Infra.Data.repositorios
             _context = context;
         }
 
-        // Busca um item específico do pedido pelo Id do próprio ItemPedido.
+        // Busca um item especifico do pedido pelo Id do proprio ItemPedido.
         public async Task<ItemPedido?> ObterPorIdAsync(int id)
         {
             return await _context.itemPedidos
                 .Include(i => i.Pedido)
                 .Include(i => i.VariacaoProduto)
+                    .ThenInclude(v => v!.Produto)
+                        .ThenInclude(p => p!.Categoria)
                 .FirstOrDefaultAsync(i => i.Id == id);
         }
 
-        // // Busca todos os itens que pertencem a um pedido específico.
+        // // Busca todos os itens que pertencem a um pedido especifico.
         public async Task<List<ItemPedido>> ObterPorPedidoAsync(int pedidoId)
         {
             return await _context.itemPedidos
                 .Include(i => i.VariacaoProduto)
+                    .ThenInclude(v => v!.Produto)
+                        .ThenInclude(p => p!.Categoria)
                 .Where(i => i.PedidoId == pedidoId)
                 .ToListAsync();
         }
@@ -41,6 +45,8 @@ namespace ZeroFrame.Infra.Data.repositorios
             return await _context.itemPedidos
                 .Include(i => i.Pedido)
                 .Include(i => i.VariacaoProduto)
+                    .ThenInclude(v => v!.Produto)
+                        .ThenInclude(p => p!.Categoria)
                 .ToListAsync();
         }
 

@@ -22,6 +22,7 @@ namespace ZeroFrame.Application.Servicos
             _variacaoRepository = variacaoRepository;
         }
 
+        // Busca um item do pedido por id.
         public async Task<ItemPedidoGetDto?> ObterPorIdAsync(int id)
         {
             var item = await _itemPedidoRepository.ObterPorIdAsync(id);
@@ -32,6 +33,7 @@ namespace ZeroFrame.Application.Servicos
             return MapearItemPedidoGetDto(item);
         }
 
+        // Busca todos os itens de um pedido específico.
         public async Task<List<ItemPedidoGetDto>> ObterPorPedidoAsync(int pedidoId)
         {
             await ObterPedidoOuFalharAsync(pedidoId);
@@ -41,6 +43,7 @@ namespace ZeroFrame.Application.Servicos
             return itens.Select(MapearItemPedidoGetDto).ToList();
         }
 
+        // Cria um novo item do pedido.
         public async Task<ItemPedidoGetDto> CriarAsync(ItemPedidoPostDto dto)
         {
             var pedido = await ObterPedidoOuFalharAsync(dto.PedidoId);
@@ -67,6 +70,7 @@ namespace ZeroFrame.Application.Servicos
             return MapearItemPedidoGetDto(item);
         }
 
+        // Atualiza um item do pedido existente.
         public async Task AtualizarAsync(ItemPedidoPutDto dto)
         {
             var item = await _itemPedidoRepository.ObterPorIdAsync(dto.Id);
@@ -109,6 +113,7 @@ namespace ZeroFrame.Application.Servicos
             await RecalcularTotalPedidoAsync(pedido.Id);
         }
 
+        // Remove um item do pedido.
         public async Task RemoverAsync(int id)
         {
             var item = await _itemPedidoRepository.ObterPorIdAsync(id);
@@ -129,6 +134,7 @@ namespace ZeroFrame.Application.Servicos
             await RecalcularTotalPedidoAsync(pedidoId);
         }
 
+        // Busca todos os itens do pedido.
         public async Task<List<ItemPedidoGetDto>> ObterTodosAsync()
         {
             var itens = await _itemPedidoRepository.ObterTodosAsync();
@@ -136,6 +142,7 @@ namespace ZeroFrame.Application.Servicos
             return itens.Select(MapearItemPedidoGetDto).ToList();
         }
 
+        // Busca itens do pedido por id do produto.
         private async Task<Pedidos> ObterPedidoOuFalharAsync(int pedidoId)
         {
             var pedido = await _pedidoRepository.ObterPorIdAsync(pedidoId);
@@ -146,6 +153,7 @@ namespace ZeroFrame.Application.Servicos
             return pedido;
         }
 
+        // Busca variação do produto 
         private async Task<VariacaoProdutos> ObterVariacaoOuFalharAsync(int variacaoProdutoId)
         {
             var variacao = await _variacaoRepository.ObterPorIdAsync(variacaoProdutoId);
@@ -159,12 +167,14 @@ namespace ZeroFrame.Application.Servicos
             return variacao;
         }
 
+        // Valida a quantidade do item do pedido.
         private static void ValidarQuantidade(int quantidade)
         {
             if (quantidade <= 0)
                 throw new InvalidOperationException("A quantidade deve ser maior que zero.");
         }
 
+        // Valida se há estoque suficiente para a variação do produto.
         private static void ValidarEstoque(VariacaoProdutos variacao, int quantidade)
         {
             if (quantidade <= 0)
@@ -174,6 +184,7 @@ namespace ZeroFrame.Application.Servicos
                 throw new InvalidOperationException("Estoque insuficiente para esta variacao.");
         }
 
+        // Recalcula o valor total do pedido com base nos itens do pedido.
         private async Task RecalcularTotalPedidoAsync(int pedidoId)
         {
             var pedido = await ObterPedidoOuFalharAsync(pedidoId);
@@ -182,6 +193,7 @@ namespace ZeroFrame.Application.Servicos
             await _pedidoRepository.AtualizarAsync(pedido);
         }
 
+        // Mapeia a entidade ItemPedido para o DTO ItemPedidoGetDto.
         private static ItemPedidoGetDto MapearItemPedidoGetDto(ItemPedido item)
         {
             var variacao = item.VariacaoProduto;

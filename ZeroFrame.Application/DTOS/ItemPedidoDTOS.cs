@@ -25,7 +25,7 @@ namespace ZeroFrame.Application.DTOS.ItemPedido
         public decimal Subtotal { get; set; }
     }
 
-
+    // DTOs para criação itens de pedido, com validação de dados.
     public class PedidoItemPostDto
     {
         [Required(ErrorMessage = "O campo VariacaoProdutoId é obrigatório.")]
@@ -37,6 +37,7 @@ namespace ZeroFrame.Application.DTOS.ItemPedido
         public int Quantidade { get; set; }
     }
 
+    // DTOs para atualização de itens de pedido, com validação de dados.
     public class PedidoItemPutDto
     {
         [Required(ErrorMessage = "O campo VariacaoProdutoId é obrigatório.")]
@@ -47,6 +48,8 @@ namespace ZeroFrame.Application.DTOS.ItemPedido
         [Range(1, int.MaxValue, ErrorMessage = "A quantidade deve ser maior que zero.")]
         public int Quantidade { get; set; }
     }
+
+    // DTOs para criação e atualização de itens de pedido, com validação de dados.
     public class ItemPedidoPostDto
     {
         //POST — Criar dados

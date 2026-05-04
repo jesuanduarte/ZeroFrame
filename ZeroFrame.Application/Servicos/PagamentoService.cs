@@ -97,6 +97,7 @@ namespace ZeroFrame.Application.Servicos
             await _pagamentoRepository.AtualizarAsync(pagamento);
         }
 
+        // Método para mapear a entidade Pagamento para o DTO PagamentoGetDto.
         private static PagamentoGetDto MapearPagamentoGetDto(Pagamento pagamento)
         {
             return new PagamentoGetDto

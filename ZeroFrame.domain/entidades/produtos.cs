@@ -6,6 +6,10 @@ namespace ZeroFrame.domain.entidades
         public string Nome { get; set; } = string.Empty;
         public string Descricao { get; set; } = string.Empty;
         public decimal Preco { get; set; }
+        public decimal? PrecoOriginal { get; set; }
+        public string ImagemUrl { get; set; } = string.Empty;
+        public string Marca { get; set; } = string.Empty;
+        public string Origem { get; set; } = string.Empty;
         public int CategoriaId { get; set; }
         public bool Ativo { get; set; } = true;
         public Categoria? Categoria { get; set; }

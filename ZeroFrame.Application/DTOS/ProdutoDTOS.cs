@@ -9,7 +9,7 @@ namespace ZeroFrame.Application.DTOS.Produto
 {
     public class ProdutoGetDto
     {
-        //GET — Buscar/Ler dados
+        //GET - Buscar/Ler dados
         public int Id { get; set; }
         public string Nome { get; set; } = string.Empty;
         public string Descricao { get; set; } = string.Empty;
@@ -39,33 +39,48 @@ namespace ZeroFrame.Application.DTOS.Produto
 
     public class ProdutoPostDto
     {
-        //POST — Criar dados
-        [Required(ErrorMessage = "O campo Nome é obrigatório.")]
-        [MaxLength(100, ErrorMessage = "O campo Nome deve conter no máximo 100 caracteres.")]
+        //POST - Criar dados
+        [Required(ErrorMessage = "O campo Nome e obrigatorio.")]
+        [MaxLength(100, ErrorMessage = "O campo Nome deve conter no maximo 100 caracteres.")]
         public string Nome { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "O campo Descrição é obrigatório.")]
-        [MaxLength(300, ErrorMessage = "O campo Descrição deve conter no máximo 300 caracteres.")]
+        [Required(ErrorMessage = "O campo Descricao e obrigatorio.")]
+        [MaxLength(300, ErrorMessage = "O campo Descricao deve conter no maximo 300 caracteres.")]
         public string Descricao { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "O campo Preço é obrigatório.")]
-        [Range(0.01, double.MaxValue, ErrorMessage = "O preço deve ser maior que zero.")]
+        [Required(ErrorMessage = "O campo Preco e obrigatorio.")]
+        [Range(0.01, double.MaxValue, ErrorMessage = "O preco deve ser maior que zero.")]
         public decimal Preco { get; set; }
 
-        [Required(ErrorMessage = "O campo CategoriaId é obrigatório.")]
-        [Range(1, int.MaxValue, ErrorMessage = "O CategoriaId deve ser válido.")]
+        [Required(ErrorMessage = "O campo CategoriaId e obrigatorio.")]
+        [Range(1, int.MaxValue, ErrorMessage = "O CategoriaId deve ser valido.")]
         public int CategoriaId { get; set; }
+
+        public decimal? PrecoOriginal { get; set; }
+
+        [MaxLength(300, ErrorMessage = "O campo ImagemUrl deve conter no maximo 300 caracteres.")]
+        public string? ImagemUrl { get; set; }
+
+        [MaxLength(100, ErrorMessage = "O campo Marca deve conter no maximo 100 caracteres.")]
+        public string? Marca { get; set; }
+
+        [MaxLength(100, ErrorMessage = "O campo Origem deve conter no maximo 100 caracteres.")]
+        public string? Origem { get; set; }
     }
 
     public class ProdutoPutDto
     {
-        //PUT — Atualizar dados
+        //PUT - Atualizar dados
         public int Id { get; set; }
         public string Nome { get; set; } = string.Empty;
         public string Descricao { get; set; } = string.Empty;
         public decimal Preco { get; set; }
-        [Range(1, int.MaxValue, ErrorMessage = "O CategoriaId deve ser válido.")]
+        [Range(1, int.MaxValue, ErrorMessage = "O CategoriaId deve ser valido.")]
         public int CategoriaId { get; set; }
+        public decimal? PrecoOriginal { get; set; }
+        public string? ImagemUrl { get; set; }
+        public string? Marca { get; set; }
+        public string? Origem { get; set; }
         public bool Ativo { get; set; }
     }
 }

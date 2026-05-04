@@ -10,7 +10,7 @@ namespace ZeroFrame.API.Controllers
     [Route("api")]
     public class PedidoController : ControllerBase
     {
-        // Serviço responsável pelas regras de negócio dos pedidos.
+        // Servico responsavel pelas regras de negocio dos pedidos.
         private readonly IPedidoService _pedidoService;
         private readonly IItemPedidoService _itemPedidoService;
 
@@ -21,13 +21,13 @@ namespace ZeroFrame.API.Controllers
         }
 
         // GET: api/pedidos/{id}
-        // Busca um pedido específico pelo seu Id.
+        // Busca um pedido especifico pelo seu Id.
         [HttpGet("pedidos/{id:int}")]
         public async Task<ActionResult<PedidosGetDto>> ObterPedidoPorId(int id)
         {
             var pedido = await _pedidoService.ObterPorIdAsync(id);
 
-            // Caso o pedido não exista, retorna 404 Not Found.
+            // Caso o pedido nao exista, retorna 404 Not Found.
             if (pedido == null)
                 return NotFound("Pedido nao encontrado.");
 
@@ -36,7 +36,7 @@ namespace ZeroFrame.API.Controllers
         }
 
         // GET: api/usuarios/{usuarioId}/pedidos
-        // Busca todos os pedidos de um usuário específico.
+        // Busca todos os pedidos de um usuario especifico.
         [HttpGet("usuarios/{usuarioId:int}/pedidos")]
         public async Task<ActionResult<List<PedidosGetDto>>> ObterPedidosPorUsuario(int usuarioId)
         {
@@ -45,7 +45,7 @@ namespace ZeroFrame.API.Controllers
         }
 
         // POST: api/usuarios/{usuarioId}/pedidos
-        // Cria um pedido a partir do carrinho ativo do usuário.
+        // Cria um pedido a partir do carrinho ativo do usuario.
         [HttpPost("usuarios/{usuarioId:int}/pedidos")]
         public async Task<ActionResult<PedidosGetDto>> CriarPedidoAPartirDoCarrinhoAtivoDoUsuario(int usuarioId)
         {
@@ -57,7 +57,7 @@ namespace ZeroFrame.API.Controllers
             }
             catch (InvalidOperationException ex)
             {
-                // Exemplo: carrinho vazio, usuário inválido ou estoque insuficiente.
+                // Exemplo: carrinho vazio, usuario invalido ou estoque insuficiente.
                 return BadRequest(ex.Message);
             }
 
@@ -73,18 +73,18 @@ namespace ZeroFrame.API.Controllers
         [HttpPut("pedidos/{id:int}")]
         public async Task<ActionResult> AtualizarPedido(int id, PedidosPutDto pedidosPutDto)
         {
-            // Verifica se o Id da rota é igual ao Id enviado no corpo da requisição.
+            // Verifica se o Id da rota e igual ao Id enviado no corpo da requisicao.
             if (id != pedidosPutDto.Id)
                 return BadRequest("Id da rota diferente do Id do pedido.");
 
             var pedido = await _pedidoService.ObterPorIdAsync(id);
 
             if (pedido == null)
-                return NotFound("Pedido não encontrado.");
+                return NotFound("Pedido nao encontrado.");
 
             await _pedidoService.AtualizarAsync(pedidosPutDto);
 
-            // Retorna 204 No Content indicando que a atualização foi feita com sucesso.
+            // Retorna 204 No Content indicando que a atualizacao foi feita com sucesso.
             return NoContent();
         }
 
@@ -141,12 +141,25 @@ namespace ZeroFrame.API.Controllers
             if (pedido == null)
                 return NotFound("Pedido nao encontrado.");
 
-            var itemCriado = await _itemPedidoService.CriarAsync(new ItemPedidoPostDto
+            ItemPedidoGetDto itemCriado;
+
+            try
             {
-                PedidoId = pedidoId,
-                VariacaoProdutoId = pedidoItemPostDto.VariacaoProdutoId,
-                Quantidade = pedidoItemPostDto.Quantidade
-            });
+                itemCriado = await _itemPedidoService.CriarAsync(new ItemPedidoPostDto
+                {
+                    PedidoId = pedidoId,
+                    VariacaoProdutoId = pedidoItemPostDto.VariacaoProdutoId,
+                    Quantidade = pedidoItemPostDto.Quantidade
+                });
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
 
             return CreatedAtAction(
                 nameof(ObterItemDoPedidoPorId),
@@ -165,13 +178,24 @@ namespace ZeroFrame.API.Controllers
             if (item == null || item.PedidoId != pedidoId)
                 return NotFound("Item do pedido nao encontrado.");
 
-            await _itemPedidoService.AtualizarAsync(new ItemPedidoPutDto
+            try
             {
-                Id = itemId,
-                PedidoId = pedidoId,
-                VariacaoProdutoId = pedidoItemPutDto.VariacaoProdutoId,
-                Quantidade = pedidoItemPutDto.Quantidade
-            });
+                await _itemPedidoService.AtualizarAsync(new ItemPedidoPutDto
+                {
+                    Id = itemId,
+                    PedidoId = pedidoId,
+                    VariacaoProdutoId = pedidoItemPutDto.VariacaoProdutoId,
+                    Quantidade = pedidoItemPutDto.Quantidade
+                });
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
 
             return NoContent();
         }
@@ -186,7 +210,18 @@ namespace ZeroFrame.API.Controllers
             if (item == null || item.PedidoId != pedidoId)
                 return NotFound("Item do pedido nao encontrado.");
 
-            await _itemPedidoService.RemoverAsync(itemId);
+            try
+            {
+                await _itemPedidoService.RemoverAsync(itemId);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
 
             return NoContent();
         }

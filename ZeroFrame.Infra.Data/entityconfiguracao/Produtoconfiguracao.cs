@@ -7,7 +7,7 @@ using System.Text;
 
 namespace ZeroFrame.Infra.Data.entityconfiguracao
 {
-    // Configuração da entidade no banco de dados.
+    // Configuracao da entidade no banco de dados.
 
     public class Produtoconfiguracao: IEntityTypeConfiguration<Produto>
     {
@@ -26,6 +26,18 @@ namespace ZeroFrame.Infra.Data.entityconfiguracao
             builder.Property(x => x.Preco)
                 .IsRequired()
                 .HasColumnType("decimal(18,2)");
+
+            builder.Property(x => x.PrecoOriginal)
+                .HasColumnType("decimal(18,2)");
+
+            builder.Property(x => x.ImagemUrl)
+                .HasMaxLength(300);
+
+            builder.Property(x => x.Marca)
+                .HasMaxLength(100);
+
+            builder.Property(x => x.Origem)
+                .HasMaxLength(100);
 
            builder.HasOne(x => x.Categoria)
                 .WithMany(c => c.Produtos)

@@ -6,19 +6,24 @@ using ZeroFrame.domain.Interface;
 
 namespace ZeroFrame.Application.Servicos
 {
-    // Serviço responsável pelas regras de negócio do Carrinho.
-    // Ele faz a comunicação entre a Controller e o Repository.
-    // Também realiza a conversão entre DTOs e Entidades.
+    // Servico responsavel pelas regras de negocio do Carrinho.
+    // Ele faz a comunicacao entre a Controller e o Repository.
+    // Tambem realiza a conversao entre DTOs e Entidades.
     public class CarrinhoService : ICarrinhoService
     {
         private readonly ICarrinhoRepository _carrinhoRepository;
         private readonly IUsuarioRepository _usuarioRepository;
+        private readonly IVariacaoRepository _variacaoRepository;
 
-        // Recebe o repositório por injeção de dependência.
-        public CarrinhoService(ICarrinhoRepository carrinhoRepository, IUsuarioRepository usuarioRepository)
+        // Recebe o repositorio por injecao de dependencia.
+        public CarrinhoService(
+            ICarrinhoRepository carrinhoRepository,
+            IUsuarioRepository usuarioRepository,
+            IVariacaoRepository variacaoRepository)
         {
             _carrinhoRepository = carrinhoRepository;
             _usuarioRepository = usuarioRepository;
+            _variacaoRepository = variacaoRepository;
         }
 
         // Busca todos os carrinhos cadastrados.
@@ -35,7 +40,7 @@ namespace ZeroFrame.Application.Servicos
         {
             var carrinho = await _carrinhoRepository.ObterPorIdAsync(id);
 
-            // Caso não encontre, retorna nulo.
+            // Caso nao encontre, retorna nulo.
             if (carrinho == null)
                 return null;
 
@@ -86,18 +91,38 @@ namespace ZeroFrame.Application.Servicos
         {
             var carrinho = await _carrinhoRepository.ObterPorIdAsync(carrinhoPutDto.Id);
 
-            // Se não existir, encerra o método.
+            // Se nao existir, encerra o metodo.
             if (carrinho == null)
                 return;
 
-            // Atualiza a lista de itens do carrinho.
-            carrinho.Itens = carrinhoPutDto.Itens.Select(item => new ItemCarrinho
+            var itensAtualizados = new List<ItemCarrinho>();
+
+            foreach (var itemDto in carrinhoPutDto.Itens)
             {
-                Id = item.Id,
-                CarrinhoId = carrinho.Id,
-                VariacaoProdutoId = item.VariacaoProdutoId,
-                Quantidade = item.Quantidade
-            }).ToList();
+                var variacao = await _variacaoRepository.ObterPorIdAsync(itemDto.VariacaoProdutoId);
+
+                if (variacao == null)
+                    throw new InvalidOperationException("Variacao do produto nao encontrada.");
+
+                if (variacao.Produto == null)
+                    throw new InvalidOperationException("Produto da variacao nao encontrado.");
+
+                ValidarEstoque(variacao, itemDto.Quantidade);
+
+                var itemAtualizado = carrinho.Itens.FirstOrDefault(item => item.Id == itemDto.Id) ?? new ItemCarrinho
+                {
+                    CarrinhoId = carrinho.Id
+                };
+
+                itemAtualizado.VariacaoProdutoId = itemDto.VariacaoProdutoId;
+                itemAtualizado.VariacaoProduto = variacao;
+                itemAtualizado.Quantidade = itemDto.Quantidade;
+                itemAtualizado.PrecoUnitario = variacao.Produto.Preco;
+
+                itensAtualizados.Add(itemAtualizado);
+            }
+
+            carrinho.Itens = itensAtualizados;
 
             await _carrinhoRepository.AtualizarAsync(carrinho);
         }
@@ -115,6 +140,15 @@ namespace ZeroFrame.Application.Servicos
 
             if (usuario == null)
                 throw new KeyNotFoundException("Usuario nao encontrado");
+        }
+
+        private static void ValidarEstoque(VariacaoProdutos variacao, int quantidade)
+        {
+            if (quantidade <= 0)
+                throw new InvalidOperationException("A quantidade deve ser maior que zero.");
+
+            if (quantidade > variacao.Estoque)
+                throw new InvalidOperationException("Estoque insuficiente para esta variacao.");
         }
         // Converte a entidade Carrinho para CarrinhoGetDto.
         private static CarrinhoGetDto MapearCarrinhoGetDto(Carrinho carrinho)
@@ -178,13 +212,13 @@ namespace ZeroFrame.Application.Servicos
             if (nomeNormalizado.Contains("moletom") || nomeNormalizado.Contains("blusa"))
                 return "/assets/products/blusa-moletom.jpg";
 
-            if (nomeNormalizado.Contains("calca") || nomeNormalizado.Contains("cal�a") || nomeNormalizado.Contains("jeans"))
+            if (nomeNormalizado.Contains("calca") || nomeNormalizado.Contains("calça") || nomeNormalizado.Contains("jeans"))
                 return "/assets/products/calca-levis-clara.png";
 
             if (nomeNormalizado.Contains("corrente") || nomeNormalizado.Contains("ice"))
                 return "/assets/products/corrente-ice.png";
 
-            if (nomeNormalizado.Contains("adidas") || nomeNormalizado.Contains("tenis") || nomeNormalizado.Contains("t�nis"))
+            if (nomeNormalizado.Contains("adidas") || nomeNormalizado.Contains("tenis") || nomeNormalizado.Contains("tênis"))
                 return "/assets/products/tenis2.png";
 
             return "/assets/products/camisa-over-black.png";

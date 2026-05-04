@@ -39,6 +39,8 @@ namespace ZeroFrame.Application.Servicos
 
             return MapearUsuarioGetDto(usuario);
         }
+
+        // Busca no banco de dados um usuário com o e-mail informado no login.
         public async Task<UsuarioLoginResponseDto?> AutenticarAsync(UsuarioLoginDto usuarioLoginDto)
         {
             var usuario = await _usuarioRepository.ObterPorEmailAsync(usuarioLoginDto.Email.Trim());

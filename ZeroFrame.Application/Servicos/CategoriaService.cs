@@ -67,7 +67,7 @@ namespace ZeroFrame.Application.Servicos
 
             // Atualiza os dados da categoria.
             categoria.Nome = categoriaPutDto.Nome;
-            categoria.Descricao = categoriaPutDto.Descricao;
+            categoria.Descricao = categoriaPutDto.Descricao ?? string.Empty;
 
             await _categoriaRepository.AtualizarAsync(categoria);
         }

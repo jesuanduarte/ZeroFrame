@@ -22,6 +22,9 @@ namespace ZeroFrame.Application.Servicos
             _variacaoRepository = variacaoRepository;
         }
 
+        
+        // Busca um pedido pelo Id.
+
         public async Task<PedidosGetDto?> ObterPorIdAsync(int id)
         {
             var pedido = await _pedidoRepository.ObterPorIdAsync(id);
@@ -32,15 +35,19 @@ namespace ZeroFrame.Application.Servicos
             return MapearPedidoGetDto(pedido);
         }
 
+        // Busca todos os pedidos de um usuário específico.
         public async Task<List<PedidosGetDto>> ObterPorUsuarioAsync(int usuarioId)
         {
             var pedidos = await _pedidoRepository.ObterPorUsuarioAsync(usuarioId);
             return pedidos.Select(MapearPedidoGetDto).ToList();
         }
 
+        // Cria um pedido diretamente a partir do DTO recebido.
         public async Task<PedidosGetDto> CriarAsync(PedidosPostDto pedidosPostDto)
         {
             var itensPedido = new List<ItemPedido>();
+            
+            // Percorre os itens enviados no pedido.
 
             foreach (var itemDto in pedidosPostDto.Itens)
             {
@@ -80,6 +87,7 @@ namespace ZeroFrame.Application.Servicos
             return MapearPedidoGetDto(pedido);
         }
 
+        // Cria o pedido com os itens montados.
         public async Task<PedidosGetDto> CriarAPartirDoCarrinhoAsync(int carrinhoId)
         {
             var carrinho = await _carrinhoRepository.ObterPorIdAsync(carrinhoId);
@@ -119,6 +127,7 @@ namespace ZeroFrame.Application.Servicos
                 });
             }
 
+            // Cria o pedido com os itens montados.
             var pedido = new Pedidos
             {
                 UsuarioId = carrinho.UsuarioId,
@@ -136,6 +145,7 @@ namespace ZeroFrame.Application.Servicos
             return MapearPedidoGetDto(pedido);
         }
 
+        // Busca todos os pedidos de um usuário específico.
         public async Task<PedidosGetDto> CriarAPartirDoCarrinhoAtivoDoUsuarioAsync(int usuarioId)
         {
             var carrinho = await _carrinhoRepository.ObterAtivoPorUsuarioAsync(usuarioId);

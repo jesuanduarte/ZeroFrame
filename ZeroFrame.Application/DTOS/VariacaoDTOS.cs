@@ -16,7 +16,7 @@ namespace ZeroFrame.Application.DTOS
         public int ProdutoId { get; set; }
     }
 
-
+    // DTOs para criação e atualização de variações de produtos, com validação de dados.
     public class VariacaoProdutoPostDto
     {
         [Required(ErrorMessage = "O campo Tamanho é obrigatório.")]
@@ -32,6 +32,7 @@ namespace ZeroFrame.Application.DTOS
         public int Estoque { get; set; }
     }
 
+    // DTO para atualização de variações de produtos
     public class VariacaoProdutoPutDto
     {
         [Required(ErrorMessage = "O campo Tamanho é obrigatório.")]
@@ -45,6 +46,8 @@ namespace ZeroFrame.Application.DTOS
         [Range(0, int.MaxValue, ErrorMessage = "O campo Estoque não pode ser negativo.")]
         public int Estoque { get; set; }
     }
+
+    // DTOs para criação e atualização de variações de produtos
     public class VariacaoPostDto
     {
         //POST — Criar dados

@@ -18,6 +18,7 @@ namespace ZeroFrame.Application.DTOS.Usuario
         public List<EnderecoGetDto> Enderecos { get; set; } = new();
     }
 
+    // DTO para criação de usuário, com validação de dados
     public class UsuarioPostDto
     {
         
@@ -39,6 +40,8 @@ namespace ZeroFrame.Application.DTOS.Usuario
         [MaxLength(20, ErrorMessage = "O campo Telefone deve conter no máximo 20 caracteres.")]
         public string Telefone { get; set; } = string.Empty;
     }
+
+    // DTO para cadastro simples de usuário, sem nome e telefone, apenas email e senha, com validação de dados
     public class UsuarioCadastroSimplesDto
     {
         [Required(ErrorMessage = "O campo Email é obrigatório.")]
@@ -54,6 +57,8 @@ namespace ZeroFrame.Application.DTOS.Usuario
         [Required(ErrorMessage = "O campo ConfirmarSenha é obrigatório.")]
         public string ConfirmarSenha { get; set; } = string.Empty;
     }
+
+    // DTO para login de usuário, apenas email e senha, com validação de dados
     public class UsuarioLoginDto
     {
         [Required(ErrorMessage = "O campo Email é obrigatório.")]
@@ -64,6 +69,7 @@ namespace ZeroFrame.Application.DTOS.Usuario
         public string Senha { get; set; } = string.Empty;
     }
 
+    // DTO para resposta de login de usuário, com os dados do usuário logado
     public class UsuarioLoginResponseDto
     {
         public int UsuarioId { get; set; }
@@ -73,6 +79,7 @@ namespace ZeroFrame.Application.DTOS.Usuario
         public bool Ativo { get; set; }
     }
 
+    // DTO para atualização de usuário, com validação de dados
     public class UsuarioPutDto
     {
         //PUT — Atualizar dados

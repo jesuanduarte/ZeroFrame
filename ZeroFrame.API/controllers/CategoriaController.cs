@@ -39,12 +39,44 @@ namespace ZeroFrame.API.Controllers
             return Ok(categoria);
         }
 
+        // POST: api/categorias
+        // Cria uma nova categoria
+        [HttpPost]
+        public async Task<ActionResult<CategoriaGetDto>> CriarCategoria(CategoriaPostDto categoriaPostDto)
+        {
+            var categoriaCriada = await _categoriaService.CriarAsync(categoriaPostDto);
+
+            return CreatedAtAction(
+                nameof(ObterCategoriaPorId),
+                new { id = categoriaCriada.Id },
+                categoriaCriada);
+        }
+
+        // PUT: api/categorias/{id}
+        // Atualiza uma categoria existente
+        [HttpPut("{id:int}")]
+        public async Task<ActionResult> AtualizarCategoria(int id, CategoriaPutDto categoriaPutDto)
+        {
+            if (id != categoriaPutDto.Id)
+                return BadRequest("O Id da rota deve ser igual ao Id do corpo da requisicao.");
+
+            var categoria = await _categoriaService.ObterPorIdAsync(id);
+
+            if (categoria == null)
+                return NotFound("Categoria nao encontrada.");
+
+            await _categoriaService.AtualizarAsync(categoriaPutDto);
+
+            return NoContent();
+        }
+
         // DELETE: api/categorias/{id}
         // Remove uma categoria
         [HttpDelete("{id:int}")]
         public async Task<ActionResult> RemoverCategoria(int id)
         {
             var categoria = await _categoriaService.ObterPorIdAsync(id);
+
             if (categoria == null)
                 return NotFound("Categoria nao encontrada.");
 

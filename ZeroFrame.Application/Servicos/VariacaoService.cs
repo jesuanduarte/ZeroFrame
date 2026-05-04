@@ -42,7 +42,7 @@ namespace ZeroFrame.Application.Servicos
             return MapearVariacaoGetDto(variacaoProduto);
         }
 
-
+        // Busca as variações de um produto específico pelo Id do produto.
         public async Task<List<VariacaoGetDto>> ObterPorProdutoIdAsync(int produtoId)
         {
             await ValidarProdutoAsync(produtoId);
@@ -96,7 +96,7 @@ namespace ZeroFrame.Application.Servicos
             await _variacaoRepository.AtualizarAsync(variacaoProduto);
         }
 
-
+        // Método para validar se o produto existe antes de criar ou atualizar uma variação.
         private async Task ValidarProdutoAsync(int produtoId)
         {
             var produto = await _produtoRepository.ObterPorIdAsync(produtoId);
@@ -105,6 +105,7 @@ namespace ZeroFrame.Application.Servicos
                 throw new InvalidOperationException("Produto nao encontrado.");
         }
 
+        // Método  para mapear uma entidade de variação de produto para um DTO de resposta.
         private static VariacaoGetDto MapearVariacaoGetDto(VariacaoProdutos variacaoProduto)
         {
             return new VariacaoGetDto

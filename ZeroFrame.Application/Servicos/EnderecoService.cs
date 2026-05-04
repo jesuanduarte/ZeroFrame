@@ -104,7 +104,7 @@ namespace ZeroFrame.Application.Servicos
             await _enderecoRepository.RemoverAsync(id);
         }
 
-
+        // Método para validar se o usuário existe antes de criar ou atualizar um endereço.
         private async Task ValidarUsuarioAsync(int usuarioId)
         {
             var usuario = await _usuarioRepository.ObterPorIdAsync(usuarioId);
