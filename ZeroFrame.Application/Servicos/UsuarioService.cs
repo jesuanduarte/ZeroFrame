@@ -48,7 +48,7 @@ namespace ZeroFrame.Application.Servicos
             if (usuario == null || !usuario.Ativo)
                 return null;
 
-            if (usuario.Senha != usuarioLoginDto.Senha)
+            if (!SenhaValida(usuarioLoginDto.Senha, usuario.Senha))
                 return null;
 
             return new UsuarioLoginResponseDto
@@ -67,8 +67,9 @@ namespace ZeroFrame.Application.Servicos
             {
                 Nome = usuarioPostDto.Nome,
                 Email = usuarioPostDto.Email,
-                Senha = usuarioPostDto.Senha,
+                Senha = BCrypt.Net.BCrypt.HashPassword(usuarioPostDto.Senha),
                 Telefone = usuarioPostDto.Telefone,
+                Perfil = usuarioPostDto.Perfil,
                 Ativo = true
             };
 
@@ -104,6 +105,7 @@ namespace ZeroFrame.Application.Servicos
                 Nome = usuario.Nome,
                 Email = usuario.Email,
                 Telefone = usuario.Telefone,
+                Perfil = usuario.Perfil,
                 Ativo = usuario.Ativo,
                 Enderecos = usuario.Enderecos.Select(endereco => new EnderecoGetDto
                 {
@@ -117,6 +119,19 @@ namespace ZeroFrame.Application.Servicos
                     UsuarioId = endereco.UsuarioId
                 }).ToList()
             };
+        }
+
+        private static bool SenhaValida(string senhaInformada, string senhaArmazenada)
+        {
+            try
+            {
+                return BCrypt.Net.BCrypt.Verify(senhaInformada, senhaArmazenada);
+            }
+            catch
+            {
+                // Usuarios antigos com senha em texto puro precisam ser recriados ou ter a senha atualizada para hash.
+                return false;
+            }
         }
     }
 }

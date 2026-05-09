@@ -25,10 +25,12 @@ namespace ZeroFrame.Infra.Data.entityconfiguracao
 
             builder.Property(x => x.Senha)
                 .IsRequired()
-                .HasMaxLength(50);
+                .HasMaxLength(100);
 
             builder.Property(x => x.Telefone)
                 .IsRequired()
+                .HasMaxLength(20);
+            builder.Property(u => u.Perfil)
                 .HasMaxLength(20);
             builder.Property(x => x.Ativo)
                 .IsRequired();

@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using ZeroFrame.API.Errors;
 using ZeroFrame.Application.DTOS.ItemPedido;
 using ZeroFrame.Application.DTOS.Pedidos;
 using ZeroFrame.Application.Interfaces;
@@ -8,6 +9,9 @@ namespace ZeroFrame.API.Controllers
     
     [ApiController]
     [Route("api")]
+    [ProducesResponseType(typeof(ApiBadRequest), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ApiNotFound), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ApiException), StatusCodes.Status500InternalServerError)]
     public class PedidoController : ControllerBase
     {
         // Servico responsavel pelas regras de negocio dos pedidos.

@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using ZeroFrame.API.Errors;
 using ZeroFrame.Application.DTOS.Categoria;
 using ZeroFrame.Application.Interfaces;
 
@@ -8,6 +9,9 @@ namespace ZeroFrame.API.Controllers
     [ApiController]
 
     [Route("api/categorias")]
+    [ProducesResponseType(typeof(ApiBadRequest), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ApiNotFound), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ApiException), StatusCodes.Status500InternalServerError)]
     public class CategoriaController : ControllerBase
     {
         private readonly ICategoriaService _categoriaService;
@@ -20,6 +24,7 @@ namespace ZeroFrame.API.Controllers
         // GET: api/categorias
         // Retorna todas as categorias cadastradas
         [HttpGet]
+        [ProducesResponseType(typeof(List<CategoriaGetDto>), StatusCodes.Status200OK)]
         public async Task<ActionResult<List<CategoriaGetDto>>> ObterTodasCategorias()
         {
             var categorias = await _categoriaService.ObterTodosAsync();
@@ -27,14 +32,15 @@ namespace ZeroFrame.API.Controllers
         }
 
         // GET: api/categorias/{id}
-        // Retorna uma categoria específica pelo Id
+        // Retorna uma categoria especÃ­fica pelo Id
         [HttpGet("{id:int}")]
+        [ProducesResponseType(typeof(CategoriaGetDto), StatusCodes.Status200OK)]
         public async Task<ActionResult<CategoriaGetDto>> ObterCategoriaPorId(int id)
         {
             var categoria = await _categoriaService.ObterPorIdAsync(id);
 
             if (categoria == null)
-                return NotFound("Categoria nao encontrada.");
+                return NotFound(new ApiNotFound("Categoria nao encontrada."));
 
             return Ok(categoria);
         }
@@ -42,6 +48,7 @@ namespace ZeroFrame.API.Controllers
         // POST: api/categorias
         // Cria uma nova categoria
         [HttpPost]
+        [ProducesResponseType(typeof(CategoriaGetDto), StatusCodes.Status201Created)]
         public async Task<ActionResult<CategoriaGetDto>> CriarCategoria(CategoriaPostDto categoriaPostDto)
         {
             var categoriaCriada = await _categoriaService.CriarAsync(categoriaPostDto);
@@ -55,15 +62,16 @@ namespace ZeroFrame.API.Controllers
         // PUT: api/categorias/{id}
         // Atualiza uma categoria existente
         [HttpPut("{id:int}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<ActionResult> AtualizarCategoria(int id, CategoriaPutDto categoriaPutDto)
         {
             if (id != categoriaPutDto.Id)
-                return BadRequest("O Id da rota deve ser igual ao Id do corpo da requisicao.");
+                return BadRequest(new ApiBadRequest("O Id da rota deve ser igual ao Id do corpo da requisicao."));
 
             var categoria = await _categoriaService.ObterPorIdAsync(id);
 
             if (categoria == null)
-                return NotFound("Categoria nao encontrada.");
+                return NotFound(new ApiNotFound("Categoria nao encontrada."));
 
             await _categoriaService.AtualizarAsync(categoriaPutDto);
 
@@ -73,12 +81,13 @@ namespace ZeroFrame.API.Controllers
         // DELETE: api/categorias/{id}
         // Remove uma categoria
         [HttpDelete("{id:int}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<ActionResult> RemoverCategoria(int id)
         {
             var categoria = await _categoriaService.ObterPorIdAsync(id);
 
             if (categoria == null)
-                return NotFound("Categoria nao encontrada.");
+                return NotFound(new ApiNotFound("Categoria nao encontrada."));
 
             await _categoriaService.RemoverAsync(id);
             return NoContent();

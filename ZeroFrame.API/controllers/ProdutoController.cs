@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using ZeroFrame.API.Errors;
 using ZeroFrame.Application.DTOS;
 using ZeroFrame.Application.DTOS.Produto;
 using ZeroFrame.Application.Interfaces;
@@ -8,6 +9,9 @@ namespace ZeroFrame.API.Controllers
   
     [ApiController]
     [Route("api/[controller]")]
+    [ProducesResponseType(typeof(ApiBadRequest), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ApiNotFound), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ApiException), StatusCodes.Status500InternalServerError)]
     public class ProdutoController : ControllerBase
     {
         private readonly IProdutoService _produtoService;
@@ -35,9 +39,9 @@ namespace ZeroFrame.API.Controllers
         {
             var produto = await _produtoService.ObterPorIdAsync(id);
 
-            // Caso o produto n„o exista, retorna 404 Not Found.
+            // Caso o produto n√£o exista, retorna 404 Not Found.
             if (produto == null)
-                return NotFound("Produto n„o encontrado.");
+                return NotFound("Produto n√£o encontrado.");
 
             // Retorna o produto encontrado.
             return Ok(produto);
@@ -91,7 +95,7 @@ namespace ZeroFrame.API.Controllers
                 return BadRequest(new { status = 400, mensagem = ex.Message });
             }
 
-            // Retorna 204 No Content indicando que a atualizaÁ„o foi feita com sucesso.
+            // Retorna 204 No Content indicando que a atualiza√ß√£o foi feita com sucesso.
             return NoContent();
         }
 
@@ -104,17 +108,17 @@ namespace ZeroFrame.API.Controllers
             var produto = await _produtoService.ObterPorIdAsync(id);
 
                 if (produto == null)
-                    return NotFound("Produto n„o encontrado.");
+                    return NotFound("Produto n√£o encontrado.");
 
             // Remove o produto.
             await _produtoService.RemoverAsync(id);
 
-            // Retorna 204 No Content indicando que a remoÁ„o foi feita com sucesso.
+            // Retorna 204 No Content indicando que a remo√ß√£o foi feita com sucesso.
             return NoContent();
         }
 
         // GET: api/Produto/{produtoId}/variacoes
-        // Busca as variaÁıes de um produto.
+        // Busca as varia√ß√µes de um produto.
         [HttpGet("{produtoId:int}/variacoes")]
         public async Task<ActionResult<List<VariacaoGetDto>>> ObterVariacoesDoProduto(int produtoId)
         {
@@ -130,20 +134,20 @@ namespace ZeroFrame.API.Controllers
         }
 
         // GET: api/Produto/{produtoId}/variacoes/{variacaoId}
-        // Busca uma variaÁ„o especÌfica de um produto.
+        // Busca uma varia√ß√£o espec√≠fica de um produto.
         [HttpGet("{produtoId:int}/variacoes/{variacaoId:int}")]
         public async Task<ActionResult<VariacaoGetDto>> ObterVariacaoProdutoPorId(int produtoId, int variacaoId)
         {
             var variacao = await _variacaoService.ObterPorIdAsync(variacaoId);
 
             if (variacao == null || variacao.ProdutoId != produtoId)
-                return NotFound("VariaÁ„o do produto n„o encontrada.");
+                return NotFound("Varia√ß√£o do produto n√£o encontrada.");
 
             return Ok(variacao);
         }
 
         // POST: api/Produto/{produtoId}/variacoes
-        // Cria uma variaÁ„o para um produto.
+        // Cria uma varia√ß√£o para um produto.
         [HttpPost("{produtoId:int}/variacoes")]
         public async Task<ActionResult<VariacaoGetDto>> CriarVariacaoProduto(int produtoId, VariacaoProdutoPostDto variacaoProdutoPostDto)
         {
@@ -172,7 +176,7 @@ namespace ZeroFrame.API.Controllers
         }
 
         // PUT: api/Produto/{produtoId}/variacoes/{variacaoId}
-        // Atualiza uma variaÁ„o de um produto.
+        // Atualiza uma varia√ß√£o de um produto.
         [HttpPut("{produtoId:int}/variacoes/{variacaoId:int}")]
         public async Task<ActionResult> AtualizarVariacaoProduto(int produtoId, int variacaoId, VariacaoProdutoPutDto variacaoProdutoPutDto)
         {
@@ -201,7 +205,7 @@ namespace ZeroFrame.API.Controllers
         }
 
         // DELETE: api/Produto/{produtoId}/variacoes/{variacaoId}
-        // Remove uma variaÁ„o de um produto.
+        // Remove uma varia√ß√£o de um produto.
         [HttpDelete("{produtoId:int}/variacoes/{variacaoId:int}")]
         public async Task<ActionResult> RemoverVariacaoProduto(int produtoId, int variacaoId)
         {

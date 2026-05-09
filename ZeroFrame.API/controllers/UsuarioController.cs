@@ -1,44 +1,65 @@
 using Microsoft.AspNetCore.Mvc;
+using ZeroFrame.API.Errors;
 using ZeroFrame.Application.DTOS.Endereco;
 using ZeroFrame.Application.DTOS.Usuario;
 using ZeroFrame.Application.Interfaces;
+using ZeroFrame.Domain.account;
+using ZeroFrame.Infra.Data.Identity;
 
 namespace ZeroFrame.API.Controllers
 {
 
     [ApiController]
     [Route("api/usuarios")]
+    [ProducesResponseType(typeof(ApiBadRequest), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ApiNotFound), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ApiException), StatusCodes.Status500InternalServerError)]
 
     public class UsuarioController : ControllerBase
     {
         private readonly IUsuarioService _usuarioService;
         private readonly IEnderecoService _enderecoService;
+        private readonly IAuthenticate _authenticateService;
 
-        public UsuarioController(IUsuarioService usuarioService, IEnderecoService enderecoService)
+        public UsuarioController(
+            IUsuarioService usuarioService,
+            IEnderecoService enderecoService,
+            IAuthenticate authenticateService)
         {
             _usuarioService = usuarioService;
             _enderecoService = enderecoService;
+            _authenticateService = authenticateService;
         }
-
         // POST: api/usuarios
-        // Cria um novo usu·rio.
+        // Cria um novo usu√°rio.
         [HttpPost]
         public async Task<ActionResult<UsuarioGetDto>> CriarUsuario(UsuarioPostDto usuarioPostDto)
         {
-            // Envia os dados para o serviÁo criar o usu·rio.
+            // Envia os dados para o servi√ßo criar o usu√°rio.
             var usuarioCriado = await _usuarioService.CriarAsync(usuarioPostDto);
 
-            // Retorna 201 Created informando que o usu·rio foi criado com sucesso.
+            var token = _authenticateService.GenerateToken(
+                usuarioCriado.Id,
+                usuarioCriado.Email,
+                usuarioPostDto.Perfil
+            );
+
+            // Retorna 201 Created informando que o usu√°rio foi criado com sucesso.
             return CreatedAtAction(
                 nameof(ObterUsuarioPorId),
                 new { id = usuarioCriado.Id },
-                usuarioCriado
+                new
+                {
+                    usuarioCriado.Id,
+                    usuarioCriado.Email,
+                    usuarioPostDto.Perfil,
+                    Token = token
+                }
             );
         }
 
-
         // POST: api/usuarios/login
-        // Autentica um usu·rio pelo email e senha.
+        // Autentica um usu√°rio pelo email e senha.
         [HttpPost("login")]
         public async Task<ActionResult<UsuarioLoginResponseDto>> LoginUsuario(UsuarioLoginDto usuarioLoginDto)
         {
@@ -51,60 +72,60 @@ namespace ZeroFrame.API.Controllers
         }
 
         // PUT: api/usuarios/{id}
-        // Atualiza os dados de um usu·rio existente.
+        // Atualiza os dados de um usu√°rio existente.
         [HttpPut("{id:int}")]
         public async Task<ActionResult> AtualizarUsuario(int id, UsuarioPutDto usuarioPutDto)
         {
-            // Verifica se o Id da rota È igual ao Id enviado no corpo da requisiÁ„o.
+            // Verifica se o Id da rota √© igual ao Id enviado no corpo da requisi√ß√£o.
             if (id != usuarioPutDto.Id)
                 return BadRequest("Id da rota diferente do Id do usuario.");
 
-            // Busca o usu·rio antes de atualizar, para confirmar se ele existe.
+            // Busca o usu√°rio antes de atualizar, para confirmar se ele existe.
             var usuario = await _usuarioService.ObterPorIdAsync(id);
 
-            // Caso o usu·rio n„o exista, retorna 404 Not Found.
+            // Caso o usu√°rio n√£o exista, retorna 404 Not Found.
             if (usuario == null)
                 return NotFound("Usuario nao encontrado.");
 
-            // Atualiza o usu·rio.
+            // Atualiza o usu√°rio.
             await _usuarioService.AtualizarAsync(usuarioPutDto);
 
-            // Retorna 204 No Content indicando que a atualizaÁ„o foi feita com sucesso.
+            // Retorna 204 No Content indicando que a atualiza√ß√£o foi feita com sucesso.
             return NoContent();
         }
 
         // GET: api/usuarios/{id}
-        // Busca um usu·rio especÌfico pelo Id.
+        // Busca um usu√°rio espec√≠fico pelo Id.
         [HttpGet("{id:int}")]
         public async Task<ActionResult<UsuarioGetDto>> ObterUsuarioPorId(int id)
         {
-            // Busca o usu·rio pelo Id informado na rota.
+            // Busca o usu√°rio pelo Id informado na rota.
             var usuario = await _usuarioService.ObterPorIdAsync(id);
 
-            // Caso o usu·rio n„o exista, retorna 404 Not Found.
+            // Caso o usu√°rio n√£o exista, retorna 404 Not Found.
             if (usuario == null)
                 return NotFound("Usuario nao encontrado.");
 
-            // Retorna o usu·rio encontrado.
+            // Retorna o usu√°rio encontrado.
             return Ok(usuario);
         }
 
         // DELETE: api/usuarios/{id}
-        // Remove um usu·rio existente.
+        // Remove um usu√°rio existente.
         [HttpDelete("{id:int}")]
         public async Task<ActionResult> RemoverUsuario(int id)
         {
-            // Busca o usu·rio antes de remover, para confirmar se ele existe.
+            // Busca o usu√°rio antes de remover, para confirmar se ele existe.
             var usuario = await _usuarioService.ObterPorIdAsync(id);
 
-            // Caso o usu·rio n„o exista, retorna 404 Not Found.
+            // Caso o usu√°rio n√£o exista, retorna 404 Not Found.
             if (usuario == null)
                 return NotFound("Usuario nao encontrado.");
 
-            // Remove o usu·rio.
+            // Remove o usu√°rio.
             await _usuarioService.RemoverAsync(id);
 
-            // Retorna 204 No Content indicando que a remoÁ„o foi feita com sucesso.
+            // Retorna 204 No Content indicando que a remo√ß√£o foi feita com sucesso.
             return NoContent();
         }
 

@@ -14,6 +14,7 @@ namespace ZeroFrame.Application.DTOS.Usuario
         public string Nome { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
         public string Telefone { get; set; } = string.Empty;
+        public string Perfil { get; set; } = string.Empty;
         public bool Ativo { get; set; }
         public List<EnderecoGetDto> Enderecos { get; set; } = new();
     }
@@ -39,6 +40,8 @@ namespace ZeroFrame.Application.DTOS.Usuario
         [Required(ErrorMessage = "O campo Telefone é obrigatório.")]
         [MaxLength(20, ErrorMessage = "O campo Telefone deve conter no máximo 20 caracteres.")]
         public string Telefone { get; set; } = string.Empty;
+
+        public string Perfil { get; set; } = "Cliente";
     }
 
     // DTO para cadastro simples de usuário, sem nome e telefone, apenas email e senha, com validação de dados

@@ -1,0 +1,119 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1050" viewBox="0 0 1600 1050" role="img" aria-labelledby="title desc">
+  <title id="title">Fluxograma do Sistema ZeroFrame</title>
+  <desc id="desc">Fluxo em camadas da API ZeroFrame, mostrando cliente, API, application, domain, infraestrutura de dados, Entity Framework e SQL Server.</desc>
+  <defs>
+    <style>
+      .bg { fill: #f7f9fc; }
+      .title { font: 700 42px Arial, Helvetica, sans-serif; fill: #172033; }
+      .subtitle { font: 400 20px Arial, Helvetica, sans-serif; fill: #506079; }
+      .band-label { font: 700 18px Arial, Helvetica, sans-serif; fill: #46546b; letter-spacing: .5px; }
+      .box-title { font: 700 23px Arial, Helvetica, sans-serif; fill: #152033; }
+      .box-text { font: 400 17px Arial, Helvetica, sans-serif; fill: #526176; }
+      .small-title { font: 700 18px Arial, Helvetica, sans-serif; fill: #152033; }
+      .small-text { font: 400 14px Arial, Helvetica, sans-serif; fill: #526176; }
+      .note { font: 400 16px Arial, Helvetica, sans-serif; fill: #5b687d; }
+      .arrow { stroke: #26364f; stroke-width: 4; fill: none; marker-end: url(#arrowhead); }
+      .arrow-soft { stroke: #7b8798; stroke-width: 3; fill: none; marker-end: url(#arrowheadSoft); }
+      .box { stroke-width: 2.5; rx: 16; ry: 16; }
+      .client { fill: #ffffff; stroke: #1f6feb; }
+      .api { fill: #fff7ed; stroke: #e57a00; }
+      .app { fill: #ecfdf5; stroke: #149b63; }
+      .domain { fill: #eef2ff; stroke: #5865d9; }
+      .infra { fill: #fdf2f8; stroke: #c53b7c; }
+      .db { fill: #eff6ff; stroke: #2775c4; }
+      .ioc { fill: #f8fafc; stroke: #64748b; stroke-dasharray: 8 8; }
+      .lane { fill: #ffffff; stroke: #d9e1ee; stroke-width: 1.5; rx: 18; ry: 18; }
+    </style>
+    <marker id="arrowhead" markerWidth="14" markerHeight="14" refX="12" refY="7" orient="auto">
+      <path d="M 0 0 L 14 7 L 0 14 z" fill="#26364f"/>
+    </marker>
+    <marker id="arrowheadSoft" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M 0 0 L 12 6 L 0 12 z" fill="#7b8798"/>
+    </marker>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="8" stdDeviation="8" flood-color="#172033" flood-opacity=".12"/>
+    </filter>
+  </defs>
+
+  <rect class="bg" width="1600" height="1050"/>
+
+  <text x="80" y="78" class="title">Fluxograma do Sistema ZeroFrame</text>
+  <text x="82" y="115" class="subtitle">Arquitetura em camadas da API de e-commerce: entrada HTTP, regras de aplicação, domínio, persistência e banco de dados.</text>
+
+  <rect x="70" y="155" width="1460" height="760" class="lane"/>
+
+  <text x="100" y="200" class="band-label">FLUXO PRINCIPAL DA REQUISICAO</text>
+
+  <rect x="105" y="245" width="230" height="135" class="box client" filter="url(#shadow)"/>
+  <text x="220" y="292" text-anchor="middle" class="box-title">Cliente</text>
+  <text x="220" y="323" text-anchor="middle" class="box-text">Frontend</text>
+  <text x="220" y="348" text-anchor="middle" class="box-text">Swagger / HTTP</text>
+
+  <rect x="420" y="245" width="230" height="135" class="box api" filter="url(#shadow)"/>
+  <text x="535" y="292" text-anchor="middle" class="box-title">ZeroFrame.API</text>
+  <text x="535" y="323" text-anchor="middle" class="box-text">Controllers</text>
+  <text x="535" y="348" text-anchor="middle" class="box-text">Rotas REST</text>
+
+  <rect x="735" y="245" width="230" height="135" class="box app" filter="url(#shadow)"/>
+  <text x="850" y="292" text-anchor="middle" class="box-title">Application</text>
+  <text x="850" y="323" text-anchor="middle" class="box-text">Services</text>
+  <text x="850" y="348" text-anchor="middle" class="box-text">DTOs e regras</text>
+
+  <rect x="1050" y="245" width="230" height="135" class="box infra" filter="url(#shadow)"/>
+  <text x="1165" y="292" text-anchor="middle" class="box-title">Infra.Data</text>
+  <text x="1165" y="323" text-anchor="middle" class="box-text">Repositories</text>
+  <text x="1165" y="348" text-anchor="middle" class="box-text">EF Core</text>
+
+  <rect x="1335" y="245" width="150" height="135" class="box db" filter="url(#shadow)"/>
+  <text x="1410" y="292" text-anchor="middle" class="box-title">SQL</text>
+  <text x="1410" y="323" text-anchor="middle" class="box-text">Server</text>
+  <text x="1410" y="348" text-anchor="middle" class="box-text">ZeroFrameDB</text>
+
+  <path d="M335 312 L410 312" class="arrow"/>
+  <path d="M650 312 L725 312" class="arrow"/>
+  <path d="M965 312 L1040 312" class="arrow"/>
+  <path d="M1280 312 L1325 312" class="arrow"/>
+
+  <text x="373" y="293" text-anchor="middle" class="note">requisição</text>
+  <text x="687" y="293" text-anchor="middle" class="note">chama serviço</text>
+  <text x="1002" y="293" text-anchor="middle" class="note">usa repositório</text>
+  <text x="1303" y="293" text-anchor="middle" class="note">consulta</text>
+
+  <path d="M1410 397 C1410 505 220 505 220 397" class="arrow-soft"/>
+  <text x="810" y="535" text-anchor="middle" class="note">resposta retorna em DTO / JSON para o cliente</text>
+
+  <rect x="205" y="610" width="270" height="130" class="box api"/>
+  <text x="340" y="653" text-anchor="middle" class="small-title">Controllers</text>
+  <text x="340" y="681" text-anchor="middle" class="small-text">Produto, Usuario, Carrinho,</text>
+  <text x="340" y="703" text-anchor="middle" class="small-text">Categoria, Pedido, Pagamento</text>
+
+  <rect x="540" y="610" width="270" height="130" class="box app"/>
+  <text x="675" y="653" text-anchor="middle" class="small-title">Services + DTOs</text>
+  <text x="675" y="681" text-anchor="middle" class="small-text">Validam dados, aplicam regras</text>
+  <text x="675" y="703" text-anchor="middle" class="small-text">e montam objetos de resposta</text>
+
+  <rect x="875" y="610" width="270" height="130" class="box domain"/>
+  <text x="1010" y="653" text-anchor="middle" class="small-title">Domain</text>
+  <text x="1010" y="681" text-anchor="middle" class="small-text">Entidades do negocio</text>
+  <text x="1010" y="703" text-anchor="middle" class="small-text">Produto, Pedido, Usuario...</text>
+
+  <rect x="1210" y="610" width="270" height="130" class="box infra"/>
+  <text x="1345" y="653" text-anchor="middle" class="small-title">DbContext + Migrations</text>
+  <text x="1345" y="681" text-anchor="middle" class="small-text">Mapeia entidades para tabelas</text>
+  <text x="1345" y="703" text-anchor="middle" class="small-text">e persiste no banco</text>
+
+  <path d="M475 675 L530 675" class="arrow-soft"/>
+  <path d="M810 675 L865 675" class="arrow-soft"/>
+  <path d="M1145 675 L1200 675" class="arrow-soft"/>
+
+  <rect x="100" y="800" width="1385" height="82" class="box ioc"/>
+  <text x="792" y="833" text-anchor="middle" class="small-title">ZeroFrame.infra.ioc / DependencyInjector</text>
+  <text x="792" y="861" text-anchor="middle" class="small-text">Registra ApplicationDbContext, repositories e services para a injecao de dependencia usada pela API.</text>
+
+  <path d="M792 800 C792 745 535 735 535 388" class="arrow-soft"/>
+  <path d="M792 800 C792 745 850 735 850 388" class="arrow-soft"/>
+  <path d="M792 800 C792 745 1165 735 1165 388" class="arrow-soft"/>
+
+  <text x="80" y="975" class="note">ZeroFrame - ASP.NET Core + Entity Framework Core + SQL Server</text>
+  <text x="1520" y="975" text-anchor="end" class="note">Gerado para documentacao do sistema</text>
+</svg>
