@@ -1,8 +1,8 @@
 using ZeroFrame.Application.DTOS.ItemPedido;
 using ZeroFrame.Application.DTOS.Pedidos;
 using ZeroFrame.Application.Interfaces;
-using ZeroFrame.domain.entidades;
-using ZeroFrame.domain.Interface;
+using ZeroFrame.Domain.Entidades;
+using ZeroFrame.Domain.Interfaces;
 
 namespace ZeroFrame.Application.Servicos
 {
@@ -11,15 +11,18 @@ namespace ZeroFrame.Application.Servicos
         private readonly IPedidoRepository _pedidoRepository;
         private readonly ICarrinhoRepository _carrinhoRepository;
         private readonly IVariacaoRepository _variacaoRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
         public PedidoService(
             IPedidoRepository pedidoRepository,
             ICarrinhoRepository carrinhoRepository,
-            IVariacaoRepository variacaoRepository)
+            IVariacaoRepository variacaoRepository,
+            IUnitOfWork unitOfWork)
         {
             _pedidoRepository = pedidoRepository;
             _carrinhoRepository = carrinhoRepository;
             _variacaoRepository = variacaoRepository;
+            _unitOfWork = unitOfWork;
         }
 
         
@@ -35,7 +38,7 @@ namespace ZeroFrame.Application.Servicos
             return MapearPedidoGetDto(pedido);
         }
 
-        // Busca todos os pedidos de um usu�rio espec�fico.
+        // Busca todos os pedidos de um usuário específico.
         public async Task<List<PedidosGetDto>> ObterPorUsuarioAsync(int usuarioId)
         {
             var pedidos = await _pedidoRepository.ObterPorUsuarioAsync(usuarioId);
@@ -45,140 +48,149 @@ namespace ZeroFrame.Application.Servicos
         // Cria um pedido diretamente a partir do DTO recebido.
         public async Task<PedidosGetDto> CriarAsync(PedidosPostDto pedidosPostDto)
         {
-            var itensPedido = new List<ItemPedido>();
+            return await _unitOfWork.ExecuteInTransactionAsync(async () =>
+            {
+                var itensPedido = new List<ItemPedido>();
             
-            // Percorre os itens enviados no pedido.
+                // Percorre os itens enviados no pedido.
 
-            foreach (var itemDto in pedidosPostDto.Itens)
-            {
-                var variacao = await _variacaoRepository.ObterPorIdAsync(itemDto.VariacaoProdutoId);
-
-                if (variacao == null)
-                    throw new InvalidOperationException("Variacao do produto nao encontrada.");
-
-                if (variacao.Produto == null)
-                    throw new InvalidOperationException("Produto da variacao nao encontrado.");
-
-                ValidarEstoque(variacao, itemDto.Quantidade);
-
-                variacao.Estoque -= itemDto.Quantidade;
-                await _variacaoRepository.AtualizarAsync(variacao);
-
-                itensPedido.Add(new ItemPedido
+                foreach (var itemDto in pedidosPostDto.Itens)
                 {
-                    VariacaoProdutoId = itemDto.VariacaoProdutoId,
-                    VariacaoProduto = variacao,
-                    Quantidade = itemDto.Quantidade,
-                    PrecoUnitario = variacao.Produto.Preco
-                });
-            }
+                    var variacao = await _variacaoRepository.ObterPorIdAsync(itemDto.VariacaoProdutoId);
 
-            var pedido = new Pedidos
-            {
-                UsuarioId = pedidosPostDto.UsuarioId,
-                DataPedido = DateTime.Now,
-                Status = "Pendente",
-                Itens = itensPedido
-            };
+                    if (variacao == null)
+                        throw new InvalidOperationException("Variação do produto não encontrada.");
 
-            pedido.ValorTotal = pedido.Itens.Sum(item => item.Quantidade * item.PrecoUnitario);
+                    if (variacao.Produto == null)
+                        throw new InvalidOperationException("Produto da variação não encontrado.");
 
-            await _pedidoRepository.CriarPedidoAsync(pedido);
-            return MapearPedidoGetDto(pedido);
+                    ValidarEstoque(variacao, itemDto.Quantidade);
+
+                    variacao.Estoque -= itemDto.Quantidade;
+                    await _variacaoRepository.AtualizarAsync(variacao);
+
+                    itensPedido.Add(new ItemPedido
+                    {
+                        VariacaoProdutoId = itemDto.VariacaoProdutoId,
+                        VariacaoProduto = variacao,
+                        Quantidade = itemDto.Quantidade,
+                        PrecoUnitario = variacao.Produto.Preco
+                    });
+                }
+
+                var pedido = new Pedidos
+                {
+                    UsuarioId = pedidosPostDto.UsuarioId,
+                    DataPedido = DateTime.Now,
+                    Status = "Pendente",
+                    Itens = itensPedido
+                };
+
+                pedido.ValorTotal = pedido.Itens.Sum(item => item.Quantidade * item.PrecoUnitario);
+
+                await _pedidoRepository.CriarPedidoAsync(pedido);
+                return MapearPedidoGetDto(pedido);
+            });
         }
 
         // Cria o pedido com os itens montados.
         public async Task<PedidosGetDto> CriarAPartirDoCarrinhoAsync(int carrinhoId)
         {
-            var carrinho = await _carrinhoRepository.ObterPorIdAsync(carrinhoId);
-
-            if (carrinho == null)
-                throw new InvalidOperationException("Carrinho nao encontrado.");
-
-            if (!carrinho.Ativo)
-                throw new InvalidOperationException("Carrinho inativo nao pode gerar pedido.");
-
-            if (!carrinho.Itens.Any())
-                throw new InvalidOperationException("Carrinho vazio nao pode gerar pedido.");
-
-            var itensPedido = new List<ItemPedido>();
-
-            foreach (var itemCarrinho in carrinho.Itens)
+            return await _unitOfWork.ExecuteInTransactionAsync(async () =>
             {
-                var variacao = await _variacaoRepository.ObterPorIdAsync(itemCarrinho.VariacaoProdutoId);
+                var carrinho = await _carrinhoRepository.ObterPorIdAsync(carrinhoId);
 
-                if (variacao == null)
-                    throw new InvalidOperationException("Variacao do produto nao encontrada.");
+                if (carrinho == null)
+                    throw new InvalidOperationException("Carrinho não encontrado.");
 
-                if (variacao.Produto == null)
-                    throw new InvalidOperationException("Produto da variacao nao encontrado.");
+                if (!carrinho.Ativo)
+                    throw new InvalidOperationException("Carrinho inativo não pode gerar pedido.");
 
-                ValidarEstoque(variacao, itemCarrinho.Quantidade);
+                if (!carrinho.Itens.Any())
+                    throw new InvalidOperationException("Carrinho vazio não pode gerar pedido.");
 
-                variacao.Estoque -= itemCarrinho.Quantidade;
-                await _variacaoRepository.AtualizarAsync(variacao);
+                var itensPedido = new List<ItemPedido>();
 
-                itensPedido.Add(new ItemPedido
+                foreach (var itemCarrinho in carrinho.Itens)
                 {
-                    VariacaoProdutoId = itemCarrinho.VariacaoProdutoId,
-                    VariacaoProduto = variacao,
-                    Quantidade = itemCarrinho.Quantidade,
-                    PrecoUnitario = variacao.Produto.Preco
-                });
-            }
+                    var variacao = await _variacaoRepository.ObterPorIdAsync(itemCarrinho.VariacaoProdutoId);
 
-            // Cria o pedido com os itens montados.
-            var pedido = new Pedidos
-            {
-                UsuarioId = carrinho.UsuarioId,
-                DataPedido = DateTime.Now,
-                Status = "Pendente",
-                Itens = itensPedido
-            };
+                    if (variacao == null)
+                        throw new InvalidOperationException("Variação do produto não encontrada.");
 
-            pedido.ValorTotal = pedido.Itens.Sum(item => item.Quantidade * item.PrecoUnitario);
-            carrinho.Ativo = false;
+                    if (variacao.Produto == null)
+                        throw new InvalidOperationException("Produto da variação não encontrado.");
 
-            await _pedidoRepository.CriarPedidoAsync(pedido);
-            await _carrinhoRepository.AtualizarAsync(carrinho);
+                    ValidarEstoque(variacao, itemCarrinho.Quantidade);
 
-            return MapearPedidoGetDto(pedido);
+                    variacao.Estoque -= itemCarrinho.Quantidade;
+                    await _variacaoRepository.AtualizarAsync(variacao);
+
+                    itensPedido.Add(new ItemPedido
+                    {
+                        VariacaoProdutoId = itemCarrinho.VariacaoProdutoId,
+                        VariacaoProduto = variacao,
+                        Quantidade = itemCarrinho.Quantidade,
+                        PrecoUnitario = variacao.Produto.Preco
+                    });
+                }
+
+                // Cria o pedido com os itens montados.
+                var pedido = new Pedidos
+                {
+                    UsuarioId = carrinho.UsuarioId,
+                    DataPedido = DateTime.Now,
+                    Status = "Pendente",
+                    Itens = itensPedido
+                };
+
+                pedido.ValorTotal = pedido.Itens.Sum(item => item.Quantidade * item.PrecoUnitario);
+                carrinho.Ativo = false;
+
+                await _pedidoRepository.CriarPedidoAsync(pedido);
+                await _carrinhoRepository.AtualizarAsync(carrinho);
+
+                return MapearPedidoGetDto(pedido);
+            });
         }
 
-        // Busca todos os pedidos de um usu�rio espec�fico.
+        // Busca todos os pedidos de um usuário específico.
         public async Task<PedidosGetDto> CriarAPartirDoCarrinhoAtivoDoUsuarioAsync(int usuarioId)
         {
             var carrinho = await _carrinhoRepository.ObterAtivoPorUsuarioAsync(usuarioId);
 
             if (carrinho == null)
-                throw new InvalidOperationException("Carrinho ativo nao encontrado para este usuario.");
+                throw new InvalidOperationException("Carrinho ativo não encontrado para este usuário.");
 
             return await CriarAPartirDoCarrinhoAsync(carrinho.Id);
         }
 
         public async Task CancelarAsync(int id)
         {
-            var pedido = await _pedidoRepository.ObterPorIdAsync(id);
-
-            if (pedido == null)
-                return;
-
-            if (pedido.Status == "Cancelado")
-                return;
-
-            foreach (var item in pedido.Itens)
+            await _unitOfWork.ExecuteInTransactionAsync(async () =>
             {
-                var variacao = await _variacaoRepository.ObterPorIdAsync(item.VariacaoProdutoId);
+                var pedido = await _pedidoRepository.ObterPorIdAsync(id);
 
-                if (variacao != null)
+                if (pedido == null)
+                    return;
+
+                if (pedido.Status == "Cancelado")
+                    return;
+
+                foreach (var item in pedido.Itens)
                 {
-                    variacao.Estoque += item.Quantidade;
-                    await _variacaoRepository.AtualizarAsync(variacao);
-                }
-            }
+                    var variacao = await _variacaoRepository.ObterPorIdAsync(item.VariacaoProdutoId);
 
-            pedido.Status = "Cancelado";
-            await _pedidoRepository.AtualizarAsync(pedido);
+                    if (variacao != null)
+                    {
+                        variacao.Estoque += item.Quantidade;
+                        await _variacaoRepository.AtualizarAsync(variacao);
+                    }
+                }
+
+                pedido.Status = "Cancelado";
+                await _pedidoRepository.AtualizarAsync(pedido);
+            });
         }
 
         public async Task AtualizarAsync(PedidosPutDto pedidosPutDto)
@@ -198,7 +210,7 @@ namespace ZeroFrame.Application.Servicos
                 throw new InvalidOperationException("A quantidade deve ser maior que zero.");
 
             if (quantidade > variacao.Estoque)
-                throw new InvalidOperationException("Estoque insuficiente para esta variacao.");
+                throw new InvalidOperationException("Estoque insuficiente para esta variação.");
         }
 
         private static PedidosGetDto MapearPedidoGetDto(Pedidos pedido)
@@ -264,13 +276,13 @@ namespace ZeroFrame.Application.Servicos
             if (nomeNormalizado.Contains("moletom") || nomeNormalizado.Contains("blusa"))
                 return "/assets/products/blusa-moletom.jpg";
 
-            if (nomeNormalizado.Contains("calca") || nomeNormalizado.Contains("cal�a") || nomeNormalizado.Contains("jeans"))
+            if (nomeNormalizado.Contains("calca") || nomeNormalizado.Contains("calça") || nomeNormalizado.Contains("jeans"))
                 return "/assets/products/calca-levis-clara.png";
 
             if (nomeNormalizado.Contains("corrente") || nomeNormalizado.Contains("ice"))
                 return "/assets/products/corrente-ice.png";
 
-            if (nomeNormalizado.Contains("adidas") || nomeNormalizado.Contains("tenis") || nomeNormalizado.Contains("t�nis"))
+            if (nomeNormalizado.Contains("adidas") || nomeNormalizado.Contains("tenis") || nomeNormalizado.Contains("tênis"))
                 return "/assets/products/tenis2.png";
 
             return "/assets/products/camisa-over-black.png";

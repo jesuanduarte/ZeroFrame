@@ -1,9 +1,11 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using ZeroFrame.API.Errors;
 using ZeroFrame.Application.DTOS.Endereco;
 using ZeroFrame.Application.DTOS.Usuario;
 using ZeroFrame.Application.Interfaces;
-using ZeroFrame.Domain.account;
+using ZeroFrame.Domain.Account;
 using ZeroFrame.Infra.Data.Identity;
 
 namespace ZeroFrame.API.Controllers
@@ -30,21 +32,21 @@ namespace ZeroFrame.API.Controllers
             _enderecoService = enderecoService;
             _authenticateService = authenticateService;
         }
+       
         // POST: api/usuarios
         // Cria um novo usuário.
+        [AllowAnonymous]
         [HttpPost]
         public async Task<ActionResult<UsuarioGetDto>> CriarUsuario(UsuarioPostDto usuarioPostDto)
         {
-            // Envia os dados para o serviço criar o usuário.
             var usuarioCriado = await _usuarioService.CriarAsync(usuarioPostDto);
 
             var token = _authenticateService.GenerateToken(
                 usuarioCriado.Id,
                 usuarioCriado.Email,
-                usuarioPostDto.Perfil
+                usuarioCriado.Perfil
             );
 
-            // Retorna 201 Created informando que o usuário foi criado com sucesso.
             return CreatedAtAction(
                 nameof(ObterUsuarioPorId),
                 new { id = usuarioCriado.Id },
@@ -52,7 +54,7 @@ namespace ZeroFrame.API.Controllers
                 {
                     usuarioCriado.Id,
                     usuarioCriado.Email,
-                    usuarioPostDto.Perfil,
+                    usuarioCriado.Perfil,
                     Token = token
                 }
             );
@@ -60,6 +62,7 @@ namespace ZeroFrame.API.Controllers
 
         // POST: api/usuarios/login
         // Autentica um usuário pelo email e senha.
+        [AllowAnonymous]
         [HttpPost("login")]
         public async Task<ActionResult<UsuarioLoginResponseDto>> LoginUsuario(UsuarioLoginDto usuarioLoginDto)
         {
@@ -68,72 +71,75 @@ namespace ZeroFrame.API.Controllers
             if (usuarioAutenticado == null)
                 return Unauthorized("Email ou senha invalidos.");
 
+            var token = _authenticateService.GenerateToken(
+                usuarioAutenticado.UsuarioId,
+                usuarioAutenticado.Email,
+                usuarioAutenticado.Perfil
+            );
+
+            usuarioAutenticado.Token = token;
+
             return Ok(usuarioAutenticado);
         }
 
         // PUT: api/usuarios/{id}
-        // Atualiza os dados de um usuário existente.
+        // Apenas Administrador pode atualizar usuário.
+        [Authorize(Roles = "Administrador")]
         [HttpPut("{id:int}")]
         public async Task<ActionResult> AtualizarUsuario(int id, UsuarioPutDto usuarioPutDto)
         {
-            // Verifica se o Id da rota é igual ao Id enviado no corpo da requisição.
             if (id != usuarioPutDto.Id)
                 return BadRequest("Id da rota diferente do Id do usuario.");
 
-            // Busca o usuário antes de atualizar, para confirmar se ele existe.
             var usuario = await _usuarioService.ObterPorIdAsync(id);
 
-            // Caso o usuário não exista, retorna 404 Not Found.
             if (usuario == null)
                 return NotFound("Usuario nao encontrado.");
 
-            // Atualiza o usuário.
             await _usuarioService.AtualizarAsync(usuarioPutDto);
 
-            // Retorna 204 No Content indicando que a atualização foi feita com sucesso.
             return NoContent();
         }
 
         // GET: api/usuarios/{id}
-        // Busca um usuário específico pelo Id.
+        // Apenas Administrador pode buscar usuário por Id.
+        [Authorize(Roles = "Administrador")]
         [HttpGet("{id:int}")]
         public async Task<ActionResult<UsuarioGetDto>> ObterUsuarioPorId(int id)
         {
-            // Busca o usuário pelo Id informado na rota.
             var usuario = await _usuarioService.ObterPorIdAsync(id);
 
-            // Caso o usuário não exista, retorna 404 Not Found.
             if (usuario == null)
                 return NotFound("Usuario nao encontrado.");
 
-            // Retorna o usuário encontrado.
             return Ok(usuario);
         }
 
         // DELETE: api/usuarios/{id}
-        // Remove um usuário existente.
+        // Apenas Administrador pode remover usuário.
+        [Authorize(Roles = "Administrador")]
         [HttpDelete("{id:int}")]
         public async Task<ActionResult> RemoverUsuario(int id)
         {
-            // Busca o usuário antes de remover, para confirmar se ele existe.
             var usuario = await _usuarioService.ObterPorIdAsync(id);
 
-            // Caso o usuário não exista, retorna 404 Not Found.
             if (usuario == null)
                 return NotFound("Usuario nao encontrado.");
 
-            // Remove o usuário.
             await _usuarioService.RemoverAsync(id);
 
-            // Retorna 204 No Content indicando que a remoção foi feita com sucesso.
             return NoContent();
         }
 
         // GET: api/usuarios/{usuarioId}/endereco
-        // Busca o endereco do usuario.
+        // Cliente e Administrador podem buscar endereço.
+        [Authorize(Roles = "Cliente,Administrador")]
         [HttpGet("{usuarioId:int}/endereco")]
         public async Task<ActionResult<EnderecoGetDto>> ObterEnderecoDoUsuario(int usuarioId)
         {
+            if (!PodeAcessarUsuario(usuarioId))
+                return Forbid();
+
             var usuario = await _usuarioService.ObterPorIdAsync(usuarioId);
 
             if (usuario == null)
@@ -148,10 +154,14 @@ namespace ZeroFrame.API.Controllers
         }
 
         // POST: api/usuarios/{usuarioId}/endereco
-        // Cria um endereco para o usuario.
+        // Cliente e Administrador podem criar endereço.
+        [Authorize(Roles = "Cliente,Administrador")]
         [HttpPost("{usuarioId:int}/endereco")]
         public async Task<ActionResult<EnderecoGetDto>> CriarEnderecoDoUsuario(int usuarioId, EnderecoPostDto enderecoPostDto)
         {
+            if (!PodeAcessarUsuario(usuarioId))
+                return Forbid();
+
             var usuario = await _usuarioService.ObterPorIdAsync(usuarioId);
 
             if (usuario == null)
@@ -175,10 +185,14 @@ namespace ZeroFrame.API.Controllers
         }
 
         // PUT: api/usuarios/{usuarioId}/endereco/{enderecoId}
-        // Atualiza o endereco do usuario.
+        // Cliente e Administrador podem atualizar endereço.
+        [Authorize(Roles = "Cliente,Administrador")]
         [HttpPut("{usuarioId:int}/endereco/{enderecoId:int}")]
         public async Task<ActionResult> AtualizarEnderecoDoUsuario(int usuarioId, int enderecoId, EnderecoPutDto enderecoPutDto)
         {
+            if (!PodeAcessarUsuario(usuarioId))
+                return Forbid();
+
             var usuario = await _usuarioService.ObterPorIdAsync(usuarioId);
 
             if (usuario == null)
@@ -201,10 +215,14 @@ namespace ZeroFrame.API.Controllers
         }
 
         // DELETE: api/usuarios/{usuarioId}/endereco/{enderecoId}
-        // Remove o endereco do usuario.
+        // Cliente e Administrador podem remover endereço.
+        [Authorize(Roles = "Cliente,Administrador")]
         [HttpDelete("{usuarioId:int}/endereco/{enderecoId:int}")]
         public async Task<ActionResult> RemoverEnderecoDoUsuario(int usuarioId, int enderecoId)
         {
+            if (!PodeAcessarUsuario(usuarioId))
+                return Forbid();
+
             var usuario = await _usuarioService.ObterPorIdAsync(usuarioId);
 
             if (usuario == null)
@@ -218,6 +236,15 @@ namespace ZeroFrame.API.Controllers
             await _enderecoService.RemoverAsync(enderecoId);
 
             return NoContent();
+        }
+
+        private bool PodeAcessarUsuario(int usuarioId)
+        {
+            if (User.IsInRole("Administrador"))
+                return true;
+
+            var usuarioLogadoId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            return int.TryParse(usuarioLogadoId, out var id) && id == usuarioId;
         }
     }
 }

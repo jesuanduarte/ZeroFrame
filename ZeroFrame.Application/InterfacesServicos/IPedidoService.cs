@@ -5,6 +5,7 @@ using ZeroFrame.Application.DTOS.Pedidos;
 
 namespace ZeroFrame.Application.Interfaces
 {
+    // 
     public interface IPedidoService
     {
         Task<PedidosGetDto?> ObterPorIdAsync(int id);

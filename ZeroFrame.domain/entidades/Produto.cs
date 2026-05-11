@@ -1,4 +1,4 @@
-namespace ZeroFrame.domain.entidades
+namespace ZeroFrame.Domain.Entidades
 {
     public class Produto
     {

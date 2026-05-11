@@ -1,25 +1,28 @@
 using ZeroFrame.Application.DTOS.Pagamento;
 using ZeroFrame.Application.Interfaces;
-using ZeroFrame.domain.entidades;
-using ZeroFrame.domain.Interface;
+using ZeroFrame.Domain.Entidades;
+using ZeroFrame.Domain.Interfaces;
 
 namespace ZeroFrame.Application.Servicos
 {
-    // Serviço responsável pelas regras de negócio do Pagamento.
+    // ServiÃ§o responsÃ¡vel pelas regras de negÃ³cio do Pagamento.
     // Ele faz a ponte entre a Controller e o Repository.
-    // Também realiza a conversão entre DTOs e Entidades.
+    // TambÃ©m realiza a conversÃ£o entre DTOs e Entidades.
     public class PagamentoService : IPagamentoService
     {
         private readonly IPagamentoRepository _pagamentoRepository;
         private readonly IPedidoRepository _pedidoRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        // Recebe os repositórios por injeção de dependência.
+        // Recebe os repositÃ³rios por injeÃ§Ã£o de dependÃªncia.
         public PagamentoService(
             IPagamentoRepository pagamentoRepository,
-            IPedidoRepository pedidoRepository)
+            IPedidoRepository pedidoRepository,
+            IUnitOfWork unitOfWork)
         {
             _pagamentoRepository = pagamentoRepository;
             _pedidoRepository = pedidoRepository;
+            _unitOfWork = unitOfWork;
         }
 
         // Busca um pagamento pelo Id.
@@ -55,33 +58,36 @@ namespace ZeroFrame.Application.Servicos
         // Cria um pagamento simples para finalizar um pedido.
         public async Task<PagamentoGetDto> CriarPagamentoDoPedidoAsync(int pedidoId, PagamentoPedidoPostDto pagamentoPedidoPostDto)
         {
-            var pedido = await _pedidoRepository.ObterPorIdAsync(pedidoId);
-
-            if (pedido == null)
-                throw new InvalidOperationException("Pedido nao encontrado.");
-
-            if (pedido.Status == "Cancelado")
-                throw new InvalidOperationException("Pedido cancelado nao pode receber pagamento.");
-
-            var pagamentoExistente = await _pagamentoRepository.ObterPorPedidoIdAsync(pedidoId);
-
-            if (pagamentoExistente != null)
-                throw new InvalidOperationException("Este pedido ja possui pagamento registrado.");
-
-            var pagamento = new Pagamento
+            return await _unitOfWork.ExecuteInTransactionAsync(async () =>
             {
-                Metodo = pagamentoPedidoPostDto.Metodo,
-                PedidoId = pedidoId,
-                Pedido = pedido,
-                Status = "Aprovado"
-            };
+                var pedido = await _pedidoRepository.ObterPorIdAsync(pedidoId);
 
-            pedido.Status = "Pago";
+                if (pedido == null)
+                    throw new InvalidOperationException("Pedido nao encontrado.");
 
-            await _pagamentoRepository.AdicionarAsync(pagamento);
-            await _pedidoRepository.AtualizarAsync(pedido);
+                if (pedido.Status == "Cancelado")
+                    throw new InvalidOperationException("Pedido cancelado nao pode receber pagamento.");
 
-            return MapearPagamentoGetDto(pagamento);
+                var pagamentoExistente = await _pagamentoRepository.ObterPorPedidoIdAsync(pedidoId);
+
+                if (pagamentoExistente != null)
+                    throw new InvalidOperationException("Este pedido ja possui pagamento registrado.");
+
+                var pagamento = new Pagamento
+                {
+                    Metodo = pagamentoPedidoPostDto.Metodo,
+                    PedidoId = pedidoId,
+                    Pedido = pedido,
+                    Status = "Aprovado"
+                };
+
+                pedido.Status = "Pago";
+
+                await _pagamentoRepository.AdicionarAsync(pagamento);
+                await _pedidoRepository.AtualizarAsync(pedido);
+
+                return MapearPagamentoGetDto(pagamento);
+            });
         }
 
         // Atualiza o status do pagamento.
@@ -97,7 +103,7 @@ namespace ZeroFrame.Application.Servicos
             await _pagamentoRepository.AtualizarAsync(pagamento);
         }
 
-        // Método para mapear a entidade Pagamento para o DTO PagamentoGetDto.
+        // MÃ©todo para mapear a entidade Pagamento para o DTO PagamentoGetDto.
         private static PagamentoGetDto MapearPagamentoGetDto(Pagamento pagamento)
         {
             return new PagamentoGetDto

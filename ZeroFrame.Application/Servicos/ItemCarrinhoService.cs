@@ -1,7 +1,7 @@
 using ZeroFrame.Application.DTOS.ItemCarrinho;
-using ZeroFrame.domain.entidades;
+using ZeroFrame.Domain.Entidades;
 using ZeroFrame.Application.Interfaces;
-using ZeroFrame.domain.Interface;
+using ZeroFrame.Domain.Interfaces;
 
 namespace ZeroFrame.Application.Servicos
 {
@@ -25,7 +25,7 @@ namespace ZeroFrame.Application.Servicos
             return itens.Select(MapearItemCarrinhoGetDto).ToList();
         }
 
-        // Busca um item de carrinho especÌfico pelo Id.
+        // Busca um item de carrinho espec√≠fico pelo Id.
         public async Task<ItemCarrinhoGetDto?> ObterPorIdAsync(int id)
         {
             var item = await _itemCarrinhoRepository.ObterPorIdAsync(id);
@@ -36,14 +36,14 @@ namespace ZeroFrame.Application.Servicos
             return MapearItemCarrinhoGetDto(item);
         }
 
-        // Busca todos os itens que pertencem a um carrinho especÌfico.
+        // Busca todos os itens que pertencem a um carrinho espec√≠fico.
         public async Task<List<ItemCarrinhoGetDto>> ObterPorCarrinhoAsync(int carrinho)
         {
             var itens = await _itemCarrinhoRepository.ObterPorCarrinhoAsync(carrinho);
             return itens.Select(MapearItemCarrinhoGetDto).ToList();
         }
 
-        // Cria um novo item no carrinho ou atualiza a quantidade caso o item j· exista.
+        // Cria um novo item no carrinho ou atualiza a quantidade caso o item j√° exista.
         public async Task<ItemCarrinhoGetDto> CriarAsync(ItemCarrinhoPostDto itemCarrinhoPostDto)
         {
             var variacao = await _variacaoRepository.ObterPorIdAsync(itemCarrinhoPostDto.VariacaoProdutoId);
@@ -83,7 +83,7 @@ namespace ZeroFrame.Application.Servicos
             return MapearItemCarrinhoGetDto(item);
         }
 
-        // Atualiza os dados de um item j· existente no carrinho.
+        // Atualiza os dados de um item j√° existente no carrinho.
         public async Task AtualizarAsync(ItemCarrinhoPutDto itemCarrinhoPutDto)
         {
             var item = await _itemCarrinhoRepository.ObterPorIdAsync(itemCarrinhoPutDto.Id);
@@ -114,7 +114,7 @@ namespace ZeroFrame.Application.Servicos
             await _itemCarrinhoRepository.RemoverAsync(id);
         }
 
-        // faz a validaÁ„o para garantir que a quantidade solicitada n„o seja negativa e que haja estoque suficiente para a variaÁ„o do produto.
+        // faz a valida√ß√£o para garantir que a quantidade solicitada n√£o seja negativa e que haja estoque suficiente para a varia√ß√£o do produto.
         private static void ValidarEstoque(VariacaoProdutos variacao, int quantidade)
         {
             if (quantidade <= 0)
@@ -128,10 +128,10 @@ namespace ZeroFrame.Application.Servicos
         // Converte a entidade ItemCarrinho para ItemCarrinhoGetDto.
         private static ItemCarrinhoGetDto MapearItemCarrinhoGetDto(ItemCarrinho item)
         {
-            // Pega a variaÁ„o do produto vinculada ao item do carrinho.
+            // Pega a varia√ß√£o do produto vinculada ao item do carrinho.
             var variacao = item.VariacaoProduto;
 
-            // Pega o produto vinculado ‡ variaÁ„o.
+            // Pega o produto vinculado √† varia√ß√£o.
             var produto = variacao?.Produto;
 
             // Retorna um DTO com os dados formatados para a API/front-end.
@@ -141,10 +141,10 @@ namespace ZeroFrame.Application.Servicos
                 CarrinhoId = item.CarrinhoId,
                 VariacaoProdutoId = item.VariacaoProdutoId,
 
-                // Se o produto existir, usa o Id dele. Caso contr·rio, retorna 0.
+                // Se o produto existir, usa o Id dele. Caso contr√°rio, retorna 0.
                 ProdutoId = produto?.Id ?? 0,
 
-                // Se o produto existir, usa o nome dele. Caso contr·rio, retorna texto vazio.
+                // Se o produto existir, usa o nome dele. Caso contr√°rio, retorna texto vazio.
                 NomeProduto = produto?.Nome ?? string.Empty,
 
                 // Define a imagem do produto com base no nome.
@@ -156,27 +156,27 @@ namespace ZeroFrame.Application.Servicos
                 // Define a marca do produto com base no nome.
                 Marca = produto == null ? string.Empty : ObterMarca(produto),
 
-                // Define se o produto È original da loja ou multimarcas.
+                // Define se o produto √© original da loja ou multimarcas.
                 Origem = produto == null ? string.Empty : ObterOrigem(produto),
 
-                // Pega o tamanho da variaÁ„o, caso exista.
+                // Pega o tamanho da varia√ß√£o, caso exista.
                 Tamanho = variacao?.Tamanho ?? string.Empty,
 
-                // Pega a cor da variaÁ„o, caso exista.
+                // Pega a cor da varia√ß√£o, caso exista.
                 Cor = variacao?.Cor ?? string.Empty,
 
                 Quantidade = item.Quantidade,
                 PrecoUnitario = item.PrecoUnitario,
 
-                // Calcula o subtotal do item: quantidade vezes preÁo unit·rio.
+                // Calcula o subtotal do item: quantidade vezes pre√ßo unit√°rio.
                 Subtotal = item.Quantidade * item.PrecoUnitario
             };
         }
 
-        // Define qual imagem ser· usada para o produto com base no nome dele.
+        // Define qual imagem ser√° usada para o produto com base no nome dele.
         private static string ObterImagemUrl(Produto produto)
         {
-            // Normaliza o nome para min˙sculo para facilitar a comparaÁ„o.
+            // Normaliza o nome para min√∫sculo para facilitar a compara√ß√£o.
             var nomeNormalizado = produto.Nome.ToLowerInvariant();
 
             // Se o nome tiver Jordan ou Latte, retorna imagem do Air Jordan.
@@ -195,26 +195,26 @@ namespace ZeroFrame.Application.Servicos
             if (nomeNormalizado.Contains("moletom") || nomeNormalizado.Contains("blusa"))
                 return "/assets/products/blusa-moletom.jpg";
 
-            // Se o nome tiver CalÁa ou Jeans, retorna imagem da calÁa.
-            if (nomeNormalizado.Contains("calca") || nomeNormalizado.Contains("calÁa") || nomeNormalizado.Contains("jeans"))
+            // Se o nome tiver Cal√ßa ou Jeans, retorna imagem da cal√ßa.
+            if (nomeNormalizado.Contains("calca") || nomeNormalizado.Contains("cal√ßa") || nomeNormalizado.Contains("jeans"))
                 return "/assets/products/calca-levis-clara.png";
 
             // Se o nome tiver Corrente ou Ice, retorna imagem da corrente.
             if (nomeNormalizado.Contains("corrente") || nomeNormalizado.Contains("ice"))
                 return "/assets/products/corrente-ice.png";
 
-            // Se o nome tiver Adidas ou TÍnis, retorna imagem do tÍnis.
-            if (nomeNormalizado.Contains("adidas") || nomeNormalizado.Contains("tenis") || nomeNormalizado.Contains("tÍnis"))
+            // Se o nome tiver Adidas ou T√™nis, retorna imagem do t√™nis.
+            if (nomeNormalizado.Contains("adidas") || nomeNormalizado.Contains("tenis") || nomeNormalizado.Contains("t√™nis"))
                 return "/assets/products/tenis2.png";
 
-            // Imagem padr„o caso nenhum nome combine com as condiÁıes acima.
+            // Imagem padr√£o caso nenhum nome combine com as condi√ß√µes acima.
             return "/assets/products/camisa-over-black.png";
         }
 
         // Define a marca do produto com base no nome.
         private static string ObterMarca(Produto produto)
         {
-            // Normaliza o nome para min˙sculo para facilitar a comparaÁ„o.
+            // Normaliza o nome para min√∫sculo para facilitar a compara√ß√£o.
             var nomeNormalizado = produto.Nome.ToLowerInvariant();
 
             // Se o nome tiver Nike ou Jordan, considera a marca como Nike.
@@ -229,15 +229,15 @@ namespace ZeroFrame.Application.Servicos
             if (nomeNormalizado.Contains("levis") || nomeNormalizado.Contains("levi"))
                 return "Levi's";
 
-            // Caso n„o identifique uma marca conhecida, considera como marca prÛpria da loja.
+            // Caso n√£o identifique uma marca conhecida, considera como marca pr√≥pria da loja.
             return "Zero Frame";
         }
 
         // Define a origem do produto com base na marca.
         private static string ObterOrigem(Produto produto)
         {
-            // Se a marca for Zero Frame, o produto È considerado Original.
-            // Caso contr·rio, È considerado Multimarcas.
+            // Se a marca for Zero Frame, o produto √© considerado Original.
+            // Caso contr√°rio, √© considerado Multimarcas.
             return ObterMarca(produto) == "Zero Frame" ? "Original" : "Multimarcas";
         }
     }

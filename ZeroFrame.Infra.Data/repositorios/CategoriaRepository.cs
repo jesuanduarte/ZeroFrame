@@ -1,15 +1,15 @@
-using ZeroFrame.domain.entidades;
-using ZeroFrame.domain.Interface;
+using ZeroFrame.Domain.Entidades;
+using ZeroFrame.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using ZeroFrame.Infra.Data.BDconexao;
+using ZeroFrame.Infra.Data.Context;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace ZeroFrame.Infra.Data.repositorios
+namespace ZeroFrame.Infra.Data.Repositorios
 {
-    // Classe que implementa o repositÛrio da entidade.
-    // Ela contÈm os mÈtodos respons·veis por manipular os dados no sistema.
+    // Classe que implementa o reposit√≥rio da entidade.
+    // Ela cont√©m os m√©todos respons√°veis por manipular os dados no sistema.
     public class CategoriaRepository : ICategoriaRepository
     {
 
@@ -20,15 +20,15 @@ namespace ZeroFrame.Infra.Data.repositorios
             _context = context;
         }
         // Busca todos os registros dessa entidade no banco de dados.
-        // Pode trazer tambÈm dados relacionados usando Include, se necess·rio.
+        // Pode trazer tamb√©m dados relacionados usando Include, se necess√°rio.
         public async Task<List<Categoria>> ObterTodosAsync()
         {
             return await _context.categorias
                 .Include(c => c.Produtos)
                 .ToListAsync();
         }
-        // Busca um ˙nico registro pelo Id.
-        // Se n„o encontrar nenhum registro, retorna null
+        // Busca um √∫nico registro pelo Id.
+        // Se n√£o encontrar nenhum registro, retorna null
         public async Task<Categoria?> ObterPorIdAsync(int id)
         {
             return await _context.categorias
@@ -36,15 +36,15 @@ namespace ZeroFrame.Infra.Data.repositorios
                 .FirstOrDefaultAsync(c => c.Id == id);
         }
         // Adiciona um novo registro no banco de dados.
-        // SaveChangesAsync confirma a gravaÁ„o.
+        // SaveChangesAsync confirma a grava√ß√£o.
         public async Task AdicionarAsync(Categoria categoria)
         {
             await _context.categorias.AddAsync(categoria);
             await _context.SaveChangesAsync();
         }
 
-        // Atualiza um registro j· existente no banco de dados.
-        // SaveChangesAsync confirma a alteraÁ„o.
+        // Atualiza um registro j√° existente no banco de dados.
+        // SaveChangesAsync confirma a altera√ß√£o.
         public async Task AtualizarAsync(Categoria categoria)
         {
             _context.categorias.Update(categoria);
@@ -52,7 +52,7 @@ namespace ZeroFrame.Infra.Data.repositorios
         }
 
         // Remove um registro do banco de dados pelo Id.
-        // Se o registro n„o existir, o mÈtodo apenas encerra.
+        // Se o registro n√£o existir, o m√©todo apenas encerra.
         public async Task RemoverAsync(int id)
         {
             var categoria = await _context.categorias.FindAsync(id);
@@ -61,7 +61,7 @@ namespace ZeroFrame.Infra.Data.repositorios
                 return;
             
           // Cancela um pedido alterando seu status.
-          // Normalmente n„o remove o pedido do banco, apenas marca como cancelado.
+          // Normalmente n√£o remove o pedido do banco, apenas marca como cancelado.
             _context.categorias.Remove(categoria);
             await _context.SaveChangesAsync();
         }

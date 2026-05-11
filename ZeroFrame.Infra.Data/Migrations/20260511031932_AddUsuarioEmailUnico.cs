@@ -1,29 +1,27 @@
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
 namespace ZeroFrame.Infra.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class AddPerfilUsuario : Migration
+    public partial class AddUsuarioEmailUnico : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<string>(
-                name: "Perfil",
+            migrationBuilder.CreateIndex(
+                name: "IX_Usuarios_Email",
                 table: "Usuarios",
-                type: "nvarchar(20)",
-                maxLength: 20,
-                nullable: false,
-                defaultValue: "Cliente");
+                column: "Email",
+                unique: true);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "Perfil",
+            migrationBuilder.DropIndex(
+                name: "IX_Usuarios_Email",
                 table: "Usuarios");
         }
     }

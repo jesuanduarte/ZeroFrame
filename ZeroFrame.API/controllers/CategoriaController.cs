@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ZeroFrame.API.Errors;
 using ZeroFrame.Application.DTOS.Categoria;
@@ -32,7 +33,7 @@ namespace ZeroFrame.API.Controllers
         }
 
         // GET: api/categorias/{id}
-        // Retorna uma categoria especÃ­fica pelo Id
+        // Retorna uma categoria específica pelo Id
         [HttpGet("{id:int}")]
         [ProducesResponseType(typeof(CategoriaGetDto), StatusCodes.Status200OK)]
         public async Task<ActionResult<CategoriaGetDto>> ObterCategoriaPorId(int id)
@@ -47,6 +48,7 @@ namespace ZeroFrame.API.Controllers
 
         // POST: api/categorias
         // Cria uma nova categoria
+        [Authorize(Roles = "Administrador")]
         [HttpPost]
         [ProducesResponseType(typeof(CategoriaGetDto), StatusCodes.Status201Created)]
         public async Task<ActionResult<CategoriaGetDto>> CriarCategoria(CategoriaPostDto categoriaPostDto)
@@ -61,6 +63,7 @@ namespace ZeroFrame.API.Controllers
 
         // PUT: api/categorias/{id}
         // Atualiza uma categoria existente
+        [Authorize(Roles = "Administrador")]
         [HttpPut("{id:int}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<ActionResult> AtualizarCategoria(int id, CategoriaPutDto categoriaPutDto)
@@ -80,6 +83,7 @@ namespace ZeroFrame.API.Controllers
 
         // DELETE: api/categorias/{id}
         // Remove uma categoria
+        [Authorize(Roles = "Administrador")]
         [HttpDelete("{id:int}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<ActionResult> RemoverCategoria(int id)

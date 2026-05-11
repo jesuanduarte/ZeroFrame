@@ -6,19 +6,20 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using ZeroFrame.Application.Interfaces;
 using ZeroFrame.Application.Servicos;
-using ZeroFrame.Domain.account;
-using ZeroFrame.domain.Interface;
-using ZeroFrame.Infra.Data.BDconexao;
+using ZeroFrame.Domain.Account;
+using ZeroFrame.Domain.Interfaces;
+using ZeroFrame.Infra.Data.Context;
 using ZeroFrame.Infra.Data.Identity;
-using ZeroFrame.Infra.Data.repositorios;
+using ZeroFrame.Infra.Data.Repositorios;
+using ZeroFrame.Infra.Data.UnitOfWork;
 
-namespace ZeroFrame.infra.ioc
+namespace ZeroFrame.Infra.IoC
 {
     public static class DependencyInjector
     {
 
-        // Classe respons·vel por registrar as dependÍncias da camada de infraestrutura.
-        // Aqui s„o configurados os serviÁos necess·rios para o funcionamento da aplicaÁ„o.
+        // Classe respons√°vel por registrar as depend√™ncias da camada de infraestrutura.
+        // Aqui s√£o configurados os servi√ßos necess√°rios para o funcionamento da aplica√ß√£o.
         public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {
             // Configura o banco de dados SQL Server
@@ -33,10 +34,10 @@ namespace ZeroFrame.infra.ioc
 
             if (string.IsNullOrWhiteSpace(secretKey))
             {
-                throw new InvalidOperationException("A chave JWT SecretKey n„o foi configurada.");
+                throw new InvalidOperationException("A chave JWT SecretKey n√£o foi configurada.");
             }
 
-            // Configura a autenticaÁ„o com JWT
+            // Configura a autentica√ß√£o com JWT
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -62,7 +63,8 @@ namespace ZeroFrame.infra.ioc
                 };
             });
 
-            // RepositÛrios
+            // Reposit√≥rios e Unit of Work
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IVariacaoRepository, VariacaoRepository>();
             services.AddScoped<IUsuarioRepository, UsuarioRepository>();
             services.AddScoped<IProdutoRepository, ProdutoRepository>();
@@ -74,7 +76,7 @@ namespace ZeroFrame.infra.ioc
             services.AddScoped<ICategoriaRepository, CategoriaRepository>();
             services.AddScoped<ICarrinhoRepository, CarrinhoRepository>();
 
-            // ServiÁos
+            // Servi√ßos de aplica√ß√£o
             services.AddScoped<IUsuarioService, UsuarioService>();
             services.AddScoped<IProdutoService, ProdutoService>();
             services.AddScoped<IVariacaoService, VariacaoService>();
@@ -86,7 +88,7 @@ namespace ZeroFrame.infra.ioc
             services.AddScoped<IPagamentoService, PagamentoService>();
             services.AddScoped<IPedidoService, PedidoService>();
 
-            //autenticaÁ„o JWT
+            //autentica√ß√£o JWT e gera√ß√£o de token
             services.AddScoped<IAuthenticate, AuthenticateService>();
 
             return services;

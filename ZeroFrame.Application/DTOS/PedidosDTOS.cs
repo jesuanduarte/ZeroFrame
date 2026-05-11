@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 using ZeroFrame.Application.DTOS.ItemPedido;
-using ZeroFrame.domain.entidades;
+using ZeroFrame.Domain.Entidades;
 
 namespace ZeroFrame.Application.DTOS.Pedidos
 {
     public class PedidosGetDto
     {
-        //GET — Buscar/Ler dados
+        //GET â€” Buscar/Ler dados
         public int Id { get; set; }
         public int UsuarioId { get; set; }
         public DateTime DataPedido { get; set; }
@@ -24,19 +24,19 @@ namespace ZeroFrame.Application.DTOS.Pedidos
 
     public class PedidosPostDto
     {
-        //POST — Criar dados
-        [Required(ErrorMessage = "O campo Usuario é obrigatório.")]
-        [Range(1, int.MaxValue, ErrorMessage = "O UsuarioId deve ser válido.")]
+        //POST â€” Criar dados
+        [Required(ErrorMessage = "O campo Usuario Ã© obrigatÃ³rio.")]
+        [Range(1, int.MaxValue, ErrorMessage = "O UsuarioId deve ser vÃ¡lido.")]
         public int UsuarioId { get; set; }
 
-        [Required(ErrorMessage = "A lista de itens é obrigatória.")]
+        [Required(ErrorMessage = "A lista de itens Ã© obrigatÃ³ria.")]
         [MinLength(1, ErrorMessage = "O pedido deve conter pelo menos 1 item.")]
         public List<ItemPedidoPostDto> Itens { get; set; } = new();
     }
 
     public class PedidosPutDto
     {
-        //PUT — Atualizar dados
+        //PUT â€” Atualizar dados
         public int Id { get; set; }
         public string Status { get; set; } = string.Empty;
     }

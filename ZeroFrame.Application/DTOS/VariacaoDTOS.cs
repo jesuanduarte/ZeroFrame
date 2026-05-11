@@ -2,13 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
-using ZeroFrame.domain.entidades;
+using ZeroFrame.Domain.Entidades;
 
 namespace ZeroFrame.Application.DTOS
 {
     public class VariacaoGetDto
     {
-        //GET ó Buscar/Ler dados
+        //GET ‚Äî Buscar/Ler dados
         public int Id { get; set; }
         public string Tamanho { get; set; } = string.Empty;
         public string Cor { get; set; } = string.Empty;
@@ -16,61 +16,61 @@ namespace ZeroFrame.Application.DTOS
         public int ProdutoId { get; set; }
     }
 
-    // DTOs para criaÁ„o e atualizaÁ„o de variaÁıes de produtos, com validaÁ„o de dados.
+    // DTOs para cria√ß√£o e atualiza√ß√£o de varia√ß√µes de produtos, com valida√ß√£o de dados.
     public class VariacaoProdutoPostDto
     {
-        [Required(ErrorMessage = "O campo Tamanho È obrigatÛrio.")]
-        [MaxLength(50, ErrorMessage = "O campo Tamanho deve conter no m·ximo 50 caracteres.")]
+        [Required(ErrorMessage = "O campo Tamanho √© obrigat√≥rio.")]
+        [MaxLength(50, ErrorMessage = "O campo Tamanho deve conter no m√°ximo 50 caracteres.")]
         public string Tamanho { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "O campo Cor È obrigatÛrio.")]
-        [MaxLength(50, ErrorMessage = "O campo Cor deve conter no m·ximo 50 caracteres.")]
+        [Required(ErrorMessage = "O campo Cor √© obrigat√≥rio.")]
+        [MaxLength(50, ErrorMessage = "O campo Cor deve conter no m√°ximo 50 caracteres.")]
         public string Cor { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "O campo Estoque È obrigatÛrio.")]
-        [Range(0, int.MaxValue, ErrorMessage = "O campo Estoque n„o pode ser negativo.")]
+        [Required(ErrorMessage = "O campo Estoque √© obrigat√≥rio.")]
+        [Range(0, int.MaxValue, ErrorMessage = "O campo Estoque n√£o pode ser negativo.")]
         public int Estoque { get; set; }
     }
 
-    // DTO para atualizaÁ„o de variaÁıes de produtos
+    // DTO para atualiza√ß√£o de varia√ß√µes de produtos
     public class VariacaoProdutoPutDto
     {
-        [Required(ErrorMessage = "O campo Tamanho È obrigatÛrio.")]
-        [MaxLength(50, ErrorMessage = "O campo Tamanho deve conter no m·ximo 50 caracteres.")]
+        [Required(ErrorMessage = "O campo Tamanho √© obrigat√≥rio.")]
+        [MaxLength(50, ErrorMessage = "O campo Tamanho deve conter no m√°ximo 50 caracteres.")]
         public string Tamanho { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "O campo Cor È obrigatÛrio.")]
-        [MaxLength(50, ErrorMessage = "O campo Cor deve conter no m·ximo 50 caracteres.")]
+        [Required(ErrorMessage = "O campo Cor √© obrigat√≥rio.")]
+        [MaxLength(50, ErrorMessage = "O campo Cor deve conter no m√°ximo 50 caracteres.")]
         public string Cor { get; set; } = string.Empty;
 
-        [Range(0, int.MaxValue, ErrorMessage = "O campo Estoque n„o pode ser negativo.")]
+        [Range(0, int.MaxValue, ErrorMessage = "O campo Estoque n√£o pode ser negativo.")]
         public int Estoque { get; set; }
     }
 
-    // DTOs para criaÁ„o e atualizaÁ„o de variaÁıes de produtos
+    // DTOs para cria√ß√£o e atualiza√ß√£o de varia√ß√µes de produtos
     public class VariacaoPostDto
     {
-        //POST ó Criar dados
-        [Required(ErrorMessage = "O campo Tamanho È obrigatÛrio.")]
-        [MaxLength(50, ErrorMessage = "O campo Tamanho deve conter no m·ximo 50 caracteres.")]
+        //POST ‚Äî Criar dados
+        [Required(ErrorMessage = "O campo Tamanho √© obrigat√≥rio.")]
+        [MaxLength(50, ErrorMessage = "O campo Tamanho deve conter no m√°ximo 50 caracteres.")]
         public string Tamanho { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "O campo Cor È obrigatÛrio.")]
-        [MaxLength(50, ErrorMessage = "O campo Cor deve conter no m·ximo 50 caracteres.")]
+        [Required(ErrorMessage = "O campo Cor √© obrigat√≥rio.")]
+        [MaxLength(50, ErrorMessage = "O campo Cor deve conter no m√°ximo 50 caracteres.")]
         public string Cor { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "O campo Estoque È obrigatÛrio.")]
-        [Range(0, int.MaxValue, ErrorMessage = "O campo Estoque n„o pode ser negativo.")]
+        [Required(ErrorMessage = "O campo Estoque √© obrigat√≥rio.")]
+        [Range(0, int.MaxValue, ErrorMessage = "O campo Estoque n√£o pode ser negativo.")]
         public int Estoque { get; set; }
 
-        [Required(ErrorMessage = "O campo ProdutoId È obrigatÛrio.")]
-        [Range(1, int.MaxValue, ErrorMessage = "O campo ProdutoId deve ser v·lido.")]
+        [Required(ErrorMessage = "O campo ProdutoId √© obrigat√≥rio.")]
+        [Range(1, int.MaxValue, ErrorMessage = "O campo ProdutoId deve ser v√°lido.")]
         public int ProdutoId { get; set; }
     }
 
     public class VariacaoPutDto
     {
-        //PUT ó Atualizar dados
+        //PUT ‚Äî Atualizar dados
         public int Id { get; set; }
         public string Tamanho { get; set; } = string.Empty;
         public string Cor { get; set; } = string.Empty;

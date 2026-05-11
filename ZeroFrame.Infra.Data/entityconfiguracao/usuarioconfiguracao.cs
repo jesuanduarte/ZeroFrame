@@ -1,19 +1,20 @@
-using ZeroFrame.domain.entidades;
+using ZeroFrame.Domain.Entidades;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace ZeroFrame.Infra.Data.entityconfiguracao
+namespace ZeroFrame.Infra.Data.EntityConfiguracao
 {
-    // Configuração da entidade no banco de dados.
+    // ConfiguraÃ§Ã£o da entidade no banco de dados.
 
-    public class Usuarioconfiguracao : IEntityTypeConfiguration<Usuario>
+    public class UsuarioConfiguracao : IEntityTypeConfiguration<Usuario>
     {
         public void Configure(EntityTypeBuilder<Usuario> builder)
         {
             builder.HasKey(x => x.Id);
+            builder.HasIndex(x => x.Email).IsUnique();
 
             builder.Property(x => x.Nome)
                 .IsRequired()

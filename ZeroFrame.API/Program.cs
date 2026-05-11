@@ -1,13 +1,23 @@
 using Microsoft.OpenApi;
 using ZeroFrame.API.Filters;
 using ZeroFrame.API.Middleware;
-using ZeroFrame.infra.ioc;
+using ZeroFrame.Infra.IoC;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers(options =>
 {
     options.Filters.Add<ApiErrorResultFilter>();
+});
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: "ZeroFrame_Frontend",
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:3000", "https://localhost:3090")
+                .AllowAnyHeader()
+                .AllowAnyMethod();
+        });
 });
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
@@ -30,9 +40,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseCors("ZeroFrame_Frontend");
 app.UseExceptionMiddleware();
 
-//app.UseHttpsRedirection();
+app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();

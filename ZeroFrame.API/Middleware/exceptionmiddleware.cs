@@ -25,7 +25,7 @@ namespace ZeroFrame.API.Middleware
             _env = env;
         }
 
-        // O método captura o erro, registra-o e retorna uma resposta JSON apropriada com base no tipo de exceção.
+        // O mÃ©todo captura o erro, registra-o e retorna uma resposta JSON apropriada com base no tipo de exceÃ§Ã£o.
         public async Task InvokeAsync(HttpContext httpContext)
         {
             try
@@ -51,8 +51,8 @@ namespace ZeroFrame.API.Middleware
             }
         }
 
-        // é responsável por mapear diferentes tipos de exceções para respostas HTTP apropriadas.
-        // Ele verifica o tipo da exceção e retorna ApiException correspondente, contendo o status code,
+        // Ã© responsÃ¡vel por mapear diferentes tipos de exceÃ§Ãµes para respostas HTTP apropriadas.
+        // Ele verifica o tipo da exceÃ§Ã£o e retorna ApiException correspondente, contendo o status code,
         // a mensagem e os detalhes (se estiver em ambiente de desenvolvimento).
         private ApiException CreateResponse(HttpContext httpContext, Exception exception)
         {

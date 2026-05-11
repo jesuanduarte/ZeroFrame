@@ -1,12 +1,12 @@
-using ZeroFrame.domain.entidades;
-using ZeroFrame.domain.Interface;
+using ZeroFrame.Domain.Entidades;
+using ZeroFrame.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using ZeroFrame.Infra.Data.BDconexao;
+using ZeroFrame.Infra.Data.Context;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace ZeroFrame.Infra.Data.repositorios
+namespace ZeroFrame.Infra.Data.Repositorios
 {
     public class ItemCarrinhoRepository : IItemCarrinhoRepository
     {

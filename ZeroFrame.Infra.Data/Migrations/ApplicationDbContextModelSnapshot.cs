@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using ZeroFrame.Infra.Data.BDconexao;
+using ZeroFrame.Infra.Data.Context;
 
 #nullable disable
 
@@ -22,7 +22,7 @@ namespace ZeroFrame.Infra.Data.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("ZeroFrame.domain.entidades.Carrinho", b =>
+            modelBuilder.Entity("ZeroFrame.Domain.Entidades.Carrinho", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -43,7 +43,7 @@ namespace ZeroFrame.Infra.Data.Migrations
                     b.ToTable("carrinhos");
                 });
 
-            modelBuilder.Entity("ZeroFrame.domain.entidades.Categoria", b =>
+            modelBuilder.Entity("ZeroFrame.Domain.Entidades.Categoria", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -66,7 +66,7 @@ namespace ZeroFrame.Infra.Data.Migrations
                     b.ToTable("categorias");
                 });
 
-            modelBuilder.Entity("ZeroFrame.domain.entidades.Endereco", b =>
+            modelBuilder.Entity("ZeroFrame.Domain.Entidades.Endereco", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -112,7 +112,7 @@ namespace ZeroFrame.Infra.Data.Migrations
                     b.ToTable("enderecos");
                 });
 
-            modelBuilder.Entity("ZeroFrame.domain.entidades.ItemCarrinho", b =>
+            modelBuilder.Entity("ZeroFrame.Domain.Entidades.ItemCarrinho", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -141,7 +141,7 @@ namespace ZeroFrame.Infra.Data.Migrations
                     b.ToTable("item_Carrinhos");
                 });
 
-            modelBuilder.Entity("ZeroFrame.domain.entidades.ItemPedido", b =>
+            modelBuilder.Entity("ZeroFrame.Domain.Entidades.ItemPedido", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -170,7 +170,7 @@ namespace ZeroFrame.Infra.Data.Migrations
                     b.ToTable("itemPedidos");
                 });
 
-            modelBuilder.Entity("ZeroFrame.domain.entidades.Pagamento", b =>
+            modelBuilder.Entity("ZeroFrame.Domain.Entidades.Pagamento", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -199,7 +199,7 @@ namespace ZeroFrame.Infra.Data.Migrations
                     b.ToTable("Pagamentos");
                 });
 
-            modelBuilder.Entity("ZeroFrame.domain.entidades.Pedidos", b =>
+            modelBuilder.Entity("ZeroFrame.Domain.Entidades.Pedidos", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -228,7 +228,7 @@ namespace ZeroFrame.Infra.Data.Migrations
                     b.ToTable("pedidos");
                 });
 
-            modelBuilder.Entity("ZeroFrame.domain.entidades.Produto", b =>
+            modelBuilder.Entity("ZeroFrame.Domain.Entidades.Produto", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -280,7 +280,7 @@ namespace ZeroFrame.Infra.Data.Migrations
                     b.ToTable("produtos");
                 });
 
-            modelBuilder.Entity("ZeroFrame.domain.entidades.Usuario", b =>
+            modelBuilder.Entity("ZeroFrame.Domain.Entidades.Usuario", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -318,10 +318,13 @@ namespace ZeroFrame.Infra.Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Email")
+                        .IsUnique();
+
                     b.ToTable("Usuarios");
                 });
 
-            modelBuilder.Entity("ZeroFrame.domain.entidades.VariacaoProdutos", b =>
+            modelBuilder.Entity("ZeroFrame.Domain.Entidades.VariacaoProdutos", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -352,9 +355,9 @@ namespace ZeroFrame.Infra.Data.Migrations
                     b.ToTable("variacaoprodutos");
                 });
 
-            modelBuilder.Entity("ZeroFrame.domain.entidades.Carrinho", b =>
+            modelBuilder.Entity("ZeroFrame.Domain.Entidades.Carrinho", b =>
                 {
-                    b.HasOne("ZeroFrame.domain.entidades.Usuario", "Usuario")
+                    b.HasOne("ZeroFrame.Domain.Entidades.Usuario", "Usuario")
                         .WithMany()
                         .HasForeignKey("UsuarioId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -363,9 +366,9 @@ namespace ZeroFrame.Infra.Data.Migrations
                     b.Navigation("Usuario");
                 });
 
-            modelBuilder.Entity("ZeroFrame.domain.entidades.Endereco", b =>
+            modelBuilder.Entity("ZeroFrame.Domain.Entidades.Endereco", b =>
                 {
-                    b.HasOne("ZeroFrame.domain.entidades.Usuario", "Usuario")
+                    b.HasOne("ZeroFrame.Domain.Entidades.Usuario", "Usuario")
                         .WithMany("Enderecos")
                         .HasForeignKey("UsuarioId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -374,15 +377,15 @@ namespace ZeroFrame.Infra.Data.Migrations
                     b.Navigation("Usuario");
                 });
 
-            modelBuilder.Entity("ZeroFrame.domain.entidades.ItemCarrinho", b =>
+            modelBuilder.Entity("ZeroFrame.Domain.Entidades.ItemCarrinho", b =>
                 {
-                    b.HasOne("ZeroFrame.domain.entidades.Carrinho", "Carrinho")
+                    b.HasOne("ZeroFrame.Domain.Entidades.Carrinho", "Carrinho")
                         .WithMany("Itens")
                         .HasForeignKey("CarrinhoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ZeroFrame.domain.entidades.VariacaoProdutos", "VariacaoProduto")
+                    b.HasOne("ZeroFrame.Domain.Entidades.VariacaoProdutos", "VariacaoProduto")
                         .WithMany()
                         .HasForeignKey("VariacaoProdutoId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -393,15 +396,15 @@ namespace ZeroFrame.Infra.Data.Migrations
                     b.Navigation("VariacaoProduto");
                 });
 
-            modelBuilder.Entity("ZeroFrame.domain.entidades.ItemPedido", b =>
+            modelBuilder.Entity("ZeroFrame.Domain.Entidades.ItemPedido", b =>
                 {
-                    b.HasOne("ZeroFrame.domain.entidades.Pedidos", "Pedido")
+                    b.HasOne("ZeroFrame.Domain.Entidades.Pedidos", "Pedido")
                         .WithMany("Itens")
                         .HasForeignKey("PedidoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ZeroFrame.domain.entidades.VariacaoProdutos", "VariacaoProduto")
+                    b.HasOne("ZeroFrame.Domain.Entidades.VariacaoProdutos", "VariacaoProduto")
                         .WithMany()
                         .HasForeignKey("VariacaoProdutoId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -412,20 +415,20 @@ namespace ZeroFrame.Infra.Data.Migrations
                     b.Navigation("VariacaoProduto");
                 });
 
-            modelBuilder.Entity("ZeroFrame.domain.entidades.Pagamento", b =>
+            modelBuilder.Entity("ZeroFrame.Domain.Entidades.Pagamento", b =>
                 {
-                    b.HasOne("ZeroFrame.domain.entidades.Pedidos", "Pedido")
+                    b.HasOne("ZeroFrame.Domain.Entidades.Pedidos", "Pedido")
                         .WithOne("Pagamento")
-                        .HasForeignKey("ZeroFrame.domain.entidades.Pagamento", "PedidoId")
+                        .HasForeignKey("ZeroFrame.Domain.Entidades.Pagamento", "PedidoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Pedido");
                 });
 
-            modelBuilder.Entity("ZeroFrame.domain.entidades.Pedidos", b =>
+            modelBuilder.Entity("ZeroFrame.Domain.Entidades.Pedidos", b =>
                 {
-                    b.HasOne("ZeroFrame.domain.entidades.Usuario", "Usuario")
+                    b.HasOne("ZeroFrame.Domain.Entidades.Usuario", "Usuario")
                         .WithMany("Pedidos")
                         .HasForeignKey("UsuarioId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -434,9 +437,9 @@ namespace ZeroFrame.Infra.Data.Migrations
                     b.Navigation("Usuario");
                 });
 
-            modelBuilder.Entity("ZeroFrame.domain.entidades.Produto", b =>
+            modelBuilder.Entity("ZeroFrame.Domain.Entidades.Produto", b =>
                 {
-                    b.HasOne("ZeroFrame.domain.entidades.Categoria", "Categoria")
+                    b.HasOne("ZeroFrame.Domain.Entidades.Categoria", "Categoria")
                         .WithMany("Produtos")
                         .HasForeignKey("CategoriaId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -445,9 +448,9 @@ namespace ZeroFrame.Infra.Data.Migrations
                     b.Navigation("Categoria");
                 });
 
-            modelBuilder.Entity("ZeroFrame.domain.entidades.VariacaoProdutos", b =>
+            modelBuilder.Entity("ZeroFrame.Domain.Entidades.VariacaoProdutos", b =>
                 {
-                    b.HasOne("ZeroFrame.domain.entidades.Produto", "Produto")
+                    b.HasOne("ZeroFrame.Domain.Entidades.Produto", "Produto")
                         .WithMany("VariacoesProdutos")
                         .HasForeignKey("ProdutoId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -456,29 +459,29 @@ namespace ZeroFrame.Infra.Data.Migrations
                     b.Navigation("Produto");
                 });
 
-            modelBuilder.Entity("ZeroFrame.domain.entidades.Carrinho", b =>
+            modelBuilder.Entity("ZeroFrame.Domain.Entidades.Carrinho", b =>
                 {
                     b.Navigation("Itens");
                 });
 
-            modelBuilder.Entity("ZeroFrame.domain.entidades.Categoria", b =>
+            modelBuilder.Entity("ZeroFrame.Domain.Entidades.Categoria", b =>
                 {
                     b.Navigation("Produtos");
                 });
 
-            modelBuilder.Entity("ZeroFrame.domain.entidades.Pedidos", b =>
+            modelBuilder.Entity("ZeroFrame.Domain.Entidades.Pedidos", b =>
                 {
                     b.Navigation("Itens");
 
                     b.Navigation("Pagamento");
                 });
 
-            modelBuilder.Entity("ZeroFrame.domain.entidades.Produto", b =>
+            modelBuilder.Entity("ZeroFrame.Domain.Entidades.Produto", b =>
                 {
                     b.Navigation("VariacoesProdutos");
                 });
 
-            modelBuilder.Entity("ZeroFrame.domain.entidades.Usuario", b =>
+            modelBuilder.Entity("ZeroFrame.Domain.Entidades.Usuario", b =>
                 {
                     b.Navigation("Enderecos");
 

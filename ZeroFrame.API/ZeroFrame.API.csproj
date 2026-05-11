@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+<Project Sdk="Microsoft.NET.Sdk.Web">
 
 	<PropertyGroup>
 		<TargetFramework>net10.0</TargetFramework>
@@ -21,7 +21,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\ZeroFrame.infra.ioc\ZeroFrame.infra.ioc.csproj" />
+		<ProjectReference Include="..\ZeroFrame.Infra.IoC\ZeroFrame.Infra.IoC.csproj" />
 	</ItemGroup>
 
 </Project>

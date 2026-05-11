@@ -1,8 +1,9 @@
 using ZeroFrame.Application.DTOS;
 using ZeroFrame.Application.DTOS.Produto;
 using ZeroFrame.Application.Interfaces;
-using ZeroFrame.domain.entidades;
-using ZeroFrame.domain.Interface;
+using ZeroFrame.Domain.Entidades;
+using ZeroFrame.Domain.Filtros;
+using ZeroFrame.Domain.Interfaces;
 
 namespace ZeroFrame.Application.Servicos
 {
@@ -27,11 +28,9 @@ namespace ZeroFrame.Application.Servicos
         // Busca todos os produtos e aplica os filtros informados.
         public async Task<List<ProdutoGetDto>> ObterTodosAsync(ProdutoFiltroDto filtro)
         {
-            var produtos = await _produtoRepository.ObterTodosAsync();
+            var produtos = await _produtoRepository.ObterTodosAsync(MapearProdutoFiltro(filtro));
 
-            // Filtra os produtos e depois transforma cada entidade Produto em ProdutoGetDto.
             return produtos
-                .Where(produto => AtendeFiltro(produto, filtro))
                 .Select(MapearProdutoGetDto)
                 .ToList();
         }
@@ -117,78 +116,19 @@ namespace ZeroFrame.Application.Servicos
                 throw new InvalidOperationException("Categoria nao encontrada.");
         }
 
-        // Verifica se o produto atende todos os filtros informados.
-        private static bool AtendeFiltro(Produto produto, ProdutoFiltroDto filtro)
+        private static ProdutoFiltro MapearProdutoFiltro(ProdutoFiltroDto filtro)
         {
-            return AtendeBusca(produto, filtro.Busca)
-                && AtendeCategoria(produto, filtro.Categoria)
-                && AtendeMarca(produto, filtro.Marca)
-                && AtendeOrigem(produto, filtro.Origem)
-                && AtendePreco(produto, filtro.PrecoMin, filtro.PrecoMax)
-                && AtendeVariacao(produto, filtro.Tamanho, filtro.Cor);
-        }
-
-        // Verifica se o texto pesquisado aparece no nome, descrição, categoria, marca ou origem.
-        private static bool AtendeBusca(Produto produto, string? busca)
-        {
-            if (string.IsNullOrWhiteSpace(busca))
-                return true;
-
-            return Contem(produto.Nome, busca)
-                || Contem(produto.Descricao, busca)
-                || Contem(produto.Categoria?.Nome, busca)
-                || Contem(ObterMarca(produto), busca)
-                || Contem(ObterOrigem(produto), busca);
-        }
-
-        // Verifica se o produto pertence à categoria informada.
-        private static bool AtendeCategoria(Produto produto, string? categoria)
-        {
-            return string.IsNullOrWhiteSpace(categoria)
-                || Contem(produto.Categoria?.Nome, categoria)
-                || produto.CategoriaId.ToString() == categoria.Trim();
-        }
-
-        // Verifica se o produto pertence à marca informada.
-        private static bool AtendeMarca(Produto produto, string? marca)
-        {
-            return string.IsNullOrWhiteSpace(marca) || Contem(ObterMarca(produto), marca);
-        }
-
-        // Verifica se o produto pertence à origem informada.
-        private static bool AtendeOrigem(Produto produto, string? origem)
-        {
-            return string.IsNullOrWhiteSpace(origem) || Contem(ObterOrigem(produto), origem);
-        }
-
-        // Verifica se o preço do produto está dentro do preço mínimo e máximo informados.
-        private static bool AtendePreco(Produto produto, decimal? precoMin, decimal? precoMax)
-        {
-            if (precoMin.HasValue && produto.Preco < precoMin.Value)
-                return false;
-
-            if (precoMax.HasValue && produto.Preco > precoMax.Value)
-                return false;
-
-            return true;
-        }
-
-        // Verifica se o produto possui alguma variação com o tamanho ou cor informados.
-        private static bool AtendeVariacao(Produto produto, string? tamanho, string? cor)
-        {
-            if (string.IsNullOrWhiteSpace(tamanho) && string.IsNullOrWhiteSpace(cor))
-                return true;
-
-            return produto.VariacoesProdutos.Any(variacao =>
-                (string.IsNullOrWhiteSpace(tamanho) || Contem(variacao.Tamanho, tamanho))
-                && (string.IsNullOrWhiteSpace(cor) || Contem(variacao.Cor, cor)));
-        }
-
-        // Verifica se um texto contém o filtro informado, ignorando letras maiúsculas e minúsculas.
-        private static bool Contem(string? valor, string filtro)
-        {
-            return !string.IsNullOrWhiteSpace(valor)
-                && valor.Contains(filtro.Trim(), StringComparison.OrdinalIgnoreCase);
+            return new ProdutoFiltro
+            {
+                Busca = filtro.Busca,
+                Categoria = filtro.Categoria,
+                Marca = filtro.Marca,
+                Origem = filtro.Origem,
+                Tamanho = filtro.Tamanho,
+                Cor = filtro.Cor,
+                PrecoMin = filtro.PrecoMin,
+                PrecoMax = filtro.PrecoMax
+            };
         }
 
         // Retorna o preço original do produto, se existir.

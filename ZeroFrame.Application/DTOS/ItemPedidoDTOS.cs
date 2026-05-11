@@ -2,13 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
-using ZeroFrame.domain.entidades;
+using ZeroFrame.Domain.Entidades;
 
 namespace ZeroFrame.Application.DTOS.ItemPedido
 {
     public class ItemPedidoGetDto
     {
-        //GET ó Buscar/Ler dados
+        //GET ‚Äî Buscar/Ler dados
         public int Id { get; set; }
         public int PedidoId { get; set; }
         public int VariacaoProdutoId { get; set; }
@@ -25,43 +25,43 @@ namespace ZeroFrame.Application.DTOS.ItemPedido
         public decimal Subtotal { get; set; }
     }
 
-    // DTOs para criaÁ„o itens de pedido, com validaÁ„o de dados.
+    // DTOs para cria√ß√£o itens de pedido, com valida√ß√£o de dados.
     public class PedidoItemPostDto
     {
-        [Required(ErrorMessage = "O campo VariacaoProdutoId È obrigatÛrio.")]
-        [Range(1, int.MaxValue, ErrorMessage = "O VariacaoProdutoId deve ser v·lido.")]
+        [Required(ErrorMessage = "O campo VariacaoProdutoId √© obrigat√≥rio.")]
+        [Range(1, int.MaxValue, ErrorMessage = "O VariacaoProdutoId deve ser v√°lido.")]
         public int VariacaoProdutoId { get; set; }
 
-        [Required(ErrorMessage = "O campo Quantidade È obrigatÛrio.")]
+        [Required(ErrorMessage = "O campo Quantidade √© obrigat√≥rio.")]
         [Range(1, int.MaxValue, ErrorMessage = "A quantidade deve ser maior que zero.")]
         public int Quantidade { get; set; }
     }
 
-    // DTOs para atualizaÁ„o de itens de pedido, com validaÁ„o de dados.
+    // DTOs para atualiza√ß√£o de itens de pedido, com valida√ß√£o de dados.
     public class PedidoItemPutDto
     {
-        [Required(ErrorMessage = "O campo VariacaoProdutoId È obrigatÛrio.")]
-        [Range(1, int.MaxValue, ErrorMessage = "O VariacaoProdutoId deve ser v·lido.")]
+        [Required(ErrorMessage = "O campo VariacaoProdutoId √© obrigat√≥rio.")]
+        [Range(1, int.MaxValue, ErrorMessage = "O VariacaoProdutoId deve ser v√°lido.")]
         public int VariacaoProdutoId { get; set; }
 
-        [Required(ErrorMessage = "O campo Quantidade È obrigatÛrio.")]
+        [Required(ErrorMessage = "O campo Quantidade √© obrigat√≥rio.")]
         [Range(1, int.MaxValue, ErrorMessage = "A quantidade deve ser maior que zero.")]
         public int Quantidade { get; set; }
     }
 
-    // DTOs para criaÁ„o e atualizaÁ„o de itens de pedido, com validaÁ„o de dados.
+    // DTOs para cria√ß√£o e atualiza√ß√£o de itens de pedido, com valida√ß√£o de dados.
     public class ItemPedidoPostDto
     {
-        //POST ó Criar dados
-        [Required(ErrorMessage = "O campo PedidoId È obrigatÛrio.")]
-        [Range(1, int.MaxValue, ErrorMessage = "O PedidoId deve ser v·lido.")]
+        //POST ‚Äî Criar dados
+        [Required(ErrorMessage = "O campo PedidoId √© obrigat√≥rio.")]
+        [Range(1, int.MaxValue, ErrorMessage = "O PedidoId deve ser v√°lido.")]
         public int PedidoId { get; set; }
 
-        [Required(ErrorMessage = "O campo VariacaoProdutoId È obrigatÛrio.")]
-        [Range(1, int.MaxValue, ErrorMessage = "O VariacaoProdutoId deve ser v·lido.")]
+        [Required(ErrorMessage = "O campo VariacaoProdutoId √© obrigat√≥rio.")]
+        [Range(1, int.MaxValue, ErrorMessage = "O VariacaoProdutoId deve ser v√°lido.")]
         public int VariacaoProdutoId { get; set; }
 
-        [Required(ErrorMessage = "O campo Quantidade È obrigatÛrio.")]
+        [Required(ErrorMessage = "O campo Quantidade √© obrigat√≥rio.")]
         [Range(1, int.MaxValue, ErrorMessage = "A quantidade deve ser maior que zero.")]
         public int Quantidade { get; set; }
 
@@ -69,7 +69,7 @@ namespace ZeroFrame.Application.DTOS.ItemPedido
 
     public class ItemPedidoPutDto
     {
-        //PUT ó Atualizar dados
+        //PUT ‚Äî Atualizar dados
         public int Id { get; set; }
         public int PedidoId { get; set; }
         public int VariacaoProdutoId { get; set; }

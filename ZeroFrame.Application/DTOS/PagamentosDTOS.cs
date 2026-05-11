@@ -2,13 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
-using ZeroFrame.domain.entidades;
+using ZeroFrame.Domain.Entidades;
 
 namespace ZeroFrame.Application.DTOS.Pagamento
 {
     public class PagamentoGetDto
     {
-        //GET — Buscar/Ler dados
+        //GET â€” Buscar/Ler dados
         public int Id { get; set; }
         public string Metodo { get; set; } = string.Empty;
         public string Status { get; set; } = string.Empty;
@@ -18,26 +18,26 @@ namespace ZeroFrame.Application.DTOS.Pagamento
 
     public class PagamentoPostDto
     {
-        //POST — Criar dados
-        [Required(ErrorMessage = "O campo Método é obrigatório.")]
-        [MaxLength(50, ErrorMessage = "O campo Método deve conter no máximo 50 caracteres.")]
+        //POST â€” Criar dados
+        [Required(ErrorMessage = "O campo MÃ©todo Ã© obrigatÃ³rio.")]
+        [MaxLength(50, ErrorMessage = "O campo MÃ©todo deve conter no mÃ¡ximo 50 caracteres.")]
         public string Metodo { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "O campo PedidoId é obrigatório.")]
-        [Range(1, int.MaxValue, ErrorMessage = "O PedidoId deve ser válido.")]
+        [Required(ErrorMessage = "O campo PedidoId Ã© obrigatÃ³rio.")]
+        [Range(1, int.MaxValue, ErrorMessage = "O PedidoId deve ser vÃ¡lido.")]
         public int PedidoId { get; set; }
         
     }
     public class PagamentoPedidoPostDto
     {
-        [Required(ErrorMessage = "O campo Método é obrigatório.")]
-        [MaxLength(50, ErrorMessage = "O campo Método deve conter no máximo 50 caracteres.")]
+        [Required(ErrorMessage = "O campo MÃ©todo Ã© obrigatÃ³rio.")]
+        [MaxLength(50, ErrorMessage = "O campo MÃ©todo deve conter no mÃ¡ximo 50 caracteres.")]
         public string Metodo { get; set; } = string.Empty;
     }
 
     public class PagamentoPutDto
     {
-        //PUT — Atualizar dados
+        //PUT â€” Atualizar dados
         public int Id { get; set; }
         public string Status { get; set; } = string.Empty;
     }

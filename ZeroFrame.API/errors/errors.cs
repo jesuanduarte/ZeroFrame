@@ -2,8 +2,8 @@ namespace ZeroFrame.API.Errors
 {
     public class ApiException
     {
-        // recebe um código de status HTTP.
-        // Ele retorna as propriedades correspondentes com as informações fornecidas.
+        // recebe um cÃ³digo de status HTTP.
+        // Ele retorna as propriedades correspondentes com as informaÃ§Ãµes fornecidas.
         public ApiException(int statusCode, string message, string? details = null)
         {
             StatusCode = statusCode;
@@ -16,7 +16,7 @@ namespace ZeroFrame.API.Errors
         public string? Details { get; set; }
     }
 
-    // Classes específicas para cada tipo de erro,
+    // Classes especÃ­ficas para cada tipo de erro,
     public class ApiNotFound : ApiException
     {
         public ApiNotFound(string message, string? details = null)
@@ -25,7 +25,7 @@ namespace ZeroFrame.API.Errors
         }
     }
 
-    // é uma classe específica para representar erros de requisição 
+    // Ã© uma classe especÃ­fica para representar erros de requisiÃ§Ã£o 
     public class ApiBadRequest : ApiException
     {
         public ApiBadRequest(string message, string? details = null)

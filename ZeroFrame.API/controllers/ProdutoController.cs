@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ZeroFrame.API.Errors;
 using ZeroFrame.Application.DTOS;
@@ -8,7 +9,8 @@ namespace ZeroFrame.API.Controllers
 {
   
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/produtos")]
+    [Route("api/Produto")]
     [ProducesResponseType(typeof(ApiBadRequest), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ApiNotFound), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ApiException), StatusCodes.Status500InternalServerError)]
@@ -49,6 +51,7 @@ namespace ZeroFrame.API.Controllers
 
         // POST: api/Produto
         // Cria um novo produto.
+        [Authorize(Roles = "Administrador")]
         [HttpPost]
         public async Task<ActionResult<ProdutoGetDto>> CriarProduto(ProdutoPostDto produtoPostDto)
         {
@@ -74,6 +77,7 @@ namespace ZeroFrame.API.Controllers
 
         // PUT: api/Produto/{id}
         // Atualiza um produto existente.
+        [Authorize(Roles = "Administrador")]
         [HttpPut("{id}")]
         public async Task<ActionResult> AtualizarProduto(int id, ProdutoPutDto produtoPutDto)
         {
@@ -101,6 +105,7 @@ namespace ZeroFrame.API.Controllers
 
         // DELETE: api/Produto/{id}
         // Remove um produto existente.
+        [Authorize(Roles = "Administrador")]
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeletarProduto(int id)
         {
@@ -148,6 +153,7 @@ namespace ZeroFrame.API.Controllers
 
         // POST: api/Produto/{produtoId}/variacoes
         // Cria uma variação para um produto.
+        [Authorize(Roles = "Administrador")]
         [HttpPost("{produtoId:int}/variacoes")]
         public async Task<ActionResult<VariacaoGetDto>> CriarVariacaoProduto(int produtoId, VariacaoProdutoPostDto variacaoProdutoPostDto)
         {
@@ -177,6 +183,7 @@ namespace ZeroFrame.API.Controllers
 
         // PUT: api/Produto/{produtoId}/variacoes/{variacaoId}
         // Atualiza uma variação de um produto.
+        [Authorize(Roles = "Administrador")]
         [HttpPut("{produtoId:int}/variacoes/{variacaoId:int}")]
         public async Task<ActionResult> AtualizarVariacaoProduto(int produtoId, int variacaoId, VariacaoProdutoPutDto variacaoProdutoPutDto)
         {
@@ -206,6 +213,7 @@ namespace ZeroFrame.API.Controllers
 
         // DELETE: api/Produto/{produtoId}/variacoes/{variacaoId}
         // Remove uma variação de um produto.
+        [Authorize(Roles = "Administrador")]
         [HttpDelete("{produtoId:int}/variacoes/{variacaoId:int}")]
         public async Task<ActionResult> RemoverVariacaoProduto(int produtoId, int variacaoId)
         {

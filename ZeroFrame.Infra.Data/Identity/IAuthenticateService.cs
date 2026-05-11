@@ -1,12 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using ZeroFrame.domain.entidades;
-using ZeroFrame.Domain.account;
-using ZeroFrame.Infra.Data.BDconexao;
+using ZeroFrame.Domain.Entidades;
+using ZeroFrame.Domain.Account;
+using ZeroFrame.Infra.Data.Context;
 
 namespace ZeroFrame.Infra.Data.Identity
 {
@@ -44,20 +44,26 @@ namespace ZeroFrame.Infra.Data.Identity
                 issuer: _configuration["Jwt:Issuer"],
                 audience: _configuration["Jwt:Audience"],
                 claims: claims,
-                expires: DateTime.Now.AddHours(1),
+                expires: DateTime.UtcNow.AddHours(1),
                 signingCredentials: credentials
             );
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
-        public Task<Usuario?> GetUser(string email)
+        public async Task<Usuario?> GetUser(string email)
         {
-            throw new NotImplementedException();
+            var emailNormalizado = email.Trim().ToLower();
+
+            return await _context.Usuarios
+                .FirstOrDefaultAsync(u => u.Email.ToLower() == emailNormalizado);
         }
 
-        public Task<bool> userExists(string email)
+        public async Task<bool> userExists(string email)
         {
-            throw new NotImplementedException();
+            var emailNormalizado = email.Trim().ToLower();
+
+            return await _context.Usuarios
+                .AnyAsync(u => u.Email.ToLower() == emailNormalizado);
         }
     }
 }

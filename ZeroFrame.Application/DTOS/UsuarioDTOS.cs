@@ -1,4 +1,4 @@
-using ZeroFrame.domain.entidades;
+using ZeroFrame.Domain.Entidades;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -9,7 +9,7 @@ namespace ZeroFrame.Application.DTOS.Usuario
 {
     public class UsuarioGetDto
     {
-        //GET ó Buscar/Ler dados
+        //GET ‚Äî Buscar/Ler dados
         public int Id { get; set; }
         public string Nome { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
@@ -19,60 +19,59 @@ namespace ZeroFrame.Application.DTOS.Usuario
         public List<EnderecoGetDto> Enderecos { get; set; } = new();
     }
 
-    // DTO para criaÁ„o de usu·rio, com validaÁ„o de dados
+    // DTO para cria√ß√£o de usu√°rio, com valida√ß√£o de dados
     public class UsuarioPostDto
     {
         
-        [Required(ErrorMessage = "O campo Nome È obrigatÛrio.")]
-        [MaxLength(50, ErrorMessage = "O campo Nome deve conter no m·ximo 50 caracteres.")]
+        [Required(ErrorMessage = "O campo Nome √© obrigat√≥rio.")]
+        [MaxLength(50, ErrorMessage = "O campo Nome deve conter no m√°ximo 50 caracteres.")]
         public string Nome { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "O campo Email È obrigatÛrio.")]
-        [EmailAddress(ErrorMessage = "O campo Email deve ser um endereÁo de email v·lido.")]
-        [MaxLength(100, ErrorMessage = "O campo Email deve conter no m·ximo 100 caracteres.")]
+        [Required(ErrorMessage = "O campo Email √© obrigat√≥rio.")]
+        [EmailAddress(ErrorMessage = "O campo Email deve ser um endere√ßo de email v√°lido.")]
+        [MaxLength(100, ErrorMessage = "O campo Email deve conter no m√°ximo 100 caracteres.")]
         public string Email { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "O campo Senha È obrigatÛrio.")]
-        [MinLength(6, ErrorMessage = "A senha deve conter no mÌnimo 6 caracteres.")]
-        [MaxLength(50, ErrorMessage = "A senha deve conter no m·ximo 50 caracteres.")]
+        [Required(ErrorMessage = "O campo Senha √© obrigat√≥rio.")]
+        [MinLength(6, ErrorMessage = "A senha deve conter no m√≠nimo 6 caracteres.")]
+        [MaxLength(50, ErrorMessage = "A senha deve conter no m√°ximo 50 caracteres.")]
         public string Senha { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "O campo Telefone È obrigatÛrio.")]
-        [MaxLength(20, ErrorMessage = "O campo Telefone deve conter no m·ximo 20 caracteres.")]
+        [Required(ErrorMessage = "O campo Telefone √© obrigat√≥rio.")]
+        [MaxLength(20, ErrorMessage = "O campo Telefone deve conter no m√°ximo 20 caracteres.")]
         public string Telefone { get; set; } = string.Empty;
 
-        public string Perfil { get; set; } = "Cliente";
     }
 
-    // DTO para cadastro simples de usu·rio, sem nome e telefone, apenas email e senha, com validaÁ„o de dados
+    // DTO para cadastro simples de usu√°rio, sem nome e telefone, apenas email e senha, com valida√ß√£o de dados
     public class UsuarioCadastroSimplesDto
     {
-        [Required(ErrorMessage = "O campo Email È obrigatÛrio.")]
-        [EmailAddress(ErrorMessage = "O campo Email deve ser um endereÁo de email v·lido.")]
-        [MaxLength(100, ErrorMessage = "O campo Email deve conter no m·ximo 100 caracteres.")]
+        [Required(ErrorMessage = "O campo Email √© obrigat√≥rio.")]
+        [EmailAddress(ErrorMessage = "O campo Email deve ser um endere√ßo de email v√°lido.")]
+        [MaxLength(100, ErrorMessage = "O campo Email deve conter no m√°ximo 100 caracteres.")]
         public string Email { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "O campo Senha È obrigatÛrio.")]
-        [MinLength(6, ErrorMessage = "A senha deve conter no mÌnimo 6 caracteres.")]
-        [MaxLength(50, ErrorMessage = "A senha deve conter no m·ximo 50 caracteres.")]
+        [Required(ErrorMessage = "O campo Senha √© obrigat√≥rio.")]
+        [MinLength(6, ErrorMessage = "A senha deve conter no m√≠nimo 6 caracteres.")]
+        [MaxLength(50, ErrorMessage = "A senha deve conter no m√°ximo 50 caracteres.")]
         public string Senha { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "O campo ConfirmarSenha È obrigatÛrio.")]
+        [Required(ErrorMessage = "O campo ConfirmarSenha √© obrigat√≥rio.")]
         public string ConfirmarSenha { get; set; } = string.Empty;
     }
 
-    // DTO para login de usu·rio, apenas email e senha, com validaÁ„o de dados
+    // DTO para login de usu√°rio, apenas email e senha, com valida√ß√£o de dados
     public class UsuarioLoginDto
     {
-        [Required(ErrorMessage = "O campo Email È obrigatÛrio.")]
-        [EmailAddress(ErrorMessage = "O campo Email deve ser um endereÁo de email v·lido.")]
+        [Required(ErrorMessage = "O campo Email √© obrigat√≥rio.")]
+        [EmailAddress(ErrorMessage = "O campo Email deve ser um endere√ßo de email v√°lido.")]
         public string Email { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "O campo Senha È obrigatÛrio.")]
+        [Required(ErrorMessage = "O campo Senha √© obrigat√≥rio.")]
         public string Senha { get; set; } = string.Empty;
     }
 
-    // DTO para resposta de login de usu·rio, com os dados do usu·rio logado
+    // DTO para resposta de login de usu√°rio, com os dados do usu√°rio logado
     public class UsuarioLoginResponseDto
     {
         public int UsuarioId { get; set; }
@@ -80,14 +79,17 @@ namespace ZeroFrame.Application.DTOS.Usuario
         public string Email { get; set; } = string.Empty;
         public string Telefone { get; set; } = string.Empty;
         public bool Ativo { get; set; }
+        public string Perfil { get; set; } = string.Empty;
+        public string Token { get; set; } = string.Empty;
     }
 
-    // DTO para atualizaÁ„o de usu·rio, com validaÁ„o de dados
+    // DTO para atualiza√ß√£o de usu√°rio, com valida√ß√£o de dados
     public class UsuarioPutDto
     {
-        //PUT ó Atualizar dados
+        //PUT ‚Äî Atualizar dados
         public int Id { get; set; }
         public string Nome { get; set; } = string.Empty;
         public string Telefone { get; set; } = string.Empty;
     }
+
 }

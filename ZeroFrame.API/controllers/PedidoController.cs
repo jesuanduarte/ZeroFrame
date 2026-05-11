@@ -1,4 +1,6 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using ZeroFrame.API.Errors;
 using ZeroFrame.Application.DTOS.ItemPedido;
 using ZeroFrame.Application.DTOS.Pedidos;
@@ -8,6 +10,7 @@ namespace ZeroFrame.API.Controllers
 {
     
     [ApiController]
+    [Authorize]
     [Route("api")]
     [ProducesResponseType(typeof(ApiBadRequest), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ApiNotFound), StatusCodes.Status404NotFound)]
@@ -35,6 +38,9 @@ namespace ZeroFrame.API.Controllers
             if (pedido == null)
                 return NotFound("Pedido nao encontrado.");
 
+            if (!PodeAcessarUsuario(pedido.UsuarioId))
+                return Forbid();
+
             // Retorna o pedido encontrado.
             return Ok(pedido);
         }
@@ -44,6 +50,9 @@ namespace ZeroFrame.API.Controllers
         [HttpGet("usuarios/{usuarioId:int}/pedidos")]
         public async Task<ActionResult<List<PedidosGetDto>>> ObterPedidosPorUsuario(int usuarioId)
         {
+            if (!PodeAcessarUsuario(usuarioId))
+                return Forbid();
+
             var pedidos = await _pedidoService.ObterPorUsuarioAsync(usuarioId);
             return Ok(pedidos);
         }
@@ -53,6 +62,9 @@ namespace ZeroFrame.API.Controllers
         [HttpPost("usuarios/{usuarioId:int}/pedidos")]
         public async Task<ActionResult<PedidosGetDto>> CriarPedidoAPartirDoCarrinhoAtivoDoUsuario(int usuarioId)
         {
+            if (!PodeAcessarUsuario(usuarioId))
+                return Forbid();
+
             PedidosGetDto pedidoCriado;
 
             try
@@ -74,6 +86,7 @@ namespace ZeroFrame.API.Controllers
 
         // PUT: api/pedidos/{id}
         // Atualiza os dados de um pedido existente.
+        [Authorize(Roles = "Administrador")]
         [HttpPut("pedidos/{id:int}")]
         public async Task<ActionResult> AtualizarPedido(int id, PedidosPutDto pedidosPutDto)
         {
@@ -86,6 +99,9 @@ namespace ZeroFrame.API.Controllers
             if (pedido == null)
                 return NotFound("Pedido nao encontrado.");
 
+            if (!PodeAcessarUsuario(pedido.UsuarioId))
+                return Forbid();
+
             await _pedidoService.AtualizarAsync(pedidosPutDto);
 
             // Retorna 204 No Content indicando que a atualizacao foi feita com sucesso.
@@ -94,6 +110,7 @@ namespace ZeroFrame.API.Controllers
 
         // PATCH: api/pedidos/{id}/cancelar
         // Cancela um pedido existente.
+        [Authorize(Roles = "Administrador")]
         [HttpPatch("pedidos/{id:int}/cancelar")]
         public async Task<ActionResult> CancelarPedido(int id)
         {
@@ -101,6 +118,9 @@ namespace ZeroFrame.API.Controllers
 
             if (pedido == null)
                 return NotFound("Pedido nao encontrado.");
+
+            if (!PodeAcessarUsuario(pedido.UsuarioId))
+                return Forbid();
 
             await _pedidoService.CancelarAsync(id);
 
@@ -117,6 +137,9 @@ namespace ZeroFrame.API.Controllers
             if (pedido == null)
                 return NotFound("Pedido nao encontrado.");
 
+            if (!PodeAcessarUsuario(pedido.UsuarioId))
+                return Forbid();
+
             var itens = await _itemPedidoService.ObterPorPedidoAsync(pedidoId);
 
             return Ok(itens);
@@ -127,6 +150,14 @@ namespace ZeroFrame.API.Controllers
         [HttpGet("pedidos/{pedidoId:int}/itens/{itemId:int}")]
         public async Task<ActionResult<ItemPedidoGetDto>> ObterItemDoPedidoPorId(int pedidoId, int itemId)
         {
+            var pedido = await _pedidoService.ObterPorIdAsync(pedidoId);
+
+            if (pedido == null)
+                return NotFound("Pedido nao encontrado.");
+
+            if (!PodeAcessarUsuario(pedido.UsuarioId))
+                return Forbid();
+
             var item = await _itemPedidoService.ObterPorIdAsync(itemId);
 
             if (item == null || item.PedidoId != pedidoId)
@@ -144,6 +175,12 @@ namespace ZeroFrame.API.Controllers
 
             if (pedido == null)
                 return NotFound("Pedido nao encontrado.");
+
+            if (!PodeAcessarUsuario(pedido.UsuarioId))
+                return Forbid();
+
+            if (PedidoEstaFechado(pedido.Status))
+                return BadRequest("Nao e permitido criar itens em pedido fechado.");
 
             ItemPedidoGetDto itemCriado;
 
@@ -177,6 +214,17 @@ namespace ZeroFrame.API.Controllers
         [HttpPut("pedidos/{pedidoId:int}/itens/{itemId:int}")]
         public async Task<ActionResult> AtualizarItemDoPedido(int pedidoId, int itemId, PedidoItemPutDto pedidoItemPutDto)
         {
+            var pedido = await _pedidoService.ObterPorIdAsync(pedidoId);
+
+            if (pedido == null)
+                return NotFound("Pedido nao encontrado.");
+
+            if (!PodeAcessarUsuario(pedido.UsuarioId))
+                return Forbid();
+
+            if (PedidoEstaFechado(pedido.Status))
+                return BadRequest("Nao e permitido atualizar itens em pedido fechado.");
+
             var item = await _itemPedidoService.ObterPorIdAsync(itemId);
 
             if (item == null || item.PedidoId != pedidoId)
@@ -205,10 +253,21 @@ namespace ZeroFrame.API.Controllers
         }
 
         // DELETE: api/pedidos/{pedidoId}/itens/{itemId}
-        // Remove um item de um pedido.
+        // Remove um item de um pedido
         [HttpDelete("pedidos/{pedidoId:int}/itens/{itemId:int}")]
         public async Task<ActionResult> RemoverItemDoPedido(int pedidoId, int itemId)
         {
+            var pedido = await _pedidoService.ObterPorIdAsync(pedidoId);
+
+            if (pedido == null)
+                return NotFound("Pedido nao encontrado.");
+
+            if (!PodeAcessarUsuario(pedido.UsuarioId))
+                return Forbid();
+
+            if (PedidoEstaFechado(pedido.Status))
+                return BadRequest("Nao e permitido remover itens de pedido fechado.");
+
             var item = await _itemPedidoService.ObterPorIdAsync(itemId);
 
             if (item == null || item.PedidoId != pedidoId)
@@ -228,6 +287,24 @@ namespace ZeroFrame.API.Controllers
             }
 
             return NoContent();
+        }
+
+        // Metodo para verificar se o usuario logado tem acesso aos dados do usuario alvo.
+        private bool PodeAcessarUsuario(int usuarioId)
+        {
+            if (User.IsInRole("Administrador"))
+                return true;
+
+            var usuarioLogadoId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            return int.TryParse(usuarioLogadoId, out var id) && id == usuarioId;
+        }
+
+        private static bool PedidoEstaFechado(string status)
+        {
+            return status.Equals("Pago", StringComparison.OrdinalIgnoreCase)
+                || status.Equals("Cancelado", StringComparison.OrdinalIgnoreCase)
+                || status.Equals("Finalizado", StringComparison.OrdinalIgnoreCase)
+                || status.Equals("Aprovado", StringComparison.OrdinalIgnoreCase);
         }
     }
 }

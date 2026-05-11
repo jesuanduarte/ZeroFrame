@@ -1,7 +1,7 @@
 using ZeroFrame.Application.DTOS.Categoria;
 using ZeroFrame.Application.Interfaces;
-using ZeroFrame.domain.entidades;
-using ZeroFrame.domain.Interface;
+using ZeroFrame.Domain.Entidades;
+using ZeroFrame.Domain.Interfaces;
 
 namespace ZeroFrame.Application.Servicos
 {

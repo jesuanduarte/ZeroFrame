@@ -1,15 +1,15 @@
-using ZeroFrame.domain.entidades;
-using ZeroFrame.domain.Interface;
+using ZeroFrame.Domain.Entidades;
+using ZeroFrame.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using ZeroFrame.Infra.Data.BDconexao;
+using ZeroFrame.Infra.Data.Context;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace ZeroFrame.Infra.Data.repositorios
+namespace ZeroFrame.Infra.Data.Repositorios
 {
-    // Classe que implementa o repositÛrio da entidade.
-    // Ela contÈm os mÈtodos respons·veis por manipular os dados no sistema.
+    // Classe que implementa o reposit√≥rio da entidade.
+    // Ela cont√©m os m√©todos respons√°veis por manipular os dados no sistema.
     public class PagamentoRepository : IPagamentoRepository
     {
         private readonly ApplicationDbContext _context;

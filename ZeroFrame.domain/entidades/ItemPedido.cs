@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using ZeroFrame.domain.entidades;
+using ZeroFrame.Domain.Entidades;
 
-namespace ZeroFrame.domain.entidades
+namespace ZeroFrame.Domain.Entidades
 {
     public class ItemPedido
     {

@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 using ZeroFrame.Application.DTOS.ItemCarrinho;
-using ZeroFrame.domain.entidades;
+using ZeroFrame.Domain.Entidades;
 
 namespace ZeroFrame.Application.DTOS
 {
     public class CarrinhoGetDto
     {
-        //GET — Buscar/Ler dados
+        //GET â€” Buscar/Ler dados
         public int Id { get; set; }
         public int UsuarioId { get; set; }
         public bool Ativo { get; set; }
@@ -23,15 +23,15 @@ namespace ZeroFrame.Application.DTOS
 
     public class CarrinhoPostDto
     {
-        //POST — Criar dados
-        [Required(ErrorMessage = "O campo UsuarioId é obrigatório.")]
-        [Range(1, int.MaxValue, ErrorMessage = "O UsuarioId deve ser válido.")]
+        //POST â€” Criar dados
+        [Required(ErrorMessage = "O campo UsuarioId Ã© obrigatÃ³rio.")]
+        [Range(1, int.MaxValue, ErrorMessage = "O UsuarioId deve ser vÃ¡lido.")]
         public int UsuarioId { get; set; }
     }
 
     public class CarrinhoPutDto
     {
-        //PUT — Atualizar dados
+        //PUT â€” Atualizar dados
         public int Id { get; set; }
         public List<ItemCarrinhoPutDto> Itens { get; set; } = new();
     }

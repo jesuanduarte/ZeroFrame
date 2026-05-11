@@ -1,15 +1,15 @@
-using ZeroFrame.domain.entidades;
-using ZeroFrame.domain.Interface;
+using ZeroFrame.Domain.Entidades;
+using ZeroFrame.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using ZeroFrame.Infra.Data.BDconexao;
+using ZeroFrame.Infra.Data.Context;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace ZeroFrame.Infra.Data.repositorios
+namespace ZeroFrame.Infra.Data.Repositorios
 {
-    // Classe que implementa o repositÛrio da entidade.
-    // Ela contÈm os mÈtodos respons·veis por manipular os dados no sistema.
+    // Classe que implementa o reposit√≥rio da entidade.
+    // Ela cont√©m os m√©todos respons√°veis por manipular os dados no sistema.
     public class PedidoRepository : IPedidoRepository
     {
         private readonly ApplicationDbContext _context;
@@ -19,7 +19,7 @@ namespace ZeroFrame.Infra.Data.repositorios
             _context = context;
         }
 
-        // Busca um pedido pelo Id, incluindo as informaÁıes do usu·rio, itens e pagamento.
+        // Busca um pedido pelo Id, incluindo as informa√ß√µes do usu√°rio, itens e pagamento.
         public async Task<Pedidos?> ObterPorIdAsync(int id)
         {
             return await _context.pedidos
@@ -32,7 +32,7 @@ namespace ZeroFrame.Infra.Data.repositorios
                 .FirstOrDefaultAsync(p => p.Id == id);
         }
 
-        // Busca todos os pedidos de um usu·rio
+        // Busca todos os pedidos de um usu√°rio
         public async Task<List<Pedidos>> ObterPorUsuarioAsync(int usuarioId)
         {
             return await _context.pedidos
@@ -59,7 +59,7 @@ namespace ZeroFrame.Infra.Data.repositorios
             await _context.SaveChangesAsync();
         }
 
-        // MÈtodo p˙blico que chama o mÈtodo privado para atualizar um pedido.
+        // M√©todo p√∫blico que chama o m√©todo privado para atualizar um pedido.
         public async Task AtualizarAsync(Pedidos pedido)
         {
             await AtualizarPedidoAsync(pedido);

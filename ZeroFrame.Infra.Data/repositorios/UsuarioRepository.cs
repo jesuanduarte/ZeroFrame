@@ -1,15 +1,15 @@
-using ZeroFrame.domain.entidades;
-using ZeroFrame.domain.Interface;
+using ZeroFrame.Domain.Entidades;
+using ZeroFrame.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using ZeroFrame.Infra.Data.BDconexao;
+using ZeroFrame.Infra.Data.Context;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace ZeroFrame.Infra.Data.repositorios
+namespace ZeroFrame.Infra.Data.Repositorios
 {
-    // Classe que implementa o repositÛrio da entidade.
-    // Ela contÈm os mÈtodos respons·veis por manipular os dados no sistema.
+    // Classe que implementa o reposit√≥rio da entidade.
+    // Ela cont√©m os m√©todos respons√°veis por manipular os dados no sistema.
     public class UsuarioRepository : IUsuarioRepository
     {
         private readonly ApplicationDbContext _context;
@@ -19,15 +19,17 @@ namespace ZeroFrame.Infra.Data.repositorios
             _context = context;
         }
 
-        // Busca um usu·rio pelo email.
+        // Busca um usu√°rio pelo email.
         public async Task<Usuario?> ObterPorEmailAsync(string email)
         {
+            var emailNormalizado = email.Trim().ToLower();
+
             return await _context.Usuarios
                 .Include(u => u.Enderecos)
-                .FirstOrDefaultAsync(u => u.Email == email);
+                .FirstOrDefaultAsync(u => u.Email.ToLower() == emailNormalizado);
         }
 
-        // Busca um usu·rio pelo ID.
+        // Busca um usu√°rio pelo ID.
         public async Task<Usuario?> ObterPorIdAsync(int id)
         {
             return await _context.Usuarios
@@ -35,21 +37,21 @@ namespace ZeroFrame.Infra.Data.repositorios
                 .FirstOrDefaultAsync(u => u.Id == id);
         }
 
-        // Busca todos os usu·rios.
+        // Busca todos os usu√°rios.
         public async Task CriarAsync(Usuario usuario)
         {
             await _context.Usuarios.AddAsync(usuario);
             await _context.SaveChangesAsync();
         }
 
-        // Atualiza um usu·rio existente.
+        // Atualiza um usu√°rio existente.
         public async Task AtualizarAsync(Usuario usuario)
         {
             _context.Usuarios.Update(usuario);
             await _context.SaveChangesAsync();
         }
 
-        // Remove um usu·rio pelo ID. 
+        // Remove um usu√°rio pelo ID. 
         public async Task RemoverAsync(int id)
         {
             var usuario = await _context.Usuarios.FindAsync(id);

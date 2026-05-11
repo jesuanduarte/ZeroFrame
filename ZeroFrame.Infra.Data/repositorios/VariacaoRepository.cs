@@ -1,15 +1,15 @@
-using ZeroFrame.domain.entidades;
-using ZeroFrame.domain.Interface;
+using ZeroFrame.Domain.Entidades;
+using ZeroFrame.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using ZeroFrame.Infra.Data.BDconexao;
+using ZeroFrame.Infra.Data.Context;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace ZeroFrame.Infra.Data.repositorios
+namespace ZeroFrame.Infra.Data.Repositorios
 {
-    // Classe que implementa o repositório da entidade.
-    // Ela contém os métodos responsáveis por manipular os dados no sistema.
+    // Classe que implementa o repositÃ³rio da entidade.
+    // Ela contÃ©m os mÃ©todos responsÃ¡veis por manipular os dados no sistema.
     public class VariacaoRepository : IVariacaoRepository
     {
         private readonly ApplicationDbContext _context;
@@ -19,7 +19,7 @@ namespace ZeroFrame.Infra.Data.repositorios
             _context = context;
         }
 
-        // retorna uma lista de todas as variações dos produtos
+        // retorna uma lista de todas as variaÃ§Ãµes dos produtos
         public async Task<List<VariacaoProdutos>> ObterTodosAsync()
         {
             return await _context.variacaoprodutos
@@ -28,7 +28,7 @@ namespace ZeroFrame.Infra.Data.repositorios
                 .ToListAsync();
         }
 
-        // retorna uma variação de produto específica com base no ID fornecido
+        // retorna uma variaÃ§Ã£o de produto especÃ­fica com base no ID fornecido
         public async Task<VariacaoProdutos?> ObterPorIdAsync(int id)
         {
             return await _context.variacaoprodutos
@@ -37,7 +37,7 @@ namespace ZeroFrame.Infra.Data.repositorios
                 .FirstOrDefaultAsync(v => v.Id == id);
         }
 
-        // retorna uma lista de variações de produtos associadas a um produto específico, 
+        // retorna uma lista de variaÃ§Ãµes de produtos associadas a um produto especÃ­fico, 
         public async Task<List<VariacaoProdutos>> ObterPorProdutoIdAsync(int produtoId)
         {
             return await _context.variacaoprodutos
@@ -47,21 +47,21 @@ namespace ZeroFrame.Infra.Data.repositorios
                 .ToListAsync();
         }
 
-        // adiciona uma nova variação de produto ao banco de dados
+        // adiciona uma nova variaÃ§Ã£o de produto ao banco de dados
         public async Task AdicionarAsync(VariacaoProdutos variacaoProdutos)
         {
             await _context.variacaoprodutos.AddAsync(variacaoProdutos);
             await _context.SaveChangesAsync();
         }
 
-        //  atualiza uma variação de produto existente no banco de dados
+        //  atualiza uma variaÃ§Ã£o de produto existente no banco de dados
         public async Task AtualizarAsync(VariacaoProdutos variacaoProdutos)
         {
             _context.variacaoprodutos.Update(variacaoProdutos);
             await _context.SaveChangesAsync();
         }
 
-        // remove uma variação de produto do banco de dados com base no ID fornecido
+        // remove uma variaÃ§Ã£o de produto do banco de dados com base no ID fornecido
         public async Task RemoverAsync(int id)
         {
             var variacao = await _context.variacaoprodutos.FindAsync(id);

@@ -1,24 +1,26 @@
 using ZeroFrame.Application.DTOS.Endereco;
 using ZeroFrame.Application.DTOS.Usuario;
+using ZeroFrame.Application.Exceptions;
 using ZeroFrame.Application.Interfaces;
-using ZeroFrame.domain.entidades;
-using ZeroFrame.domain.Interface;
+using ZeroFrame.Domain.Entidades;
+using ZeroFrame.Domain.Interfaces;
+
 
 namespace ZeroFrame.Application.Servicos
 {
-    // Ele faz a comunicaÁ„o entre a Controller e o Repository.
-    // TambÈm realiza a convers„o entre DTOs e Entidades.
+    // Ele faz a comunica√ß√£o entre a Controller e o Repository.
+    // Tamb√©m realiza a convers√£o entre DTOs e Entidades.
     public class UsuarioService : IUsuarioService
     {
         private readonly IUsuarioRepository _usuarioRepository;
 
-        // Recebe o repositÛrio por injeÁ„o de dependÍncia.
+        // Recebe o reposit√≥rio por inje√ß√£o de depend√™ncia.
         public UsuarioService(IUsuarioRepository usuarioRepository)
         {
             _usuarioRepository = usuarioRepository;
         }
 
-        // Busca um usu·rio pelo Id.
+        // Busca um usu√°rio pelo Id.
         public async Task<UsuarioGetDto?> ObterPorIdAsync(int id)
         {
             var usuario = await _usuarioRepository.ObterPorIdAsync(id);
@@ -29,7 +31,7 @@ namespace ZeroFrame.Application.Servicos
             return MapearUsuarioGetDto(usuario);
         }
 
-        // Busca um usu·rio pelo email.
+        // Busca um usu√°rio pelo email.
         public async Task<UsuarioGetDto?> ObterPorEmailAsync(string email)
         {
             var usuario = await _usuarioRepository.ObterPorEmailAsync(email);
@@ -40,7 +42,7 @@ namespace ZeroFrame.Application.Servicos
             return MapearUsuarioGetDto(usuario);
         }
 
-        // Busca no banco de dados um usu·rio com o e-mail informado no login.
+        // Busca no banco de dados um usu√°rio com o e-mail informado no login.
         public async Task<UsuarioLoginResponseDto?> AutenticarAsync(UsuarioLoginDto usuarioLoginDto)
         {
             var usuario = await _usuarioRepository.ObterPorEmailAsync(usuarioLoginDto.Email.Trim());
@@ -57,19 +59,26 @@ namespace ZeroFrame.Application.Servicos
                 Nome = usuario.Nome,
                 Email = usuario.Email,
                 Telefone = usuario.Telefone,
-                Ativo = usuario.Ativo
+                Ativo = usuario.Ativo,
+                Perfil = usuario.Perfil
             };
         }
-        // Cria um novo usu·rio.
+        // Cria um novo usu√°rio.
         public async Task<UsuarioGetDto> CriarAsync(UsuarioPostDto usuarioPostDto)
         {
+            var emailNormalizado = usuarioPostDto.Email.Trim().ToLower();
+            var usuarioExistente = await _usuarioRepository.ObterPorEmailAsync(emailNormalizado);
+
+            if (usuarioExistente != null)
+                throw new BadRequestException("Este e-mail ja esta cadastrado.");
+
             var usuario = new Usuario
             {
-                Nome = usuarioPostDto.Nome,
-                Email = usuarioPostDto.Email,
+                Nome = usuarioPostDto.Nome.Trim(),
+                Email = emailNormalizado,
                 Senha = BCrypt.Net.BCrypt.HashPassword(usuarioPostDto.Senha),
                 Telefone = usuarioPostDto.Telefone,
-                Perfil = usuarioPostDto.Perfil,
+                Perfil = "Cliente",
                 Ativo = true
             };
 
@@ -78,7 +87,7 @@ namespace ZeroFrame.Application.Servicos
             return MapearUsuarioGetDto(usuario);
         }
 
-        // Atualiza os dados b·sicos de um usu·rio.
+        // Atualiza os dados b√°sicos de um usu√°rio.
         public async Task AtualizarAsync(UsuarioPutDto usuarioPutDto)
         {
             var usuario = await _usuarioRepository.ObterPorIdAsync(usuarioPutDto.Id);
@@ -92,7 +101,7 @@ namespace ZeroFrame.Application.Servicos
             await _usuarioRepository.AtualizarAsync(usuario);
         }
 
-        // Remove um usu·rio pelo Id.
+        // Remove um usu√°rio pelo Id.
         public async Task RemoverAsync(int id)
         {
             await _usuarioRepository.RemoverAsync(id);

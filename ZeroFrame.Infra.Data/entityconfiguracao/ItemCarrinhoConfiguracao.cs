@@ -3,11 +3,11 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using ZeroFrame.domain.entidades;
+using ZeroFrame.Domain.Entidades;
 
-namespace ZeroFrame.Infra.Data.entityconfiguracao
+namespace ZeroFrame.Infra.Data.EntityConfiguracao
 {
-    // Configuração da entidade no banco de dados 
+    // ConfiguraÃ§Ã£o da entidade no banco de dados 
     public class ItemCarrinhoConfiguracao: IEntityTypeConfiguration<ItemCarrinho>
     {
         public void Configure(EntityTypeBuilder<ItemCarrinho> builder)

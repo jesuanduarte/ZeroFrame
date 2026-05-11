@@ -1,15 +1,15 @@
-using ZeroFrame.domain.entidades;
+using ZeroFrame.Domain.Entidades;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace ZeroFrame.Infra.Data.entityconfiguracao
+namespace ZeroFrame.Infra.Data.EntityConfiguracao
 {
     // Configuracao da entidade no banco de dados.
 
-    public class Produtoconfiguracao: IEntityTypeConfiguration<Produto>
+    public class ProdutoConfiguracao: IEntityTypeConfiguration<Produto>
     {
         public void Configure(EntityTypeBuilder<Produto> builder)
         {
