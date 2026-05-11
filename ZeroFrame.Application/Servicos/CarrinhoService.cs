@@ -48,7 +48,8 @@ namespace ZeroFrame.Application.Servicos
             return MapearCarrinhoGetDto(carrinho);
         }
 
-
+        // Busca o carrinho ativo de um usuário.
+        // Se nao existir, cria um novo carrinho ativo para esse usuário.
         public async Task<CarrinhoGetDto> ObterOuCriarAtivoPorUsuarioAsync(int usuarioId)
         {
             await ValidarUsuarioAsync(usuarioId);
@@ -134,6 +135,7 @@ namespace ZeroFrame.Application.Servicos
         }
 
 
+        // Valida se o usuário existe no sistema.
         private async Task ValidarUsuarioAsync(int usuarioId)
         {
             var usuario = await _usuarioRepository.ObterPorIdAsync(usuarioId);
@@ -142,6 +144,8 @@ namespace ZeroFrame.Application.Servicos
                 throw new KeyNotFoundException("Usuario nao encontrado");
         }
 
+        // Valida se a quantidade solicitada é válida
+        // e se há estoque suficiente para a variação do produto.
         private static void ValidarEstoque(VariacaoProdutos variacao, int quantidade)
         {
             if (quantidade <= 0)
@@ -172,6 +176,8 @@ namespace ZeroFrame.Application.Servicos
             };
         }
 
+        // Converte a entidade ItemCarrinho para ItemCarrinhoGetDto,
+        // incluindo informações do produto e variação.
         private static ItemCarrinhoGetDto MapearItemCarrinhoGetDto(ItemCarrinho item)
         {
             var variacao = item.VariacaoProduto;
@@ -196,6 +202,7 @@ namespace ZeroFrame.Application.Servicos
             };
         }
 
+        // Determina a URL da imagem do produto com base no nome do produto.
         private static string ObterImagemUrl(Produto produto)
         {
             var nomeNormalizado = produto.Nome.ToLowerInvariant();
@@ -224,6 +231,7 @@ namespace ZeroFrame.Application.Servicos
             return "/assets/products/camisa-over-black.png";
         }
 
+        // Determina a marca do produto com base no nome do produto.
         private static string ObterMarca(Produto produto)
         {
             var nomeNormalizado = produto.Nome.ToLowerInvariant();

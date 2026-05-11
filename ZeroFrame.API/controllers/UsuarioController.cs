@@ -238,6 +238,7 @@ namespace ZeroFrame.API.Controllers
             return NoContent();
         }
 
+        // verifica se o usuário logado pode acessar os dados do usuário especificado.
         private bool PodeAcessarUsuario(int usuarioId)
         {
             if (User.IsInRole("Administrador"))

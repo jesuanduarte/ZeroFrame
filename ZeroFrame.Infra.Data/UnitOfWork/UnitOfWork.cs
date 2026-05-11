@@ -40,6 +40,7 @@ namespace ZeroFrame.Infra.Data.UnitOfWork
             });
         }
 
+        // Sobrecarga para operações que não retornam valor, apenas executam uma ação.
         public async Task ExecuteInTransactionAsync(Func<Task> operation)
         {
             await ExecuteInTransactionAsync(async () =>

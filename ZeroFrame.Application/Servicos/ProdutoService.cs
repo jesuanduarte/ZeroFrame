@@ -116,6 +116,7 @@ namespace ZeroFrame.Application.Servicos
                 throw new InvalidOperationException("Categoria nao encontrada.");
         }
 
+        // Converte o DTO de filtro para a entidade de filtro usada no repositório.
         private static ProdutoFiltro MapearProdutoFiltro(ProdutoFiltroDto filtro)
         {
             return new ProdutoFiltro

@@ -106,6 +106,9 @@ namespace ZeroFrame.Application.Servicos
         {
             await _usuarioRepository.RemoverAsync(id);
         }
+
+        // mapeia os dados de um usuário para um DTO de resposta,
+        // incluindo os endereços associados.
         private static UsuarioGetDto MapearUsuarioGetDto(Usuario usuario)
         {
             return new UsuarioGetDto
@@ -130,6 +133,7 @@ namespace ZeroFrame.Application.Servicos
             };
         }
 
+        // Verifica se a senha informada no login corresponde à senha armazenada no banco de dados.
         private static bool SenhaValida(string senhaInformada, string senhaArmazenada)
         {
             try
@@ -138,7 +142,8 @@ namespace ZeroFrame.Application.Servicos
             }
             catch
             {
-                // Usuarios antigos com senha em texto puro precisam ser recriados ou ter a senha atualizada para hash.
+                // Usuarios antigos com senha em texto puro precisam ser recriados
+                // ou ter a senha atualizada para hash.
                 return false;
             }
         }

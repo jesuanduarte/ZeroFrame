@@ -193,6 +193,7 @@ namespace ZeroFrame.Application.Servicos
             });
         }
 
+        // Atualiza o status do pedido.
         public async Task AtualizarAsync(PedidosPutDto pedidosPutDto)
         {
             var pedido = await _pedidoRepository.ObterPorIdAsync(pedidosPutDto.Id);
@@ -204,6 +205,7 @@ namespace ZeroFrame.Application.Servicos
             await _pedidoRepository.AtualizarAsync(pedido);
         }
 
+        // Valida o estoque antes de criar ou atualizar um pedido.
         private static void ValidarEstoque(VariacaoProdutos variacao, int quantidade)
         {
             if (quantidade <= 0)
@@ -213,6 +215,8 @@ namespace ZeroFrame.Application.Servicos
                 throw new InvalidOperationException("Estoque insuficiente para esta variação.");
         }
 
+        // Mapeia a entidade Pedidos para o DTO PedidosGetDto,
+        // incluindo o cálculo do subtotal, desconto, frete e valor total.
         private static PedidosGetDto MapearPedidoGetDto(Pedidos pedido)
         {
             var itens = pedido.Itens.Select(MapearItemPedidoGetDto).ToList();
@@ -236,6 +240,8 @@ namespace ZeroFrame.Application.Servicos
             };
         }
 
+        // Mapeia a entidade ItemPedido para o DTO ItemPedidoGetDto,
+        // incluindo a obtenção da URL da imagem, marca e origem do produto.
         private static ItemPedidoGetDto MapearItemPedidoGetDto(ItemPedido item)
         {
             var variacao = item.VariacaoProduto;
@@ -260,6 +266,8 @@ namespace ZeroFrame.Application.Servicos
             };
         }
 
+        // Obtém a URL da imagem com base no nome do produto,
+        // utilizando palavras-chave para identificar o tipo de produto.
         private static string ObterImagemUrl(Produto produto)
         {
             var nomeNormalizado = produto.Nome.ToLowerInvariant();
@@ -288,6 +296,8 @@ namespace ZeroFrame.Application.Servicos
             return "/assets/products/camisa-over-black.png";
         }
 
+        // Obtém a marca do produto com base no nome,
+        // utilizando palavras-chave para identificar a marca.
         private static string ObterMarca(Produto produto)
         {
             var nomeNormalizado = produto.Nome.ToLowerInvariant();
@@ -304,6 +314,8 @@ namespace ZeroFrame.Application.Servicos
             return "Zero Frame";
         }
 
+        // Obtém a origem do produto com base na marca,
+        // utilizando a marca para determinar se é original ou multimarcas.
         private static string ObterOrigem(Produto produto)
         {
             return ObterMarca(produto) == "Zero Frame" ? "Original" : "Multimarcas";
