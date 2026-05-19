@@ -28,6 +28,11 @@ O sistema está dividido em camadas:
 - **ZeroFrame.Domain**: camada responsável pelas entidades e interfaces.
 - **ZeroFrame.Infra.Data**: camada responsável pelo acesso ao banco de dados com Entity Framework Core.
 - **ZeroFrame.Infra.IoC**: camada responsável pela injeção de dependência.
+- <h2>Arquitetura da API</h2>
+
+<p align="center">
+  <img src="assets/arquitetura.png" width="1000"/>
+</p>
 
 ## Funcionalidades principais
 
