@@ -22,8 +22,10 @@ O objetivo da API é simular o backend de uma loja virtual, permitindo que o fro
 Pacotes do NuGET
 <h2>Pacotes NuGet Utilizados</h2>
 
+<h2>Pacotes NuGet Utilizados</h2>
+
 <p align="center">
-  <img src="assets/pacotes-nuget.png" width="1000"/>
+  <img src="./assets/Pacotes-%20NuGet.png" width="1000"/>
 </p>
 
 ## Arquitetura do projeto
@@ -37,8 +39,10 @@ O sistema está dividido em camadas:
 - **ZeroFrame.Infra.IoC**: camada responsável pela injeção de dependência.
 - <h2>Arquitetura da API</h2>
 
+<h2>Arquitetura da API</h2>
+
 <p align="center">
-  <img src="assets/arquitetura.png" width="1000"/>
+  <img src="./assets/fluxograma.png" width="1000"/>
 </p>
 
 ## Funcionalidades principais
@@ -117,8 +121,10 @@ O sistema está dividido em camadas:
 O Entity Framework Core é utilizado como ORM para mapear as entidades C# para tabelas no banco de dados.
 <h2>Relacionamentos do Banco de Dados</h2>
 
+<h2>Relacionamentos do Banco de Dados</h2>
+
 <p align="center">
-  <img src="assets/banco-relacionamentos.png" width="900"/>
+  <img src="./assets/Relacionamentos%20do%20Banco.png" width="1000"/>
 </p>
 
 ## Documentação da API
