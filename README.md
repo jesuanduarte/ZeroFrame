@@ -19,6 +19,13 @@ O objetivo da API é simular o backend de uma loja virtual, permitindo que o fro
 - Arquitetura em camadas
 - Git e GitHub
 
+Pacotes do NuGET
+<h2>Pacotes NuGet Utilizados</h2>
+
+<p align="center">
+  <img src="assets/pacotes-nuget.png" width="1000"/>
+</p>
+
 ## Arquitetura do projeto
 
 O sistema está dividido em camadas:
@@ -108,6 +115,11 @@ O sistema está dividido em camadas:
 ## Entity Framework Core
 
 O Entity Framework Core é utilizado como ORM para mapear as entidades C# para tabelas no banco de dados.
+<h2>Relacionamentos do Banco de Dados</h2>
+
+<p align="center">
+  <img src="assets/banco-relacionamentos.png" width="900"/>
+</p>
 
 ## Documentação da API
 
