@@ -2,7 +2,7 @@
 
 ZeroFrame é uma API REST para e-commerce desenvolvida em ASP.NET Core
 
-O projeto utiliza arquitetura em camadas, Entity Framework Core, SQL Server/LocalDB, Swagger e autenticação JWT.
+O projeto utiliza arquitetura em camadas
 
 ## Objetivo
 
