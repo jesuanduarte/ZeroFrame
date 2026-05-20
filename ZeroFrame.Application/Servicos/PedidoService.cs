@@ -11,17 +11,23 @@ namespace ZeroFrame.Application.Servicos
         private readonly IPedidoRepository _pedidoRepository;
         private readonly ICarrinhoRepository _carrinhoRepository;
         private readonly IVariacaoRepository _variacaoRepository;
+        private readonly IUsuarioRepository _usuarioRepository;
+        private readonly IEnderecoRepository _enderecoRepository;
         private readonly IUnitOfWork _unitOfWork;
 
         public PedidoService(
             IPedidoRepository pedidoRepository,
             ICarrinhoRepository carrinhoRepository,
             IVariacaoRepository variacaoRepository,
+            IUsuarioRepository usuarioRepository,
+            IEnderecoRepository enderecoRepository,
             IUnitOfWork unitOfWork)
         {
             _pedidoRepository = pedidoRepository;
             _carrinhoRepository = carrinhoRepository;
             _variacaoRepository = variacaoRepository;
+            _usuarioRepository = usuarioRepository;
+            _enderecoRepository = enderecoRepository;
             _unitOfWork = unitOfWork;
         }
 
@@ -50,6 +56,8 @@ namespace ZeroFrame.Application.Servicos
         {
             return await _unitOfWork.ExecuteInTransactionAsync(async () =>
             {
+                await ValidarUsuarioEEnderecoAsync(pedidosPostDto.UsuarioId);
+
                 var itensPedido = new List<ItemPedido>();
             
                 // Percorre os itens enviados no pedido.
@@ -102,6 +110,8 @@ namespace ZeroFrame.Application.Servicos
 
                 if (carrinho == null)
                     throw new InvalidOperationException("Carrinho não encontrado.");
+
+                await ValidarUsuarioEEnderecoAsync(carrinho.UsuarioId);
 
                 if (!carrinho.Ativo)
                     throw new InvalidOperationException("Carrinho inativo não pode gerar pedido.");
@@ -165,6 +175,7 @@ namespace ZeroFrame.Application.Servicos
             return await CriarAPartirDoCarrinhoAsync(carrinho.Id);
         }
 
+        // metodo para cancelar um pedido, atualizando o estoque das variações dos produtos e o status do pedido.
         public async Task CancelarAsync(int id)
         {
             await _unitOfWork.ExecuteInTransactionAsync(async () =>
@@ -213,6 +224,20 @@ namespace ZeroFrame.Application.Servicos
 
             if (quantidade > variacao.Estoque)
                 throw new InvalidOperationException("Estoque insuficiente para esta variação.");
+        }
+
+        // Valida os dados mínimos do checkout antes de criar o pedido e baixar estoque.
+        private async Task ValidarUsuarioEEnderecoAsync(int usuarioId)
+        {
+            var usuario = await _usuarioRepository.ObterPorIdAsync(usuarioId);
+
+            if (usuario == null)
+                throw new InvalidOperationException("Usuario nao encontrado.");
+
+            var endereco = await _enderecoRepository.ObterPorUsuarioIdAsync(usuarioId);
+
+            if (endereco == null || !endereco.Ativo)
+                throw new InvalidOperationException("Endereco valido nao encontrado para este usuario.");
         }
 
         // Mapeia a entidade Pedidos para o DTO PedidosGetDto,

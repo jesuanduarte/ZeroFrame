@@ -21,6 +21,8 @@ namespace ZeroFrame.Infra.Data.Identity
             _configuration = configuration;
         }
 
+        // metodo para gerar um token JWT para um usuário autenticado. O token inclui informações do usuário,
+        // incluindo suas reivindicações e informações de segurança.
         public string GenerateToken(int id, string email, string role)
         {
             var claims = new[]
@@ -50,6 +52,8 @@ namespace ZeroFrame.Infra.Data.Identity
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
+
+        // metodo para obter um usuário do banco de dados com base no email fornecido. 
         public async Task<Usuario?> GetUser(string email)
         {
             var emailNormalizado = email.Trim().ToLower();
@@ -58,6 +62,7 @@ namespace ZeroFrame.Infra.Data.Identity
                 .FirstOrDefaultAsync(u => u.Email.ToLower() == emailNormalizado);
         }
 
+        // metodo para verificar se um usuário com o email fornecido já existe no banco de dados.
         public async Task<bool> userExists(string email)
         {
             var emailNormalizado = email.Trim().ToLower();

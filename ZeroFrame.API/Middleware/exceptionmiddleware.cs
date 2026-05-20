@@ -52,8 +52,7 @@ namespace ZeroFrame.API.Middleware
         }
 
         // é responsável por mapear diferentes tipos de exceções para respostas HTTP apropriadas.
-        // Ele verifica o tipo da exceção e retorna ApiException correspondente, contendo o status code,
-        // a mensagem e os detalhes (se estiver em ambiente de desenvolvimento).
+        // Ele verifica o tipo da exceção e retorna ApiException correspondente, contendo o status code
         private ApiException CreateResponse(HttpContext httpContext, Exception exception)
         {
             var details = _env.IsDevelopment() ? exception.StackTrace : null;

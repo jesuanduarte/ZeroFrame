@@ -55,7 +55,7 @@ namespace ZeroFrame.Application.Servicos
                 new PagamentoPedidoPostDto { Metodo = pagamentoPostDto.Metodo });
         }
 
-        // Cria um pagamento simples para finalizar um pedido.
+        // Cria um pagamento pendente; somente a aprovacao posterior confirma o pedido como pago.
         public async Task<PagamentoGetDto> CriarPagamentoDoPedidoAsync(int pedidoId, PagamentoPedidoPostDto pagamentoPedidoPostDto)
         {
             return await _unitOfWork.ExecuteInTransactionAsync(async () =>
@@ -78,13 +78,10 @@ namespace ZeroFrame.Application.Servicos
                     Metodo = pagamentoPedidoPostDto.Metodo,
                     PedidoId = pedidoId,
                     Pedido = pedido,
-                    Status = "Aprovado"
+                    Status = "Pendente"
                 };
 
-                pedido.Status = "Pago";
-
                 await _pagamentoRepository.AdicionarAsync(pagamento);
-                await _pedidoRepository.AtualizarAsync(pedido);
 
                 return MapearPagamentoGetDto(pagamento);
             });
@@ -99,6 +96,12 @@ namespace ZeroFrame.Application.Servicos
                 return;
 
             pagamento.Status = pagamentoPutDto.Status;
+
+            if (pagamento.Pedido != null && pagamentoPutDto.Status.Equals("Aprovado", StringComparison.OrdinalIgnoreCase))
+                pagamento.Pedido.Status = "Pago";
+
+            if (pagamento.Pedido != null && pagamentoPutDto.Status.Equals("Recusado", StringComparison.OrdinalIgnoreCase))
+                pagamento.Pedido.Status = "Pendente";
 
             await _pagamentoRepository.AtualizarAsync(pagamento);
         }

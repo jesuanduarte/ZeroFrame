@@ -26,7 +26,7 @@ namespace ZeroFrame.API.Controllers
 
         // POST: api/pedidos/{pedidoId}/pagamento
         // Registra um pagamento simples para finalizar o pedido.
-        [Authorize(Roles = "Administrador")]
+        [Authorize(Roles = "Cliente,Administrador")]
         [HttpPost("pedidos/{pedidoId:int}/pagamento")]
         public async Task<ActionResult<PagamentoGetDto>> CriarPagamentoDoPedido(
             int pedidoId,

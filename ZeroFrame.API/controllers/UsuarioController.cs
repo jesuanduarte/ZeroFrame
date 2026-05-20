@@ -52,10 +52,13 @@ namespace ZeroFrame.API.Controllers
                 new { id = usuarioCriado.Id },
                 new
                 {
-                    usuarioCriado.Id,
-                    usuarioCriado.Email,
-                    usuarioCriado.Perfil,
-                    Token = token
+                    id = usuarioCriado.Id,
+                    usuarioId = usuarioCriado.Id,
+                    nome = usuarioCriado.Nome,
+                    email = usuarioCriado.Email,
+                    telefone = usuarioCriado.Telefone,
+                    perfil = usuarioCriado.Perfil,
+                    token
                 }
             );
         }
