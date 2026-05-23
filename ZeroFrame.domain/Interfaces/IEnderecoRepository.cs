@@ -12,6 +12,7 @@ namespace ZeroFrame.Domain.Interfaces
         Task<List<Endereco>> ObterTodosAsync();
         Task<Endereco?> ObterPorIdAsync(int id);
         Task<Endereco?> ObterPorUsuarioIdAsync(int usuarioId);
+        Task<List<Endereco>> ObterTodosPorUsuarioIdAsync(int usuarioId);
         Task<int> CountByUsuarioIdAsync(int usuarioId);
         Task AdicionarAsync(Endereco endereco);
         Task AtualizarAsync(Endereco endereco);

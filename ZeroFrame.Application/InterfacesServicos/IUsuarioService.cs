@@ -15,6 +15,7 @@ namespace ZeroFrame.Application.Interfaces
         Task<UsuarioLoginResponseDto?> AutenticarAsync(UsuarioLoginDto usuarioLoginDto);
         Task<UsuarioGetDto> CriarAsync(UsuarioPostDto usuarioPostDto);
         Task AtualizarAsync(UsuarioPutDto usuarioPutDto);
+        Task<UsuarioGetDto> AtualizarPerfilAsync(int usuarioId, UsuarioPerfilPutDto usuarioPerfilPutDto);
         Task RemoverAsync(int id);
     }
 }

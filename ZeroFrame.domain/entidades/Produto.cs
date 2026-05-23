@@ -23,6 +23,7 @@ namespace ZeroFrame.Domain.Entidades
         public Categoria? Categoria { get; set; }
         public List<VariacaoProdutos> VariacoesProdutos { get; set; } = new();
         public List<AvaliacaoProduto> AvaliacoesProdutos { get; set; } = new();
+        public List<FavoritoProduto> FavoritosProdutos { get; set; } = new();
         
     }
 }

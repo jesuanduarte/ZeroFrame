@@ -12,6 +12,7 @@ namespace ZeroFrame.Application.DTOS.Endereco
         public string Cidade { get; set; } = string.Empty;
         public string Estado { get; set; } = string.Empty;
         public string Cep { get; set; } = string.Empty;
+        public string Telefone { get; set; } = string.Empty;
         public string? Complemento { get; set; }
         public bool Ativo { get; set; }
         public int UsuarioId { get; set; }
@@ -43,6 +44,9 @@ namespace ZeroFrame.Application.DTOS.Endereco
         [MaxLength(10, ErrorMessage = "O campo CEP deve conter no maximo 10 caracteres.")]
         public string Cep { get; set; } = string.Empty;
 
+        [MaxLength(20, ErrorMessage = "O campo Telefone deve conter no maximo 20 caracteres.")]
+        public string Telefone { get; set; } = string.Empty;
+
         [MaxLength(150, ErrorMessage = "O campo Complemento deve conter no maximo 150 caracteres.")]
         public string? Complemento { get; set; }
 
@@ -61,8 +65,9 @@ namespace ZeroFrame.Application.DTOS.Endereco
         public string Cidade { get; set; } = string.Empty;
         public string Estado { get; set; } = string.Empty;
         public string Cep { get; set; } = string.Empty;
+        public string Telefone { get; set; } = string.Empty;
         public string? Complemento { get; set; }
-        public bool Ativo { get; set; }
+        public bool? Ativo { get; set; }
         public int UsuarioId { get; set; }
     }
 }

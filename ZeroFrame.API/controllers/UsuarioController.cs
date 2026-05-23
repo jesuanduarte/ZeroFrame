@@ -128,6 +128,33 @@ namespace ZeroFrame.API.Controllers
             return Ok(usuario);
         }
 
+        [Authorize(Roles = "Cliente,Administrador")]
+        [HttpGet("meu-perfil")]
+        public async Task<ActionResult<UsuarioGetDto>> ObterMeuPerfil()
+        {
+            var usuarioId = ObterUsuarioLogadoId();
+            if (!usuarioId.HasValue)
+                return Unauthorized("Usuario autenticado nao identificado.");
+
+            var usuario = await _usuarioService.ObterPorIdAsync(usuarioId.Value);
+            if (usuario == null)
+                return NotFound("Usuario nao encontrado.");
+
+            return Ok(usuario);
+        }
+
+        [Authorize(Roles = "Cliente,Administrador")]
+        [HttpPut("meu-perfil")]
+        public async Task<ActionResult<UsuarioGetDto>> AtualizarMeuPerfil(UsuarioPerfilPutDto usuarioPerfilPutDto)
+        {
+            var usuarioId = ObterUsuarioLogadoId();
+            if (!usuarioId.HasValue)
+                return Unauthorized("Usuario autenticado nao identificado.");
+
+            var usuarioAtualizado = await _usuarioService.AtualizarPerfilAsync(usuarioId.Value, usuarioPerfilPutDto);
+            return Ok(usuarioAtualizado);
+        }
+
         // DELETE: api/usuarios/{id}
         // Apenas Administrador pode remover usuário.
         [Authorize(Roles = "Administrador")]
@@ -146,6 +173,22 @@ namespace ZeroFrame.API.Controllers
 
         // GET: api/usuarios/{usuarioId}/endereco
         // Cliente e Administrador podem buscar endereço.
+        [Authorize(Roles = "Cliente,Administrador")]
+        [HttpGet("{usuarioId:int}/enderecos")]
+        public async Task<ActionResult<List<EnderecoGetDto>>> ObterEnderecosDoUsuario(int usuarioId)
+        {
+            if (!PodeAcessarUsuario(usuarioId))
+                return Forbid();
+
+            var usuario = await _usuarioService.ObterPorIdAsync(usuarioId);
+
+            if (usuario == null)
+                return NotFound("Usuario nao encontrado.");
+
+            var enderecos = await _enderecoService.ObterTodosPorUsuarioIdAsync(usuarioId);
+            return Ok(enderecos);
+        }
+
         [Authorize(Roles = "Cliente,Administrador")]
         [HttpGet("{usuarioId:int}/endereco")]
         public async Task<ActionResult<EnderecoGetDto>> ObterEnderecoDoUsuario(int usuarioId)
@@ -263,6 +306,12 @@ namespace ZeroFrame.API.Controllers
 
             var usuarioLogadoId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             return int.TryParse(usuarioLogadoId, out var id) && id == usuarioId;
+        }
+
+        private int? ObterUsuarioLogadoId()
+        {
+            var usuarioLogadoId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            return int.TryParse(usuarioLogadoId, out var id) ? id : null;
         }
     }
 }

@@ -211,6 +211,9 @@ namespace ZeroFrame.Application.Servicos
         // Determina a URL da imagem do produto com base no nome do produto.
         private static string ObterImagemUrl(Produto produto)
         {
+            if (!string.IsNullOrWhiteSpace(produto.ImagemUrl))
+                return produto.ImagemUrl;
+
             var nomeNormalizado = produto.Nome.ToLowerInvariant();
 
             if (nomeNormalizado.Contains("jordan") || nomeNormalizado.Contains("latte"))

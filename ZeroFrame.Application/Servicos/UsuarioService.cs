@@ -119,6 +119,18 @@ namespace ZeroFrame.Application.Servicos
             await _usuarioRepository.AtualizarAsync(usuario);
         }
 
+        public async Task<UsuarioGetDto> AtualizarPerfilAsync(int usuarioId, UsuarioPerfilPutDto usuarioPerfilPutDto)
+        {
+            var usuario = await _usuarioRepository.ObterPorIdAsync(usuarioId)
+                ?? throw new KeyNotFoundException("Usuario nao encontrado");
+
+            usuario.Nome = usuarioPerfilPutDto.Nome.Trim();
+            usuario.Telefone = usuarioPerfilPutDto.Telefone.Trim();
+
+            await _usuarioRepository.AtualizarAsync(usuario);
+            return MapearUsuarioGetDto(usuario);
+        }
+
         // Remove um usuário pelo Id.
         public async Task RemoverAsync(int id)
         {
@@ -146,6 +158,7 @@ namespace ZeroFrame.Application.Servicos
                     Cidade = endereco.Cidade,
                     Estado = endereco.Estado,
                     Cep = endereco.CEP,
+                    Telefone = endereco.Telefone,
                     Complemento = endereco.Complemento,
                     Ativo = endereco.Ativo,
                     UsuarioId = endereco.UsuarioId

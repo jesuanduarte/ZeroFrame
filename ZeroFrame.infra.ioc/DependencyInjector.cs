@@ -76,6 +76,7 @@ namespace ZeroFrame.Infra.IoC
             services.AddScoped<ICategoriaRepository, CategoriaRepository>();
             services.AddScoped<ICarrinhoRepository, CarrinhoRepository>();
             services.AddScoped<IAvaliacaoProdutoRepository, AvaliacaoProdutoRepository>();
+            services.AddScoped<IFavoritoProdutoRepository, FavoritoProdutoRepository>();
 
             // Serviços de aplicação
             services.AddScoped<IUsuarioService, UsuarioService>();
@@ -91,6 +92,7 @@ namespace ZeroFrame.Infra.IoC
             services.AddScoped<IAvaliacaoProdutoService, AvaliacaoProdutoService>();
             services.AddScoped<IAdminDashboardService, AdminDashboardService>();
             services.AddScoped<IFreteService, FreteService>();
+            services.AddScoped<IFavoritoProdutoService, FavoritoProdutoService>();
 
             //autenticação JWT e geração de token
             services.AddScoped<IAuthenticate, AuthenticateService>();

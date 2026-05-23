@@ -39,6 +39,9 @@ namespace ZeroFrame.Infra.Data.EntityConfiguracao
                 .IsRequired()
                 .HasMaxLength(10);
 
+            builder.Property(x => x.Telefone)
+                .HasMaxLength(20);
+
             builder.Property(x => x.Complemento)
                 .HasMaxLength(150);
 

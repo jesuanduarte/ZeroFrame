@@ -176,6 +176,9 @@ namespace ZeroFrame.Application.Servicos
         // Define qual imagem será usada para o produto com base no nome dele.
         private static string ObterImagemUrl(Produto produto)
         {
+            if (!string.IsNullOrWhiteSpace(produto.ImagemUrl))
+                return produto.ImagemUrl;
+
             // Normaliza o nome para minúsculo para facilitar a comparação.
             var nomeNormalizado = produto.Nome.ToLowerInvariant();
 

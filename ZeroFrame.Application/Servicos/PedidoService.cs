@@ -485,6 +485,9 @@ namespace ZeroFrame.Application.Servicos
         // utilizando palavras-chave para identificar o tipo de produto.
         private static string ObterImagemUrl(Produto produto)
         {
+            if (!string.IsNullOrWhiteSpace(produto.ImagemUrl))
+                return produto.ImagemUrl;
+
             var nomeNormalizado = produto.Nome.ToLowerInvariant();
 
             if (nomeNormalizado.Contains("jordan") || nomeNormalizado.Contains("latte"))

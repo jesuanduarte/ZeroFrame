@@ -17,5 +17,6 @@ namespace ZeroFrame.Domain.Entidades
         public List<Endereco> Enderecos { get; set; } = new();
         public List<Pedidos> Pedidos { get; set; } = new();
         public List<AvaliacaoProduto> AvaliacoesProdutos { get; set; } = new();
+        public List<FavoritoProduto> FavoritosProdutos { get; set; } = new();
     }
 }

@@ -52,6 +52,14 @@ namespace ZeroFrame.Application.Servicos
 
             return MapearEnderecoGetDto(endereco);
         }
+
+        public async Task<List<EnderecoGetDto>> ObterTodosPorUsuarioIdAsync(int usuarioId)
+        {
+            await ValidarUsuarioAsync(usuarioId);
+
+            var enderecos = await _enderecoRepository.ObterTodosPorUsuarioIdAsync(usuarioId);
+            return enderecos.Select(MapearEnderecoGetDto).ToList();
+        }
         // Cria um novo endereço.
         public async Task<EnderecoGetDto> CriarAsync(EnderecoPostDto enderecoPostDto)
         {
@@ -65,8 +73,9 @@ namespace ZeroFrame.Application.Servicos
                 Numero = enderecoPostDto.Numero,
                 Bairro = enderecoPostDto.Bairro,
                 Cidade = enderecoPostDto.Cidade,
-                Estado = enderecoPostDto.Estado,
+                Estado = enderecoPostDto.Estado.Trim().ToUpperInvariant(),
                 CEP = enderecoPostDto.Cep,
+                Telefone = enderecoPostDto.Telefone,
                 Complemento = enderecoPostDto.Complemento,
                 UsuarioId = enderecoPostDto.UsuarioId,
                 Ativo = true
@@ -94,10 +103,12 @@ namespace ZeroFrame.Application.Servicos
             endereco.Numero = enderecoPutDto.Numero;
             endereco.Bairro = enderecoPutDto.Bairro;
             endereco.Cidade = enderecoPutDto.Cidade;
-            endereco.Estado = enderecoPutDto.Estado;
+            endereco.Estado = enderecoPutDto.Estado.Trim().ToUpperInvariant();
             endereco.CEP = enderecoPutDto.Cep;
+            endereco.Telefone = enderecoPutDto.Telefone;
             endereco.Complemento = enderecoPutDto.Complemento;
-            endereco.Ativo = enderecoPutDto.Ativo;
+            if (enderecoPutDto.Ativo.HasValue)
+                endereco.Ativo = enderecoPutDto.Ativo.Value;
             endereco.UsuarioId = enderecoPutDto.UsuarioId;
 
             await _enderecoRepository.AtualizarAsync(endereco);
@@ -139,6 +150,7 @@ namespace ZeroFrame.Application.Servicos
                 Cidade = endereco.Cidade,
                 Estado = endereco.Estado,
                 Cep = endereco.CEP,
+                Telefone = endereco.Telefone,
                 Complemento = endereco.Complemento,
                 Ativo = endereco.Ativo,
                 UsuarioId = endereco.UsuarioId
