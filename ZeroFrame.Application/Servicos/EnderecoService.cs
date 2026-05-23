@@ -56,15 +56,18 @@ namespace ZeroFrame.Application.Servicos
         public async Task<EnderecoGetDto> CriarAsync(EnderecoPostDto enderecoPostDto)
         {
             await ValidarUsuarioAsync(enderecoPostDto.UsuarioId);
+            await ValidarLimiteEnderecosAsync(enderecoPostDto.UsuarioId);
 
             // Converte o DTO recebido em entidade.
             var endereco = new Endereco
             {
                 Rua = enderecoPostDto.Rua,
                 Numero = enderecoPostDto.Numero,
+                Bairro = enderecoPostDto.Bairro,
                 Cidade = enderecoPostDto.Cidade,
                 Estado = enderecoPostDto.Estado,
                 CEP = enderecoPostDto.Cep,
+                Complemento = enderecoPostDto.Complemento,
                 UsuarioId = enderecoPostDto.UsuarioId,
                 Ativo = true
             };
@@ -89,9 +92,11 @@ namespace ZeroFrame.Application.Servicos
             // Atualiza os dados do endereço.
             endereco.Rua = enderecoPutDto.Rua;
             endereco.Numero = enderecoPutDto.Numero;
+            endereco.Bairro = enderecoPutDto.Bairro;
             endereco.Cidade = enderecoPutDto.Cidade;
             endereco.Estado = enderecoPutDto.Estado;
             endereco.CEP = enderecoPutDto.Cep;
+            endereco.Complemento = enderecoPutDto.Complemento;
             endereco.Ativo = enderecoPutDto.Ativo;
             endereco.UsuarioId = enderecoPutDto.UsuarioId;
 
@@ -112,6 +117,16 @@ namespace ZeroFrame.Application.Servicos
             if (usuario == null)
                 throw new KeyNotFoundException("Usuario nao encontrado");
         }
+
+        // O limite vale apenas para criacao; atualizar endereco existente nao incrementa a contagem.
+        private async Task ValidarLimiteEnderecosAsync(int usuarioId)
+        {
+            var totalEnderecos = await _enderecoRepository.CountByUsuarioIdAsync(usuarioId);
+
+            if (totalEnderecos >= 3)
+                throw new InvalidOperationException("O usuário já possui o limite máximo de 3 endereços cadastrados.");
+        }
+
         // Converte a entidade Endereco para EnderecoGetDto.
         private static EnderecoGetDto MapearEnderecoGetDto(Endereco endereco)
         {
@@ -120,9 +135,11 @@ namespace ZeroFrame.Application.Servicos
                 Id = endereco.Id,
                 Rua = endereco.Rua,
                 Numero = endereco.Numero,
+                Bairro = endereco.Bairro,
                 Cidade = endereco.Cidade,
                 Estado = endereco.Estado,
                 Cep = endereco.CEP,
+                Complemento = endereco.Complemento,
                 Ativo = endereco.Ativo,
                 UsuarioId = endereco.UsuarioId
             };

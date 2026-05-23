@@ -1,6 +1,7 @@
 using ZeroFrame.Application.DTOS.ItemPedido;
 using ZeroFrame.Application.Interfaces;
 using ZeroFrame.Domain.Entidades;
+using ZeroFrame.Domain.Enums;
 using ZeroFrame.Domain.Interfaces;
 
 namespace ZeroFrame.Application.Servicos
@@ -12,17 +13,20 @@ namespace ZeroFrame.Application.Servicos
         private readonly IPedidoRepository _pedidoRepository;
         private readonly IVariacaoRepository _variacaoRepository;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IFreteService _freteService;
 
         public ItemPedidoService(
             IItemPedidoRepository itemPedidoRepository,
             IPedidoRepository pedidoRepository,
             IVariacaoRepository variacaoRepository,
-            IUnitOfWork unitOfWork)
+            IUnitOfWork unitOfWork,
+            IFreteService freteService)
         {
             _itemPedidoRepository = itemPedidoRepository;
             _pedidoRepository = pedidoRepository;
             _variacaoRepository = variacaoRepository;
             _unitOfWork = unitOfWork;
+            _freteService = freteService;
         }
 
         // Busca um item do pedido por id.
@@ -65,7 +69,8 @@ namespace ZeroFrame.Application.Servicos
                     VariacaoProdutoId = variacao.Id,
                     VariacaoProduto = variacao,
                     Quantidade = dto.Quantidade,
-                    PrecoUnitario = variacao.Produto!.Preco
+                    PrecoUnitario = ProdutoPrecoService.CalcularPrecoFinal(variacao.Produto!),
+                    PrecoCustoUnitario = variacao.Produto!.PrecoCusto
                 };
 
                 variacao.Estoque -= dto.Quantidade;
@@ -118,7 +123,8 @@ namespace ZeroFrame.Application.Servicos
                 item.VariacaoProdutoId = novaVariacao.Id;
                 item.VariacaoProduto = novaVariacao;
                 item.Quantidade = dto.Quantidade;
-                item.PrecoUnitario = novaVariacao.Produto!.Preco;
+                item.PrecoUnitario = ProdutoPrecoService.CalcularPrecoFinal(novaVariacao.Produto!);
+                item.PrecoCustoUnitario = novaVariacao.Produto!.PrecoCusto;
 
                 await _variacaoRepository.AtualizarAsync(novaVariacao);
                 await _itemPedidoRepository.AtualizarAsync(item);
@@ -205,10 +211,7 @@ namespace ZeroFrame.Application.Servicos
 
         private static void ValidarPedidoAberto(Pedidos pedido)
         {
-            if (pedido.Status.Equals("Pago", StringComparison.OrdinalIgnoreCase)
-                || pedido.Status.Equals("Cancelado", StringComparison.OrdinalIgnoreCase)
-                || pedido.Status.Equals("Finalizado", StringComparison.OrdinalIgnoreCase)
-                || pedido.Status.Equals("Aprovado", StringComparison.OrdinalIgnoreCase))
+            if (pedido.Status is StatusPedido.Entregue or StatusPedido.Cancelado)
             {
                 throw new InvalidOperationException("Nao e permitido alterar itens em pedido fechado.");
             }
@@ -219,7 +222,8 @@ namespace ZeroFrame.Application.Servicos
         {
             var pedido = await ObterPedidoOuFalharAsync(pedidoId);
 
-            pedido.ValorTotal = pedido.Itens.Sum(item => item.Quantidade * item.PrecoUnitario);
+            var subtotal = pedido.Itens.Sum(item => item.Quantidade * item.PrecoUnitario);
+            pedido.ValorTotal = subtotal + _freteService.CalcularFrete(subtotal);
             await _pedidoRepository.AtualizarAsync(pedido);
         }
 
@@ -241,7 +245,21 @@ namespace ZeroFrame.Application.Servicos
                 Cor = variacao?.Cor ?? string.Empty,
                 Quantidade = item.Quantidade,
                 PrecoUnitario = item.PrecoUnitario,
-                Subtotal = item.Quantidade * item.PrecoUnitario
+                PrecoCustoUnitario = item.PrecoCustoUnitario,
+                Subtotal = item.Quantidade * item.PrecoUnitario,
+                Produto = produto == null
+                    ? new ItemPedidoProdutoGetDto()
+                    : new ItemPedidoProdutoGetDto
+                    {
+                        ProdutoId = produto.Id,
+                        Nome = produto.Nome,
+                        Preco = produto.Preco,
+                        PrecoCusto = produto.PrecoCusto,
+                        ImagemUrl = produto.ImagemUrl,
+                        Categoria = produto.Categoria?.Nome ?? string.Empty,
+                        Marca = produto.Marca,
+                        Origem = produto.Origem
+                    }
             };
         }
     }

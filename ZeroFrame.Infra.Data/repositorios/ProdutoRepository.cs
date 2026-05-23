@@ -30,11 +30,64 @@ namespace ZeroFrame.Infra.Data.Repositorios
                 .AsNoTracking()
                 .Include(p => p.Categoria)
                 .Include(p => p.VariacoesProdutos)
+                .Include(p => p.AvaliacoesProdutos)
                 .AsQueryable();
 
             query = AplicarFiltros(query, filtro);
 
             return await query.ToListAsync();
+        }
+
+        public async Task<(List<Produto> Items, int TotalItems)> ObterTodosPaginadoAsync(
+            ProdutoFiltro filtro,
+            int pageNumber,
+            int pageSize)
+        {
+            var query = _context.produtos
+                .AsNoTracking()
+                .Include(p => p.Categoria)
+                .Include(p => p.VariacoesProdutos)
+                .Include(p => p.AvaliacoesProdutos)
+                .AsQueryable();
+
+            query = AplicarFiltros(query, filtro);
+
+            var totalItems = await query.CountAsync();
+            var items = await query
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return (items, totalItems);
+        }
+
+        // Listagem administrativa inclui produtos ativos e inativos para manutencao do catalogo.
+        public async Task<List<Produto>> ObterTodosAdminAsync()
+        {
+            return await _context.produtos
+                .AsNoTracking()
+                .Include(p => p.Categoria)
+                .Include(p => p.VariacoesProdutos)
+                .Include(p => p.AvaliacoesProdutos)
+                .ToListAsync();
+        }
+
+        public async Task<(List<Produto> Items, int TotalItems)> ObterTodosAdminPaginadoAsync(int pageNumber, int pageSize)
+        {
+            var query = _context.produtos
+                .AsNoTracking()
+                .Include(p => p.Categoria)
+                .Include(p => p.VariacoesProdutos)
+                .Include(p => p.AvaliacoesProdutos)
+                .AsQueryable();
+
+            var totalItems = await query.CountAsync();
+            var items = await query
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return (items, totalItems);
         }
 
         // busca um produto por id
@@ -43,6 +96,7 @@ namespace ZeroFrame.Infra.Data.Repositorios
             return await _context.produtos
                 .Include(p => p.Categoria)
                 .Include(p => p.VariacoesProdutos)
+                .Include(p => p.AvaliacoesProdutos)
                 .FirstOrDefaultAsync(p => p.Id == id);
         }
 
@@ -68,7 +122,8 @@ namespace ZeroFrame.Infra.Data.Repositorios
             if (produto is null)
                 return;
 
-            _context.produtos.Remove(produto);
+            produto.Ativo = false;
+            _context.produtos.Update(produto);
             await _context.SaveChangesAsync();
         }
 
@@ -76,6 +131,9 @@ namespace ZeroFrame.Infra.Data.Repositorios
         //
         private static IQueryable<Produto> AplicarFiltros(IQueryable<Produto> query, ProdutoFiltro filtro)
         {
+            if (!filtro.IncluirInativos)
+                query = query.Where(produto => produto.Ativo);
+
             if (!string.IsNullOrWhiteSpace(filtro.Busca))
             {
                 var busca = filtro.Busca.Trim().ToLower();

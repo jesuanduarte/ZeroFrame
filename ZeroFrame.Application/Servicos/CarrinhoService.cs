@@ -14,16 +14,19 @@ namespace ZeroFrame.Application.Servicos
         private readonly ICarrinhoRepository _carrinhoRepository;
         private readonly IUsuarioRepository _usuarioRepository;
         private readonly IVariacaoRepository _variacaoRepository;
+        private readonly IFreteService _freteService;
 
         // Recebe o repositorio por injecao de dependencia.
         public CarrinhoService(
             ICarrinhoRepository carrinhoRepository,
             IUsuarioRepository usuarioRepository,
-            IVariacaoRepository variacaoRepository)
+            IVariacaoRepository variacaoRepository,
+            IFreteService freteService)
         {
             _carrinhoRepository = carrinhoRepository;
             _usuarioRepository = usuarioRepository;
             _variacaoRepository = variacaoRepository;
+            _freteService = freteService;
         }
 
         // Busca todos os carrinhos cadastrados.
@@ -155,12 +158,13 @@ namespace ZeroFrame.Application.Servicos
                 throw new InvalidOperationException("Estoque insuficiente para esta variacao.");
         }
         // Converte a entidade Carrinho para CarrinhoGetDto.
-        private static CarrinhoGetDto MapearCarrinhoGetDto(Carrinho carrinho)
+        private CarrinhoGetDto MapearCarrinhoGetDto(Carrinho carrinho)
         {
             var itens = carrinho.Itens.Select(MapearItemCarrinhoGetDto).ToList();
             var subtotal = itens.Sum(item => item.Subtotal);
             var desconto = 0m;
-            var frete = 0m;
+            var frete = _freteService.CalcularFrete(subtotal - desconto);
+            var totalGeral = subtotal - desconto + frete;
 
             return new CarrinhoGetDto
             {
@@ -171,7 +175,9 @@ namespace ZeroFrame.Application.Servicos
                 Subtotal = subtotal,
                 Desconto = desconto,
                 Frete = frete,
-                TotalGeral = subtotal - desconto + frete,
+                ValorFrete = frete,
+                TotalGeral = totalGeral,
+                ValorTotalComFrete = totalGeral,
                 Itens = itens
             };
         }

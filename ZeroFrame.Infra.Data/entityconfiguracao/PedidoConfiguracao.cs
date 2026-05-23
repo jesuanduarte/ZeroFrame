@@ -17,10 +17,16 @@ namespace ZeroFrame.Infra.Data.EntityConfiguracao
 
             builder.Property(x => x.Status)
                 .IsRequired()
+                .HasConversion<string>()
                 .HasMaxLength(30);
 
             builder.Property(x => x.DataPedido)
                 .IsRequired();
+
+            builder.Property(x => x.StatusEntrega)
+                .IsRequired()
+                .HasMaxLength(30)
+                .HasDefaultValue("Pendente");
 
             builder.Property(x => x.ValorTotal)
                 .IsRequired()
@@ -29,6 +35,12 @@ namespace ZeroFrame.Infra.Data.EntityConfiguracao
             builder.HasOne(x => x.Usuario)
                 .WithMany(u => u.Pedidos)
                 .HasForeignKey(x => x.UsuarioId);
+
+            // O pedido guarda o endereco usado na entrega, sem apagar historico se o endereco for removido.
+            builder.HasOne(x => x.Endereco)
+                .WithMany(e => e.Pedidos)
+                .HasForeignKey(x => x.EnderecoId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasMany(x => x.Itens)
                 .WithOne(i => i.Pedido)

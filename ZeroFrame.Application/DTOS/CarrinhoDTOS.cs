@@ -17,7 +17,9 @@ namespace ZeroFrame.Application.DTOS
         public decimal Subtotal { get; set; }
         public decimal Desconto { get; set; }
         public decimal Frete { get; set; }
+        public decimal ValorFrete { get; set; }
         public decimal TotalGeral { get; set; }
+        public decimal ValorTotalComFrete { get; set; }
         public List<ItemCarrinhoGetDto> Itens { get; set; } = new();
     }
 

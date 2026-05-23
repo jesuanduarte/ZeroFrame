@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using ZeroFrame.API.Errors;
 using ZeroFrame.Application.DTOS.Endereco;
+using ZeroFrame.Application.DTOS.Common;
 using ZeroFrame.Application.DTOS.Usuario;
 using ZeroFrame.Application.Interfaces;
 using ZeroFrame.Domain.Account;
@@ -107,6 +108,15 @@ namespace ZeroFrame.API.Controllers
         // GET: api/usuarios/{id}
         // Apenas Administrador pode buscar usuário por Id.
         [Authorize(Roles = "Administrador")]
+        [HttpGet("todos")]
+        public async Task<ActionResult<PagedResponse<UsuarioAdminGetDto>>> ObterTodosUsuarios(
+            [FromQuery] PaginationParams paginationParams)
+        {
+            var usuarios = await _usuarioService.ObterTodosAdminPaginadoAsync(paginationParams);
+            return Ok(usuarios);
+        }
+
+        [Authorize(Roles = "Administrador")]
         [HttpGet("{id:int}")]
         public async Task<ActionResult<UsuarioGetDto>> ObterUsuarioPorId(int id)
         {
@@ -173,12 +183,16 @@ namespace ZeroFrame.API.Controllers
             if (enderecoPostDto.UsuarioId != usuarioId)
                 return BadRequest("Id da rota diferente do UsuarioId do endereco.");
 
-            var enderecoExistente = await _enderecoService.ObterPorUsuarioIdAsync(usuarioId);
+            EnderecoGetDto enderecoCriado;
 
-            if (enderecoExistente != null)
-                return BadRequest("Usuario ja possui endereco cadastrado.");
-
-            var enderecoCriado = await _enderecoService.CriarAsync(enderecoPostDto);
+            try
+            {
+                enderecoCriado = await _enderecoService.CriarAsync(enderecoPostDto);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
 
             return CreatedAtAction(
                 nameof(ObterEnderecoDoUsuario),

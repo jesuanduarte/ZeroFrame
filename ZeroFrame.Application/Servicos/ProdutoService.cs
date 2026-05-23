@@ -1,4 +1,5 @@
 using ZeroFrame.Application.DTOS;
+using ZeroFrame.Application.DTOS.Common;
 using ZeroFrame.Application.DTOS.Produto;
 using ZeroFrame.Application.Interfaces;
 using ZeroFrame.Domain.Entidades;
@@ -35,6 +36,38 @@ namespace ZeroFrame.Application.Servicos
                 .ToList();
         }
 
+        public async Task<PagedResponse<ProdutoGetDto>> ObterTodosPaginadoAsync(
+            ProdutoFiltroDto filtro,
+            PaginationParams paginationParams)
+        {
+            var resultado = await _produtoRepository.ObterTodosPaginadoAsync(
+                MapearProdutoFiltro(filtro),
+                paginationParams.PageNumber,
+                paginationParams.PageSize);
+
+            var items = resultado.Items.Select(MapearProdutoGetDto).ToList();
+            return PagedResponse<ProdutoGetDto>.Create(items, resultado.TotalItems, paginationParams);
+        }
+
+        public async Task<List<ProdutoGetDto>> ObterTodosAdminAsync()
+        {
+            var produtos = await _produtoRepository.ObterTodosAdminAsync();
+
+            return produtos
+                .Select(MapearProdutoGetDto)
+                .ToList();
+        }
+
+        public async Task<PagedResponse<ProdutoGetDto>> ObterTodosAdminPaginadoAsync(PaginationParams paginationParams)
+        {
+            var resultado = await _produtoRepository.ObterTodosAdminPaginadoAsync(
+                paginationParams.PageNumber,
+                paginationParams.PageSize);
+
+            var items = resultado.Items.Select(MapearProdutoGetDto).ToList();
+            return PagedResponse<ProdutoGetDto>.Create(items, resultado.TotalItems, paginationParams);
+        }
+
         // Busca um produto pelo Id.
         public async Task<ProdutoGetDto?> ObterPorIdAsync(int id)
         {
@@ -51,6 +84,11 @@ namespace ZeroFrame.Application.Servicos
         {
             // Valida se a categoria informada existe antes de criar o produto.
             await ValidarCategoriaAsync(produtoPostDto.CategoriaId);
+            ProdutoPrecoService.ValidarProduto(
+                produtoPostDto.Preco,
+                produtoPostDto.PrecoCusto,
+                produtoPostDto.TipoDesconto,
+                produtoPostDto.Desconto);
 
             // Monta a entidade Produto com os dados recebidos do DTO.
             var produto = new Produto
@@ -58,10 +96,18 @@ namespace ZeroFrame.Application.Servicos
                 Nome = produtoPostDto.Nome,
                 Descricao = produtoPostDto.Descricao,
                 Preco = produtoPostDto.Preco,
+                PrecoCusto = produtoPostDto.PrecoCusto,
                 PrecoOriginal = produtoPostDto.PrecoOriginal,
+                TipoDesconto = ProdutoPrecoService.NormalizarTipoDesconto(produtoPostDto.TipoDesconto),
+                Desconto = produtoPostDto.Desconto,
                 ImagemUrl = produtoPostDto.ImagemUrl ?? string.Empty,
                 Marca = produtoPostDto.Marca ?? string.Empty,
                 Origem = produtoPostDto.Origem ?? string.Empty,
+                Genero = produtoPostDto.Genero ?? string.Empty,
+                Cor = produtoPostDto.Cor ?? string.Empty,
+                SecaoVitrine = produtoPostDto.SecaoVitrine ?? string.Empty,
+                TipoTamanho = produtoPostDto.TipoTamanho ?? string.Empty,
+                TamanhosDisponiveis = produtoPostDto.TamanhosDisponiveis ?? string.Empty,
                 CategoriaId = produtoPostDto.CategoriaId,
                 Ativo = true
             };
@@ -85,15 +131,32 @@ namespace ZeroFrame.Application.Servicos
 
             // Valida se a nova categoria informada existe.
             await ValidarCategoriaAsync(produtoPutDto.CategoriaId);
+            ProdutoPrecoService.ValidarProduto(
+                produtoPutDto.Preco,
+                produtoPutDto.PrecoCusto,
+                produtoPutDto.TipoDesconto,
+                produtoPutDto.Desconto);
 
             // Atualiza os dados da entidade com os dados recebidos do DTO.
             produto.Nome = produtoPutDto.Nome;
             produto.Descricao = produtoPutDto.Descricao;
             produto.Preco = produtoPutDto.Preco;
+            produto.PrecoCusto = produtoPutDto.PrecoCusto;
             produto.PrecoOriginal = produtoPutDto.PrecoOriginal;
-            produto.ImagemUrl = produtoPutDto.ImagemUrl ?? string.Empty;
+            produto.TipoDesconto = ProdutoPrecoService.NormalizarTipoDesconto(produtoPutDto.TipoDesconto);
+            produto.Desconto = produtoPutDto.Desconto;
+
+            // Preserva a imagem atual quando o formulario de edicao nao envia um novo arquivo/caminho.
+            if (produtoPutDto.ImagemArquivo != null || produtoPutDto.ImagemUrl != null)
+                produto.ImagemUrl = produtoPutDto.ImagemUrl ?? string.Empty;
+
             produto.Marca = produtoPutDto.Marca ?? string.Empty;
             produto.Origem = produtoPutDto.Origem ?? string.Empty;
+            produto.Genero = produtoPutDto.Genero ?? string.Empty;
+            produto.Cor = produtoPutDto.Cor ?? string.Empty;
+            produto.SecaoVitrine = produtoPutDto.SecaoVitrine ?? string.Empty;
+            produto.TipoTamanho = produtoPutDto.TipoTamanho ?? string.Empty;
+            produto.TamanhosDisponiveis = produtoPutDto.TamanhosDisponiveis ?? string.Empty;
             produto.CategoriaId = produtoPutDto.CategoriaId;
             produto.Ativo = produtoPutDto.Ativo;
 
@@ -128,7 +191,8 @@ namespace ZeroFrame.Application.Servicos
                 Tamanho = filtro.Tamanho,
                 Cor = filtro.Cor,
                 PrecoMin = filtro.PrecoMin,
-                PrecoMax = filtro.PrecoMax
+                PrecoMax = filtro.PrecoMax,
+                IncluirInativos = false
             };
         }
 
@@ -211,6 +275,10 @@ namespace ZeroFrame.Application.Servicos
                 Nome = produto.Nome,
                 Descricao = produto.Descricao,
                 Preco = produto.Preco,
+                PrecoCusto = produto.PrecoCusto,
+                TipoDesconto = produto.TipoDesconto,
+                Desconto = produto.Desconto,
+                PrecoFinal = ProdutoPrecoService.CalcularPrecoFinal(produto),
                 PrecoOriginal = ObterPrecoOriginal(produto),
 
                 // Define se o produto está em promoção.
@@ -221,6 +289,11 @@ namespace ZeroFrame.Application.Servicos
                 CategoriaNome = produto.Categoria?.Nome ?? string.Empty,
                 Marca = ObterMarca(produto),
                 Origem = ObterOrigem(produto),
+                Genero = produto.Genero,
+                Cor = produto.Cor,
+                SecaoVitrine = produto.SecaoVitrine,
+                TipoTamanho = produto.TipoTamanho,
+                TamanhosDisponiveis = produto.TamanhosDisponiveis,
                 Ativo = produto.Ativo,
 
                 // Converte as variações do produto para DTO.

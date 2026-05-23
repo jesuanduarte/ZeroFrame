@@ -1,7 +1,9 @@
 using ZeroFrame.Application.DTOS.ItemPedido;
+using ZeroFrame.Application.DTOS.Common;
 using ZeroFrame.Application.DTOS.Pedidos;
 using ZeroFrame.Application.Interfaces;
 using ZeroFrame.Domain.Entidades;
+using ZeroFrame.Domain.Enums;
 using ZeroFrame.Domain.Interfaces;
 
 namespace ZeroFrame.Application.Servicos
@@ -14,6 +16,8 @@ namespace ZeroFrame.Application.Servicos
         private readonly IUsuarioRepository _usuarioRepository;
         private readonly IEnderecoRepository _enderecoRepository;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IFreteService _freteService;
+        private static readonly string[] StatusEntregaPermitidos = ["Pendente", "Em Separacao", "Enviado", "Entregue", "Cancelado"];
 
         public PedidoService(
             IPedidoRepository pedidoRepository,
@@ -21,7 +25,8 @@ namespace ZeroFrame.Application.Servicos
             IVariacaoRepository variacaoRepository,
             IUsuarioRepository usuarioRepository,
             IEnderecoRepository enderecoRepository,
-            IUnitOfWork unitOfWork)
+            IUnitOfWork unitOfWork,
+            IFreteService freteService)
         {
             _pedidoRepository = pedidoRepository;
             _carrinhoRepository = carrinhoRepository;
@@ -29,10 +34,27 @@ namespace ZeroFrame.Application.Servicos
             _usuarioRepository = usuarioRepository;
             _enderecoRepository = enderecoRepository;
             _unitOfWork = unitOfWork;
+            _freteService = freteService;
         }
 
         
         // Busca um pedido pelo Id.
+
+        public async Task<List<PedidosGetDto>> ObterTodosAsync()
+        {
+            var pedidos = await _pedidoRepository.ObterTodosAsync();
+            return pedidos.Select(MapearPedidoGetDto).ToList();
+        }
+
+        public async Task<PagedResponse<PedidosGetDto>> ObterTodosPaginadoAsync(PaginationParams paginationParams)
+        {
+            var resultado = await _pedidoRepository.ObterTodosPaginadoAsync(
+                paginationParams.PageNumber,
+                paginationParams.PageSize);
+
+            var items = resultado.Items.Select(MapearPedidoGetDto).ToList();
+            return PagedResponse<PedidosGetDto>.Create(items, resultado.TotalItems, paginationParams);
+        }
 
         public async Task<PedidosGetDto?> ObterPorIdAsync(int id)
         {
@@ -51,12 +73,27 @@ namespace ZeroFrame.Application.Servicos
             return pedidos.Select(MapearPedidoGetDto).ToList();
         }
 
+        public async Task<PagedResponse<PedidosGetDto>> ObterPorUsuarioPaginadoAsync(
+            int usuarioId,
+            PaginationParams paginationParams)
+        {
+            var resultado = await _pedidoRepository.ObterPorUsuarioPaginadoAsync(
+                usuarioId,
+                paginationParams.PageNumber,
+                paginationParams.PageSize);
+
+            var items = resultado.Items.Select(MapearPedidoGetDto).ToList();
+            return PagedResponse<PedidosGetDto>.Create(items, resultado.TotalItems, paginationParams);
+        }
+
         // Cria um pedido diretamente a partir do DTO recebido.
         public async Task<PedidosGetDto> CriarAsync(PedidosPostDto pedidosPostDto)
         {
             return await _unitOfWork.ExecuteInTransactionAsync(async () =>
             {
-                await ValidarUsuarioEEnderecoAsync(pedidosPostDto.UsuarioId);
+                var endereco = await ValidarUsuarioEEnderecoAsync(
+                    pedidosPostDto.UsuarioId,
+                    pedidosPostDto.EnderecoId);
 
                 var itensPedido = new List<ItemPedido>();
             
@@ -77,24 +114,31 @@ namespace ZeroFrame.Application.Servicos
                     variacao.Estoque -= itemDto.Quantidade;
                     await _variacaoRepository.AtualizarAsync(variacao);
 
+                    var precoVenda = ProdutoPrecoService.CalcularPrecoFinal(variacao.Produto);
+
                     itensPedido.Add(new ItemPedido
                     {
                         VariacaoProdutoId = itemDto.VariacaoProdutoId,
                         VariacaoProduto = variacao,
                         Quantidade = itemDto.Quantidade,
-                        PrecoUnitario = variacao.Produto.Preco
+                        PrecoUnitario = precoVenda,
+                        PrecoCustoUnitario = variacao.Produto.PrecoCusto
                     });
                 }
 
                 var pedido = new Pedidos
                 {
                     UsuarioId = pedidosPostDto.UsuarioId,
-                    DataPedido = DateTime.Now,
-                    Status = "Pendente",
+                    EnderecoId = pedidosPostDto.EnderecoId,
+                    Endereco = endereco,
+                    DataPedido = DateTime.UtcNow,
+                    Status = StatusPedido.Pendente,
+                    StatusEntrega = "Pendente",
                     Itens = itensPedido
                 };
 
-                pedido.ValorTotal = pedido.Itens.Sum(item => item.Quantidade * item.PrecoUnitario);
+                var subtotalPedido = pedido.Itens.Sum(item => item.Quantidade * item.PrecoUnitario);
+                pedido.ValorTotal = subtotalPedido + _freteService.CalcularFrete(subtotalPedido);
 
                 await _pedidoRepository.CriarPedidoAsync(pedido);
                 return MapearPedidoGetDto(pedido);
@@ -102,7 +146,7 @@ namespace ZeroFrame.Application.Servicos
         }
 
         // Cria o pedido com os itens montados.
-        public async Task<PedidosGetDto> CriarAPartirDoCarrinhoAsync(int carrinhoId)
+        public async Task<PedidosGetDto> CriarAPartirDoCarrinhoAsync(int carrinhoId, int enderecoId)
         {
             return await _unitOfWork.ExecuteInTransactionAsync(async () =>
             {
@@ -111,7 +155,7 @@ namespace ZeroFrame.Application.Servicos
                 if (carrinho == null)
                     throw new InvalidOperationException("Carrinho não encontrado.");
 
-                await ValidarUsuarioEEnderecoAsync(carrinho.UsuarioId);
+                var endereco = await ValidarUsuarioEEnderecoAsync(carrinho.UsuarioId, enderecoId);
 
                 if (!carrinho.Ativo)
                     throw new InvalidOperationException("Carrinho inativo não pode gerar pedido.");
@@ -136,12 +180,15 @@ namespace ZeroFrame.Application.Servicos
                     variacao.Estoque -= itemCarrinho.Quantidade;
                     await _variacaoRepository.AtualizarAsync(variacao);
 
+                    var precoVenda = ProdutoPrecoService.CalcularPrecoFinal(variacao.Produto);
+
                     itensPedido.Add(new ItemPedido
                     {
                         VariacaoProdutoId = itemCarrinho.VariacaoProdutoId,
                         VariacaoProduto = variacao,
                         Quantidade = itemCarrinho.Quantidade,
-                        PrecoUnitario = variacao.Produto.Preco
+                        PrecoUnitario = precoVenda,
+                        PrecoCustoUnitario = variacao.Produto.PrecoCusto
                     });
                 }
 
@@ -149,12 +196,16 @@ namespace ZeroFrame.Application.Servicos
                 var pedido = new Pedidos
                 {
                     UsuarioId = carrinho.UsuarioId,
-                    DataPedido = DateTime.Now,
-                    Status = "Pendente",
+                    EnderecoId = enderecoId,
+                    Endereco = endereco,
+                    DataPedido = DateTime.UtcNow,
+                    Status = StatusPedido.Pendente,
+                    StatusEntrega = "Pendente",
                     Itens = itensPedido
                 };
 
-                pedido.ValorTotal = pedido.Itens.Sum(item => item.Quantidade * item.PrecoUnitario);
+                var subtotalPedido = pedido.Itens.Sum(item => item.Quantidade * item.PrecoUnitario);
+                pedido.ValorTotal = subtotalPedido + _freteService.CalcularFrete(subtotalPedido);
                 carrinho.Ativo = false;
 
                 await _pedidoRepository.CriarPedidoAsync(pedido);
@@ -165,14 +216,14 @@ namespace ZeroFrame.Application.Servicos
         }
 
         // Busca todos os pedidos de um usuário específico.
-        public async Task<PedidosGetDto> CriarAPartirDoCarrinhoAtivoDoUsuarioAsync(int usuarioId)
+        public async Task<PedidosGetDto> CriarAPartirDoCarrinhoAtivoDoUsuarioAsync(int usuarioId, int enderecoId)
         {
             var carrinho = await _carrinhoRepository.ObterAtivoPorUsuarioAsync(usuarioId);
 
             if (carrinho == null)
                 throw new InvalidOperationException("Carrinho ativo não encontrado para este usuário.");
 
-            return await CriarAPartirDoCarrinhoAsync(carrinho.Id);
+            return await CriarAPartirDoCarrinhoAsync(carrinho.Id, enderecoId);
         }
 
         // metodo para cancelar um pedido, atualizando o estoque das variações dos produtos e o status do pedido.
@@ -185,8 +236,10 @@ namespace ZeroFrame.Application.Servicos
                 if (pedido == null)
                     return;
 
-                if (pedido.Status == "Cancelado")
+                if (pedido.Status == StatusPedido.Cancelado)
                     return;
+
+                ValidarAlteracaoStatus(pedido.Status, StatusPedido.Cancelado);
 
                 foreach (var item in pedido.Itens)
                 {
@@ -199,20 +252,55 @@ namespace ZeroFrame.Application.Servicos
                     }
                 }
 
-                pedido.Status = "Cancelado";
+                pedido.Status = StatusPedido.Cancelado;
+                pedido.StatusEntrega = "Cancelado";
                 await _pedidoRepository.AtualizarAsync(pedido);
             });
         }
 
-        // Atualiza o status do pedido.
-        public async Task AtualizarAsync(PedidosPutDto pedidosPutDto)
+        public async Task AtualizarStatusAsync(int pedidoId, PedidoStatusUpdateDto pedidoStatusUpdateDto, bool usuarioAdministrador)
         {
-            var pedido = await _pedidoRepository.ObterPorIdAsync(pedidosPutDto.Id);
+            if (!usuarioAdministrador)
+                throw new UnauthorizedAccessException("Apenas Administrador pode alterar o status do pedido.");
+
+            if (!Enum.IsDefined(typeof(StatusPedido), pedidoStatusUpdateDto.Status))
+                throw new InvalidOperationException("Status do pedido invalido.");
+
+            var pedido = await _pedidoRepository.ObterPorIdAsync(pedidoId);
 
             if (pedido == null)
-                return;
+                throw new KeyNotFoundException("Pedido nao encontrado.");
 
-            pedido.Status = pedidosPutDto.Status;
+            ValidarAlteracaoStatus(pedido.Status, pedidoStatusUpdateDto.Status);
+
+            pedido.Status = pedidoStatusUpdateDto.Status;
+            await _pedidoRepository.AtualizarAsync(pedido);
+        }
+
+        public async Task AtualizarStatusEntregaAsync(int pedidoId, PedidoStatusEntregaUpdateDto pedidoStatusEntregaUpdateDto, bool usuarioAdministrador)
+        {
+            if (!usuarioAdministrador)
+                throw new UnauthorizedAccessException("Apenas Administrador pode alterar o status de entrega do pedido.");
+
+            var statusEntrega = NormalizarStatusEntrega(pedidoStatusEntregaUpdateDto.StatusEntrega);
+            if (!StatusEntregaPermitidos.Contains(statusEntrega))
+                throw new InvalidOperationException("Status de entrega invalido.");
+
+            var pedido = await _pedidoRepository.ObterPorIdAsync(pedidoId);
+            if (pedido == null)
+                throw new KeyNotFoundException("Pedido nao encontrado.");
+
+            pedido.StatusEntrega = statusEntrega;
+            pedido.PrevisaoEntrega = pedidoStatusEntregaUpdateDto.PrevisaoEntrega;
+
+            // DataEntrega representa o momento real da conclusao e fica em UTC para relatorios consistentes.
+            pedido.DataEntrega = statusEntrega == "Entregue"
+                ? DateTime.UtcNow
+                : pedido.DataEntrega;
+
+            if (statusEntrega == "Cancelado")
+                pedido.Status = StatusPedido.Cancelado;
+
             await _pedidoRepository.AtualizarAsync(pedido);
         }
 
@@ -227,40 +315,54 @@ namespace ZeroFrame.Application.Servicos
         }
 
         // Valida os dados mínimos do checkout antes de criar o pedido e baixar estoque.
-        private async Task ValidarUsuarioEEnderecoAsync(int usuarioId)
+        private async Task<Endereco> ValidarUsuarioEEnderecoAsync(int usuarioId, int enderecoId)
         {
             var usuario = await _usuarioRepository.ObterPorIdAsync(usuarioId);
 
             if (usuario == null)
                 throw new InvalidOperationException("Usuario nao encontrado.");
 
-            var endereco = await _enderecoRepository.ObterPorUsuarioIdAsync(usuarioId);
+            var endereco = await _enderecoRepository.ObterPorIdAsync(enderecoId);
 
             if (endereco == null || !endereco.Ativo)
-                throw new InvalidOperationException("Endereco valido nao encontrado para este usuario.");
+                throw new InvalidOperationException("Endereço não encontrado.");
+
+            if (endereco.UsuarioId != usuarioId)
+                throw new InvalidOperationException("Este endereço não pertence ao usuário informado.");
+
+            return endereco;
         }
 
         // Mapeia a entidade Pedidos para o DTO PedidosGetDto,
         // incluindo o cálculo do subtotal, desconto, frete e valor total.
-        private static PedidosGetDto MapearPedidoGetDto(Pedidos pedido)
+        private PedidosGetDto MapearPedidoGetDto(Pedidos pedido)
         {
             var itens = pedido.Itens.Select(MapearItemPedidoGetDto).ToList();
             var subtotal = itens.Sum(item => item.Subtotal);
             var desconto = 0m;
-            var frete = 0m;
-            var valorTotal = pedido.ValorTotal > 0 ? pedido.ValorTotal : subtotal - desconto + frete;
+            var frete = _freteService.CalcularFrete(subtotal - desconto);
+            var valorTotalComFrete = subtotal - desconto + frete;
 
             return new PedidosGetDto
             {
                 Id = pedido.Id,
                 UsuarioId = pedido.UsuarioId,
+                Usuario = MapearUsuarioGetDto(pedido.Usuario, pedido.UsuarioId),
+                EnderecoId = pedido.EnderecoId,
+                Endereco = MapearEnderecoGetDto(pedido.Endereco, pedido.EnderecoId),
                 DataPedido = pedido.DataPedido,
                 Status = pedido.Status,
+                MensagemStatus = ObterMensagemStatus(pedido.Status),
+                StatusEntrega = pedido.StatusEntrega,
+                PrevisaoEntrega = pedido.PrevisaoEntrega,
+                DataEntrega = pedido.DataEntrega,
                 TotalItens = itens.Sum(item => item.Quantidade),
                 Subtotal = subtotal,
                 Desconto = desconto,
                 Frete = frete,
-                ValorTotal = valorTotal,
+                ValorFrete = frete,
+                ValorTotal = valorTotalComFrete,
+                ValorTotalComFrete = valorTotalComFrete,
                 Itens = itens
             };
         }
@@ -287,7 +389,95 @@ namespace ZeroFrame.Application.Servicos
                 Cor = variacao?.Cor ?? string.Empty,
                 Quantidade = item.Quantidade,
                 PrecoUnitario = item.PrecoUnitario,
-                Subtotal = item.Quantidade * item.PrecoUnitario
+                PrecoCustoUnitario = item.PrecoCustoUnitario,
+                Subtotal = item.Quantidade * item.PrecoUnitario,
+                Produto = produto == null
+                    ? new ItemPedidoProdutoGetDto()
+                    : new ItemPedidoProdutoGetDto
+                    {
+                        ProdutoId = produto.Id,
+                        Nome = produto.Nome,
+                        Preco = produto.Preco,
+                        PrecoCusto = produto.PrecoCusto,
+                        ImagemUrl = ObterImagemUrl(produto),
+                        Categoria = produto.Categoria?.Nome ?? string.Empty,
+                        Marca = ObterMarca(produto),
+                        Origem = ObterOrigem(produto)
+                    }
+            };
+        }
+
+        private static PedidoUsuarioGetDto MapearUsuarioGetDto(Usuario? usuario, int usuarioId)
+        {
+            if (usuario == null)
+                return new PedidoUsuarioGetDto { Id = usuarioId };
+
+            return new PedidoUsuarioGetDto
+            {
+                Id = usuario.Id,
+                Nome = usuario.Nome,
+                Email = usuario.Email
+            };
+        }
+
+        // Mapeia o endereco de entrega salvo no pedido para o retorno da API.
+        private static PedidoEnderecoGetDto MapearEnderecoGetDto(Endereco? endereco, int enderecoId)
+        {
+            if (endereco == null)
+                return new PedidoEnderecoGetDto { EnderecoId = enderecoId };
+
+            return new PedidoEnderecoGetDto
+            {
+                EnderecoId = endereco.Id,
+                Rua = endereco.Rua,
+                Numero = endereco.Numero,
+                Bairro = endereco.Bairro,
+                Cidade = endereco.Cidade,
+                Estado = endereco.Estado,
+                Cep = endereco.CEP,
+                Complemento = endereco.Complemento
+            };
+        }
+
+        private static void ValidarAlteracaoStatus(StatusPedido statusAtual, StatusPedido novoStatus)
+        {
+            if (statusAtual == novoStatus)
+                return;
+
+            if (statusAtual is StatusPedido.Entregue or StatusPedido.Cancelado)
+                throw new InvalidOperationException("Nao e permitido alterar um pedido entregue ou cancelado.");
+
+            var alteracaoPermitida = statusAtual switch
+            {
+                StatusPedido.Pendente => novoStatus is StatusPedido.PreparandoParaSaida or StatusPedido.Cancelado,
+                StatusPedido.PreparandoParaSaida => novoStatus is StatusPedido.SaiuParaEntrega or StatusPedido.Cancelado,
+                StatusPedido.SaiuParaEntrega => novoStatus is StatusPedido.Entregue or StatusPedido.Cancelado,
+                _ => false
+            };
+
+            if (!alteracaoPermitida)
+                throw new InvalidOperationException("Alteracao de status do pedido nao permitida.");
+        }
+
+        private static string NormalizarStatusEntrega(string statusEntrega)
+        {
+            var status = statusEntrega.Trim();
+
+            return StatusEntregaPermitidos
+                .FirstOrDefault(statusPermitido => statusPermitido.Equals(status, StringComparison.OrdinalIgnoreCase))
+                ?? status;
+        }
+
+        private static string ObterMensagemStatus(StatusPedido status)
+        {
+            return status switch
+            {
+                StatusPedido.Pendente => "Seu pedido está pendente.",
+                StatusPedido.PreparandoParaSaida => "Seu pedido está sendo preparado para saída.",
+                StatusPedido.SaiuParaEntrega => "Seu pedido saiu para rota de entrega.",
+                StatusPedido.Entregue => "Seu pedido foi entregue com sucesso.",
+                StatusPedido.Cancelado => "Seu pedido foi cancelado.",
+                _ => "Status do pedido invalido."
             };
         }
 

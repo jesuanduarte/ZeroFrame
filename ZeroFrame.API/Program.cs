@@ -11,17 +11,22 @@ builder.Services.AddControllers(options =>
 });
 builder.Services.AddCors(options =>
 {
+    var allowedFrontendOrigins = new[]
+    {
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+        "http://localhost:5500",
+        "http://127.0.0.1:5500",
+        "https://localhost:3090"
+    };
+
     options.AddPolicy(name: "ZeroFrame_Frontend",
         policy =>
         {
-            policy.WithOrigins(
-                    "http://localhost:3000",
-                    "http://127.0.0.1:3000",
-                    "http://localhost:5173",
-                    "http://127.0.0.1:5173",
-                    "http://localhost:5500",
-                    "http://127.0.0.1:5500",
-                    "https://localhost:3090")
+            policy.SetIsOriginAllowed(origin =>
+                    origin == "null" || allowedFrontendOrigins.Contains(origin))
                 .AllowAnyHeader()
                 .AllowAnyMethod();
         });
@@ -35,6 +40,14 @@ builder.Services.AddSwaggerGen(options =>
         Scheme = "bearer",
         BearerFormat = "JWT",
         Description = "Insira o token JWT no formato: Bearer {seu_token}"
+    });
+
+    options.AddSecurityRequirement(_ => new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecuritySchemeReference("Bearer", null, "Bearer"),
+            new List<string>()
+        }
     });
 });
 builder.Services.AddInfrastructure(builder.Configuration);

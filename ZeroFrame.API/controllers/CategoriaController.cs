@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ZeroFrame.API.Errors;
 using ZeroFrame.Application.DTOS.Categoria;
+using ZeroFrame.Application.DTOS.Common;
 using ZeroFrame.Application.Interfaces;
 
 namespace ZeroFrame.API.Controllers
@@ -26,9 +27,10 @@ namespace ZeroFrame.API.Controllers
         // Retorna todas as categorias cadastradas
         [HttpGet]
         [ProducesResponseType(typeof(List<CategoriaGetDto>), StatusCodes.Status200OK)]
-        public async Task<ActionResult<List<CategoriaGetDto>>> ObterTodasCategorias()
+        public async Task<ActionResult<PagedResponse<CategoriaGetDto>>> ObterTodasCategorias(
+            [FromQuery] PaginationParams paginationParams)
         {
-            var categorias = await _categoriaService.ObterTodosAsync();
+            var categorias = await _categoriaService.ObterTodosPaginadoAsync(paginationParams);
             return Ok(categorias);
         }
 

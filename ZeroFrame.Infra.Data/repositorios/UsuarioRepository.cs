@@ -29,6 +29,30 @@ namespace ZeroFrame.Infra.Data.Repositorios
                 .FirstOrDefaultAsync(u => u.Email.ToLower() == emailNormalizado);
         }
 
+        public async Task<List<Usuario>> ObterTodosAsync()
+        {
+            return await _context.Usuarios
+                .Include(u => u.Pedidos)
+                .AsNoTracking()
+                .ToListAsync();
+        }
+
+        public async Task<(List<Usuario> Items, int TotalItems)> ObterTodosPaginadoAsync(int pageNumber, int pageSize)
+        {
+            var query = _context.Usuarios
+                .AsNoTracking()
+                .Include(u => u.Pedidos)
+                .AsQueryable();
+
+            var totalItems = await query.CountAsync();
+            var items = await query
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return (items, totalItems);
+        }
+
         // Busca um usuário pelo ID.
         public async Task<Usuario?> ObterPorIdAsync(int id)
         {

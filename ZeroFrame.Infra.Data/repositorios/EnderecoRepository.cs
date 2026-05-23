@@ -42,6 +42,13 @@ namespace ZeroFrame.Infra.Data.Repositorios
                 .FirstOrDefaultAsync(e => e.UsuarioId == usuarioId);
         }
 
+        // Conta os enderecos cadastrados para aplicar o limite de criacao no Service.
+        public async Task<int> CountByUsuarioIdAsync(int usuarioId)
+        {
+            return await _context.enderecos
+                .CountAsync(e => e.UsuarioId == usuarioId);
+        }
+
         // Adiciona um novo endereço no banco de dados
         public async Task AdicionarAsync(Endereco endereco)
         {

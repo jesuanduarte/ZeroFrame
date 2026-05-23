@@ -27,6 +27,22 @@ namespace ZeroFrame.Infra.Data.Repositorios
                 .Include(c => c.Produtos)
                 .ToListAsync();
         }
+
+        public async Task<(List<Categoria> Items, int TotalItems)> ObterTodosPaginadoAsync(int pageNumber, int pageSize)
+        {
+            var query = _context.categorias
+                .AsNoTracking()
+                .Include(c => c.Produtos)
+                .AsQueryable();
+
+            var totalItems = await query.CountAsync();
+            var items = await query
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return (items, totalItems);
+        }
         // Busca um único registro pelo Id.
         // Se não encontrar nenhum registro, retorna null
         public async Task<Categoria?> ObterPorIdAsync(int id)

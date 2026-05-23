@@ -10,6 +10,7 @@ namespace ZeroFrame.Domain.Interfaces
     public interface ICategoriaRepository
     {
         Task<List<Categoria>> ObterTodosAsync();
+        Task<(List<Categoria> Items, int TotalItems)> ObterTodosPaginadoAsync(int pageNumber, int pageSize);
         Task<Categoria?> ObterPorIdAsync(int id);
         Task AdicionarAsync(Categoria categoria);
         Task AtualizarAsync(Categoria categoria);

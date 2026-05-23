@@ -21,6 +21,10 @@ namespace ZeroFrame.Infra.Data.EntityConfiguracao
                 .IsRequired()
                 .HasColumnType("decimal(18,2)");
 
+            builder.Property(x => x.PrecoCustoUnitario)
+                .IsRequired()
+                .HasColumnType("decimal(18,2)");
+
             builder.HasOne(x => x.Pedido)
                 .WithMany(p => p.Itens)
                 .HasForeignKey(x => x.PedidoId);

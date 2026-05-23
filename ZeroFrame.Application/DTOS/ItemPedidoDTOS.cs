@@ -22,7 +22,21 @@ namespace ZeroFrame.Application.DTOS.ItemPedido
         public string Cor { get; set; } = string.Empty;
         public int Quantidade { get; set; }
         public decimal PrecoUnitario { get; set; }
+        public decimal PrecoCustoUnitario { get; set; }
         public decimal Subtotal { get; set; }
+        public ItemPedidoProdutoGetDto Produto { get; set; } = new();
+    }
+
+    public class ItemPedidoProdutoGetDto
+    {
+        public int ProdutoId { get; set; }
+        public string Nome { get; set; } = string.Empty;
+        public decimal Preco { get; set; }
+        public decimal PrecoCusto { get; set; }
+        public string ImagemUrl { get; set; } = string.Empty;
+        public string Categoria { get; set; } = string.Empty;
+        public string Marca { get; set; } = string.Empty;
+        public string Origem { get; set; } = string.Empty;
     }
 
     // DTOs para criação itens de pedido, com validação de dados.

@@ -1,4 +1,5 @@
 using ZeroFrame.Application.DTOS.Endereco;
+using ZeroFrame.Application.DTOS.Common;
 using ZeroFrame.Application.DTOS.Usuario;
 using ZeroFrame.Application.Exceptions;
 using ZeroFrame.Application.Interfaces;
@@ -40,6 +41,23 @@ namespace ZeroFrame.Application.Servicos
                 return null;
 
             return MapearUsuarioGetDto(usuario);
+        }
+
+        public async Task<List<UsuarioAdminGetDto>> ObterTodosAdminAsync()
+        {
+            var usuarios = await _usuarioRepository.ObterTodosAsync();
+
+            return usuarios.Select(MapearUsuarioAdminGetDto).ToList();
+        }
+
+        public async Task<PagedResponse<UsuarioAdminGetDto>> ObterTodosAdminPaginadoAsync(PaginationParams paginationParams)
+        {
+            var resultado = await _usuarioRepository.ObterTodosPaginadoAsync(
+                paginationParams.PageNumber,
+                paginationParams.PageSize);
+
+            var items = resultado.Items.Select(MapearUsuarioAdminGetDto).ToList();
+            return PagedResponse<UsuarioAdminGetDto>.Create(items, resultado.TotalItems, paginationParams);
         }
 
         // Busca no banco de dados um usuário com o e-mail informado no login.
@@ -124,12 +142,28 @@ namespace ZeroFrame.Application.Servicos
                     Id = endereco.Id,
                     Rua = endereco.Rua,
                     Numero = endereco.Numero,
+                    Bairro = endereco.Bairro,
                     Cidade = endereco.Cidade,
                     Estado = endereco.Estado,
                     Cep = endereco.CEP,
+                    Complemento = endereco.Complemento,
                     Ativo = endereco.Ativo,
                     UsuarioId = endereco.UsuarioId
                 }).ToList()
+            };
+        }
+
+        private static UsuarioAdminGetDto MapearUsuarioAdminGetDto(Usuario usuario)
+        {
+            return new UsuarioAdminGetDto
+            {
+                Id = usuario.Id,
+                Nome = usuario.Nome,
+                Email = usuario.Email,
+                Telefone = usuario.Telefone,
+                Ativo = usuario.Ativo,
+                Perfil = usuario.Perfil,
+                QuantidadePedidos = usuario.Pedidos.Count
             };
         }
 

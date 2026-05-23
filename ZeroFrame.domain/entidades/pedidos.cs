@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using ZeroFrame.Domain.Enums;
 
 namespace ZeroFrame.Domain.Entidades
 {
@@ -11,8 +12,14 @@ namespace ZeroFrame.Domain.Entidades
         public int UsuarioId { get; set; }
         public Usuario? Usuario { get; set; }
 
+        public int EnderecoId { get; set; }
+        public Endereco? Endereco { get; set; }
+
         public DateTime DataPedido { get; set; }
-        public string Status { get; set; } = string.Empty;
+        public StatusPedido Status { get; set; } = StatusPedido.Pendente;
+        public string StatusEntrega { get; set; } = "Pendente";
+        public DateTime? PrevisaoEntrega { get; set; }
+        public DateTime? DataEntrega { get; set; }
 
         public decimal ValorTotal { get; set; }
 

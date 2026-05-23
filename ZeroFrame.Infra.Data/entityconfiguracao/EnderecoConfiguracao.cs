@@ -24,6 +24,9 @@ namespace ZeroFrame.Infra.Data.EntityConfiguracao
                 .IsRequired()
                 .HasMaxLength(20);
 
+            builder.Property(x => x.Bairro)
+                .HasMaxLength(100);
+
             builder.Property(x => x.Cidade)
                 .IsRequired()
                 .HasMaxLength(100);
@@ -35,6 +38,9 @@ namespace ZeroFrame.Infra.Data.EntityConfiguracao
             builder.Property(x => x.CEP)
                 .IsRequired()
                 .HasMaxLength(10);
+
+            builder.Property(x => x.Complemento)
+                .HasMaxLength(150);
 
             builder.Property(x => x.UsuarioId)
                 .IsRequired();

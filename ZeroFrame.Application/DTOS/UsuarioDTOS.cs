@@ -19,6 +19,17 @@ namespace ZeroFrame.Application.DTOS.Usuario
         public List<EnderecoGetDto> Enderecos { get; set; } = new();
     }
 
+    public class UsuarioAdminGetDto
+    {
+        public int Id { get; set; }
+        public string Nome { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
+        public string Telefone { get; set; } = string.Empty;
+        public bool Ativo { get; set; }
+        public string Perfil { get; set; } = string.Empty;
+        public int QuantidadePedidos { get; set; }
+    }
+
     // DTO para criação de usuário, com validação de dados
     public class UsuarioPostDto
     {

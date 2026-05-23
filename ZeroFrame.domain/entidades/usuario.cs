@@ -16,5 +16,6 @@ namespace ZeroFrame.Domain.Entidades
         public bool Ativo { get; set; } = true;
         public List<Endereco> Enderecos { get; set; } = new();
         public List<Pedidos> Pedidos { get; set; } = new();
+        public List<AvaliacaoProduto> AvaliacoesProdutos { get; set; } = new();
     }
 }

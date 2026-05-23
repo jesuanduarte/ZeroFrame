@@ -2,9 +2,11 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using ZeroFrame.API.Errors;
+using ZeroFrame.Application.DTOS.Common;
 using ZeroFrame.Application.DTOS.ItemPedido;
 using ZeroFrame.Application.DTOS.Pedidos;
 using ZeroFrame.Application.Interfaces;
+using ZeroFrame.Domain.Enums;
 
 namespace ZeroFrame.API.Controllers
 {
@@ -48,19 +50,58 @@ namespace ZeroFrame.API.Controllers
         // GET: api/usuarios/{usuarioId}/pedidos
         // Busca todos os pedidos de um usuario especifico.
         [HttpGet("usuarios/{usuarioId:int}/pedidos")]
-        public async Task<ActionResult<List<PedidosGetDto>>> ObterPedidosPorUsuario(int usuarioId)
+        public async Task<ActionResult<PagedResponse<PedidosGetDto>>> ObterPedidosPorUsuario(
+            int usuarioId,
+            [FromQuery] PaginationParams paginationParams)
         {
             if (!PodeAcessarUsuario(usuarioId))
                 return Forbid();
 
-            var pedidos = await _pedidoService.ObterPorUsuarioAsync(usuarioId);
+            var pedidos = await _pedidoService.ObterPorUsuarioPaginadoAsync(usuarioId, paginationParams);
             return Ok(pedidos);
+        }
+
+        // GET: api/pedidos
+        // Lista todos os pedidos com dados suficientes para a tela administrativa.
+        [Authorize(Roles = "Administrador")]
+        [HttpGet("pedidos")]
+        public async Task<ActionResult<PagedResponse<PedidosGetDto>>> ObterTodosPedidos(
+            [FromQuery] PaginationParams paginationParams)
+        {
+            var pedidos = await _pedidoService.ObterTodosPaginadoAsync(paginationParams);
+            return Ok(pedidos);
+        }
+
+        // POST: api/pedidos
+        // Cria um pedido diretamente com os itens e o endereco de entrega informado.
+        [HttpPost("pedidos")]
+        public async Task<ActionResult<PedidosGetDto>> CriarPedido(PedidosPostDto pedidosPostDto)
+        {
+            if (!PodeAcessarUsuario(pedidosPostDto.UsuarioId))
+                return Forbid();
+
+            try
+            {
+                var pedidoCriado = await _pedidoService.CriarAsync(pedidosPostDto);
+
+                return CreatedAtAction(
+                    nameof(ObterPedidoPorId),
+                    new { id = pedidoCriado.Id },
+                    pedidoCriado
+                );
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         // POST: api/usuarios/{usuarioId}/pedidos
         // Cria um pedido a partir do carrinho ativo do usuario.
         [HttpPost("usuarios/{usuarioId:int}/pedidos")]
-        public async Task<ActionResult<PedidosGetDto>> CriarPedidoAPartirDoCarrinhoAtivoDoUsuario(int usuarioId)
+        public async Task<ActionResult<PedidosGetDto>> CriarPedidoAPartirDoCarrinhoAtivoDoUsuario(
+            int usuarioId,
+            PedidoCarrinhoPostDto pedidoCarrinhoPostDto)
         {
             if (!PodeAcessarUsuario(usuarioId))
                 return Forbid();
@@ -69,7 +110,9 @@ namespace ZeroFrame.API.Controllers
 
             try
             {
-                pedidoCriado = await _pedidoService.CriarAPartirDoCarrinhoAtivoDoUsuarioAsync(usuarioId);
+                pedidoCriado = await _pedidoService.CriarAPartirDoCarrinhoAtivoDoUsuarioAsync(
+                    usuarioId,
+                    pedidoCarrinhoPostDto.EnderecoId);
             }
             catch (InvalidOperationException ex)
             {
@@ -84,28 +127,62 @@ namespace ZeroFrame.API.Controllers
             );
         }
 
-        // PUT: api/pedidos/{id}
-        // Atualiza os dados de um pedido existente.
+        // PUT: api/pedidos/{pedidoId}/status
+        // Atualiza o status de entrega do pedido.
         [Authorize(Roles = "Administrador")]
-        [HttpPut("pedidos/{id:int}")]
-        public async Task<ActionResult> AtualizarPedido(int id, PedidosPutDto pedidosPutDto)
+        [HttpPut("pedidos/{pedidoId:int}/status")]
+        public async Task<ActionResult> AtualizarStatusPedido(int pedidoId, PedidoStatusUpdateDto pedidoStatusUpdateDto)
         {
-            // Verifica se o Id da rota e igual ao Id enviado no corpo da requisicao.
-            if (id != pedidosPutDto.Id)
-                return BadRequest("Id da rota diferente do Id do pedido.");
+            try
+            {
+                await _pedidoService.AtualizarStatusAsync(
+                    pedidoId,
+                    pedidoStatusUpdateDto,
+                    User.IsInRole("Administrador"));
 
-            var pedido = await _pedidoService.ObterPorIdAsync(id);
-
-            if (pedido == null)
-                return NotFound("Pedido nao encontrado.");
-
-            if (!PodeAcessarUsuario(pedido.UsuarioId))
+                return NoContent();
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (UnauthorizedAccessException)
+            {
                 return Forbid();
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
 
-            await _pedidoService.AtualizarAsync(pedidosPutDto);
+        // PUT: api/pedidos/{id}/status-entrega
+        // Atualiza status e previsao de entrega sem remover historico do pedido.
+        [Authorize(Roles = "Administrador")]
+        [HttpPut("pedidos/{id:int}/status-entrega")]
+        public async Task<ActionResult> AtualizarStatusEntregaPedido(int id, PedidoStatusEntregaUpdateDto pedidoStatusEntregaUpdateDto)
+        {
+            try
+            {
+                await _pedidoService.AtualizarStatusEntregaAsync(
+                    id,
+                    pedidoStatusEntregaUpdateDto,
+                    User.IsInRole("Administrador"));
 
-            // Retorna 204 No Content indicando que a atualizacao foi feita com sucesso.
-            return NoContent();
+                return NoContent();
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Forbid();
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         // PATCH: api/pedidos/{id}/cancelar
@@ -299,12 +376,9 @@ namespace ZeroFrame.API.Controllers
             return int.TryParse(usuarioLogadoId, out var id) && id == usuarioId;
         }
 
-        private static bool PedidoEstaFechado(string status)
+        private static bool PedidoEstaFechado(StatusPedido status)
         {
-            return status.Equals("Pago", StringComparison.OrdinalIgnoreCase)
-                || status.Equals("Cancelado", StringComparison.OrdinalIgnoreCase)
-                || status.Equals("Finalizado", StringComparison.OrdinalIgnoreCase)
-                || status.Equals("Aprovado", StringComparison.OrdinalIgnoreCase);
+            return status is StatusPedido.Entregue or StatusPedido.Cancelado;
         }
     }
 }

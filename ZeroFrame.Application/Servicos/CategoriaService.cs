@@ -1,4 +1,5 @@
 using ZeroFrame.Application.DTOS.Categoria;
+using ZeroFrame.Application.DTOS.Common;
 using ZeroFrame.Application.Interfaces;
 using ZeroFrame.Domain.Entidades;
 using ZeroFrame.Domain.Interfaces;
@@ -25,6 +26,16 @@ namespace ZeroFrame.Application.Servicos
 
             // Converte a lista de entidades para lista de DTOs.
             return categorias.Select(MapearCategoriaGetDto).ToList();
+        }
+
+        public async Task<PagedResponse<CategoriaGetDto>> ObterTodosPaginadoAsync(PaginationParams paginationParams)
+        {
+            var resultado = await _categoriaRepository.ObterTodosPaginadoAsync(
+                paginationParams.PageNumber,
+                paginationParams.PageSize);
+
+            var items = resultado.Items.Select(MapearCategoriaGetDto).ToList();
+            return PagedResponse<CategoriaGetDto>.Create(items, resultado.TotalItems, paginationParams);
         }
 
         // Busca uma categoria pelo Id.

@@ -22,6 +22,47 @@ namespace ZeroFrame.Infra.Data.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("ZeroFrame.Domain.Entidades.AvaliacaoProduto", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("Ativo")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Comentario")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime?>("DataAtualizacao")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DataCriacao")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("Nota")
+                        .HasColumnType("decimal(2,1)");
+
+                    b.Property<int>("ProdutoId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UsuarioId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProdutoId");
+
+                    b.HasIndex("UsuarioId", "ProdutoId")
+                        .IsUnique()
+                        .HasFilter("[Ativo] = 1");
+
+                    b.ToTable("AvaliacoesProdutos");
+                });
+
             modelBuilder.Entity("ZeroFrame.Domain.Entidades.Carrinho", b =>
                 {
                     b.Property<int>("Id")
@@ -77,6 +118,11 @@ namespace ZeroFrame.Infra.Data.Migrations
                     b.Property<bool>("Ativo")
                         .HasColumnType("bit");
 
+                    b.Property<string>("Bairro")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
                     b.Property<string>("CEP")
                         .IsRequired()
                         .HasMaxLength(10)
@@ -86,6 +132,10 @@ namespace ZeroFrame.Infra.Data.Migrations
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Complemento")
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
 
                     b.Property<string>("Estado")
                         .IsRequired()
@@ -152,6 +202,9 @@ namespace ZeroFrame.Infra.Data.Migrations
                     b.Property<int>("PedidoId")
                         .HasColumnType("int");
 
+                    b.Property<decimal>("PrecoCustoUnitario")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<decimal>("PrecoUnitario")
                         .HasColumnType("decimal(18,2)");
 
@@ -207,13 +260,29 @@ namespace ZeroFrame.Infra.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<DateTime?>("DataEntrega")
+                        .HasColumnType("datetime2");
+
                     b.Property<DateTime>("DataPedido")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("EnderecoId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("PrevisaoEntrega")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasMaxLength(30)
                         .HasColumnType("nvarchar(30)");
+
+                    b.Property<string>("StatusEntrega")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)")
+                        .HasDefaultValue("Pendente");
 
                     b.Property<int>("UsuarioId")
                         .HasColumnType("int");
@@ -222,6 +291,8 @@ namespace ZeroFrame.Infra.Data.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("EnderecoId");
 
                     b.HasIndex("UsuarioId");
 
@@ -242,10 +313,23 @@ namespace ZeroFrame.Infra.Data.Migrations
                     b.Property<int>("CategoriaId")
                         .HasColumnType("int");
 
+                    b.Property<string>("Cor")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<decimal>("Desconto")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<string>("Descricao")
                         .IsRequired()
                         .HasMaxLength(300)
                         .HasColumnType("nvarchar(300)");
+
+                    b.Property<string>("Genero")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("ImagemUrl")
                         .IsRequired()
@@ -270,8 +354,33 @@ namespace ZeroFrame.Infra.Data.Migrations
                     b.Property<decimal>("Preco")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<decimal>("PrecoCusto")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<decimal?>("PrecoOriginal")
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("SecaoVitrine")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("TamanhosDisponiveis")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
+                    b.Property<string>("TipoDesconto")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)")
+                        .HasDefaultValue("nenhum");
+
+                    b.Property<string>("TipoTamanho")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.HasKey("Id");
 
@@ -355,6 +464,25 @@ namespace ZeroFrame.Infra.Data.Migrations
                     b.ToTable("variacaoprodutos");
                 });
 
+            modelBuilder.Entity("ZeroFrame.Domain.Entidades.AvaliacaoProduto", b =>
+                {
+                    b.HasOne("ZeroFrame.Domain.Entidades.Produto", "Produto")
+                        .WithMany("AvaliacoesProdutos")
+                        .HasForeignKey("ProdutoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ZeroFrame.Domain.Entidades.Usuario", "Usuario")
+                        .WithMany("AvaliacoesProdutos")
+                        .HasForeignKey("UsuarioId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Produto");
+
+                    b.Navigation("Usuario");
+                });
+
             modelBuilder.Entity("ZeroFrame.Domain.Entidades.Carrinho", b =>
                 {
                     b.HasOne("ZeroFrame.Domain.Entidades.Usuario", "Usuario")
@@ -428,11 +556,19 @@ namespace ZeroFrame.Infra.Data.Migrations
 
             modelBuilder.Entity("ZeroFrame.Domain.Entidades.Pedidos", b =>
                 {
+                    b.HasOne("ZeroFrame.Domain.Entidades.Endereco", "Endereco")
+                        .WithMany("Pedidos")
+                        .HasForeignKey("EnderecoId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("ZeroFrame.Domain.Entidades.Usuario", "Usuario")
                         .WithMany("Pedidos")
                         .HasForeignKey("UsuarioId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Endereco");
 
                     b.Navigation("Usuario");
                 });
@@ -469,6 +605,11 @@ namespace ZeroFrame.Infra.Data.Migrations
                     b.Navigation("Produtos");
                 });
 
+            modelBuilder.Entity("ZeroFrame.Domain.Entidades.Endereco", b =>
+                {
+                    b.Navigation("Pedidos");
+                });
+
             modelBuilder.Entity("ZeroFrame.Domain.Entidades.Pedidos", b =>
                 {
                     b.Navigation("Itens");
@@ -478,11 +619,15 @@ namespace ZeroFrame.Infra.Data.Migrations
 
             modelBuilder.Entity("ZeroFrame.Domain.Entidades.Produto", b =>
                 {
+                    b.Navigation("AvaliacoesProdutos");
+
                     b.Navigation("VariacoesProdutos");
                 });
 
             modelBuilder.Entity("ZeroFrame.Domain.Entidades.Usuario", b =>
                 {
+                    b.Navigation("AvaliacoesProdutos");
+
                     b.Navigation("Enderecos");
 
                     b.Navigation("Pedidos");

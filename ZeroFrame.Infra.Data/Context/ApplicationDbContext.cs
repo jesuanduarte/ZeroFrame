@@ -26,6 +26,7 @@ namespace ZeroFrame.Infra.Data.Context
         public DbSet<Produto> produtos { get; set; }
         public DbSet<Usuario> Usuarios { get; set; }
         public DbSet<VariacaoProdutos> variacaoprodutos { get; set; }
+        public DbSet<AvaliacaoProduto> AvaliacoesProdutos { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

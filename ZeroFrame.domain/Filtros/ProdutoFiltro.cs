@@ -10,5 +10,6 @@ namespace ZeroFrame.Domain.Filtros
         public string? Cor { get; set; }
         public decimal? PrecoMin { get; set; }
         public decimal? PrecoMax { get; set; }
+        public bool IncluirInativos { get; set; }
     }
 }

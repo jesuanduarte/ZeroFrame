@@ -1,6 +1,7 @@
 using ZeroFrame.Application.DTOS.Pagamento;
 using ZeroFrame.Application.Interfaces;
 using ZeroFrame.Domain.Entidades;
+using ZeroFrame.Domain.Enums;
 using ZeroFrame.Domain.Interfaces;
 
 namespace ZeroFrame.Application.Servicos
@@ -65,7 +66,7 @@ namespace ZeroFrame.Application.Servicos
                 if (pedido == null)
                     throw new InvalidOperationException("Pedido nao encontrado.");
 
-                if (pedido.Status == "Cancelado")
+                if (pedido.Status == StatusPedido.Cancelado)
                     throw new InvalidOperationException("Pedido cancelado nao pode receber pagamento.");
 
                 var pagamentoExistente = await _pagamentoRepository.ObterPorPedidoIdAsync(pedidoId);
@@ -96,12 +97,6 @@ namespace ZeroFrame.Application.Servicos
                 return;
 
             pagamento.Status = pagamentoPutDto.Status;
-
-            if (pagamento.Pedido != null && pagamentoPutDto.Status.Equals("Aprovado", StringComparison.OrdinalIgnoreCase))
-                pagamento.Pedido.Status = "Pago";
-
-            if (pagamento.Pedido != null && pagamentoPutDto.Status.Equals("Recusado", StringComparison.OrdinalIgnoreCase))
-                pagamento.Pedido.Status = "Pendente";
 
             await _pagamentoRepository.AtualizarAsync(pagamento);
         }
