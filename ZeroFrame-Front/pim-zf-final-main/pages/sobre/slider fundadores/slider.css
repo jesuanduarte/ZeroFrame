@@ -1,0 +1,279 @@
+:root {
+    --primary-color: #8C5A3C;
+    --secondary-color: #F5EBE0;
+    --accent-secondary-color: white;
+    --text-color: black;
+
+    --btn-color: black;
+    --accent-hover-color: #9b655d;
+    --arrow-color: #F5EBE0;
+    
+
+    --github-color: #0FBF3E;
+    --linkedin-color: #0A66C2;
+}
+
+.modoescuro {
+    --primary-color: #48312E;
+    --secondary-color: #201B1B;
+    --accent-color: #F5EBE0;
+    --text-color: white;
+    --accent-secondary-color: #9b655d;
+    --third-color: #ffc484;
+
+    --btn-color: #48312e;
+    --accent-hover-color: #9b655d;
+    --arrow-color: #F5EBE0;
+
+
+}
+
+
+.content-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 60vw;
+    padding: 2rem;
+    border-radius: 1rem;
+    background-color: transparent;
+    gap: 2rem;
+    transition: 0.3s;
+    color: var(te)
+}
+
+.content-img {
+    height: 70vh;
+    width: auto;
+    border-radius: 16px;
+    box-shadow:  0 0 5px rgba(0, 0, 0, 0.2);
+    transition: 0.3s;
+}
+
+.content-text-div {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    transition: 0.3s;
+}
+
+
+.content-title {
+    margin: 0;
+    font-size: 2.5rem;
+    font-weight: bolder;
+    text-align: center;
+}
+
+.content-subtitle {
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-align: center;
+    margin: 0;
+}
+
+.content-text-titles {
+    margin-bottom: 32px;
+}
+
+.content-paragraph {
+    font-weight: 500;
+    text-align: justify;
+}
+
+.slider-btn {
+    transition: 0.3s ease-in;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    border: none;
+    background-color: var(--btn-color);
+    color: var(--arrow-color);
+    box-shadow:  0 0 5px rgba(0, 0, 0, 0.2);
+    font-size: 20px;
+    cursor: pointer;
+
+}
+
+.slider-btn:hover {
+    transition: 0.2s;
+    background-color: var(--accent-hover-color);
+    color: var(--arrow-color);
+    transform: scale(1.2);
+}
+
+/* sliders */
+
+.slider-container {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    gap: 64px;
+}
+
+.slider-content {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.slider {
+    display: none;
+}
+
+.on {
+    display: flex;
+}
+
+.fundadores-links-container {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 4rem;
+}
+
+.fundadores-i {
+    font-size: 3rem;
+    color: var(--accent-color);
+    transition: 0.3s;
+}
+
+.fa-github:hover {
+    transform: scale(1.2);
+    color: var(--linkedin-color);
+}
+
+.fa-linkedin:hover {
+    transform: scale(1.2);
+    color: var(--linkedin-color);
+}
+
+/* ====================================
+   RESPONSIVIDADE DO SLIDER
+   ==================================== */
+
+/* Tablet — layout horizontal mantido, proporções ajustadas */
+@media (max-width: 1024px) {
+    .slider-container {
+        gap: 0.8rem;
+        padding: 0 0.5rem;
+        align-items: center;
+    }
+
+    .slider-content {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .slider-btn {
+        width: 44px;
+        height: 44px;
+        font-size: 16px;
+        flex-shrink: 0;
+    }
+
+    /* Mantém foto + texto lado a lado no tablet */
+    .content-container {
+        width: 100%;
+        padding: 1.5rem;
+        gap: 1.5rem;
+        align-items: center;
+    }
+
+    .content-img {
+        height: auto;
+        width: 36%;
+        max-width: 220px;
+        aspect-ratio: 3 / 4;
+        object-fit: cover;
+        flex-shrink: 0;
+    }
+
+    .content-text-div {
+        flex: 1;
+        min-width: 0;
+        padding: 0;
+    }
+
+    .content-title {
+        font-size: 1.8rem;
+    }
+
+    .content-subtitle {
+        font-size: 1.1rem;
+    }
+
+    .content-text-titles {
+        margin-bottom: 1.2rem;
+    }
+
+    .content-paragraph {
+        font-size: 0.92rem;
+        line-height: 1.6;
+    }
+
+    .fundadores-links-container {
+        margin-top: 1.5rem;
+        gap: 1.2rem;
+    }
+
+    .fundadores-i {
+        font-size: 2.4rem;
+    }
+}
+
+/* Mobile — colapsa para coluna */
+@media (max-width: 480px) {
+    .slider-container {
+        gap: 0.5rem;
+        padding: 0 0.3rem;
+    }
+
+    .slider-btn {
+        width: 36px;
+        height: 36px;
+        font-size: 13px;
+    }
+
+    .content-container {
+        flex-direction: column;
+        padding: 1rem;
+        gap: 1rem;
+        align-items: center;
+    }
+
+    .content-img {
+        width: 70%;
+        max-width: 220px;
+    }
+
+    .content-text-div {
+        width: 100%;
+    }
+
+    .content-title {
+        font-size: 1.3rem;
+        text-align: center;
+    }
+
+    .content-subtitle {
+        font-size: 0.9rem;
+        text-align: center;
+    }
+
+    .content-paragraph {
+        font-size: 0.85rem;
+    }
+
+    .fundadores-links-container {
+        margin-top: 1.2rem;
+    }
+
+    .fundadores-i {
+        font-size: 2rem;
+    }
+}

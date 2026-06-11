@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <!-- Configurações de metadados e codificação do documento -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zero-Frame | Painel Administrativo</title>
+
+    <!-- Fontes externas do Google Fonts (Montserrat) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
+    <!-- Ícones Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" rel="stylesheet">
+    <!-- Link dos estilos dos componentes -->
+    <link rel="stylesheet" href="../../styles/header.css">
+    <link rel="stylesheet" href="admin.css">
+</head>
+
+<body>
+    <button class="admin-menu-toggle" id="adminMenuToggle" type="button" aria-label="Abrir menu administrativo">
+        <i class="fa-solid fa-bars"></i>
+    </button>
+    <div class="admin-container">
+        <aside class="admin-sidebar">
+            <div class="admin-logo">
+                <img src="../../assets/zeroframelogo-sem fundo-white.svg" alt="Zero-Frame Admin"
+                    style="max-width: 150px;">
+                <h2>Admin</h2>
+            </div>
+            <nav class="admin-nav">
+                <button type="button" class="nav-btn active" data-target="dashboard" data-section="dashboard"><i class="fa-solid fa-chart-line"></i>
+                    Relatórios</button>
+                <button type="button" class="nav-btn" data-target="pedidos" data-section="pedidos"><i class="fa-solid fa-truck-fast"></i> Pedidos</button>
+                <button type="button" class="nav-btn" data-target="produtos" data-section="produtos"><i class="fa-solid fa-tag"></i> Produtos</button>
+                <button type="button" class="nav-btn" data-target="categorias" data-section="categorias"><i class="fa-solid fa-layer-group"></i> Categorias</button>
+                <button type="button" class="nav-btn" data-target="clientes" data-section="clientes"><i class="fa-solid fa-user-group"></i> Clientes</button>
+            </nav>
+            <div class="sidebar-bottom">
+                <button class="btn-secondary btn-sm w-100" onclick="abrirModalCriarAdmin()">+ Criar Admin</button>
+                <a href="../../index.html" class="nav-btn btn-voltar btn-sm"><i class="fa-solid fa-backward"></i> Voltar
+                    ao Site</a>
+            </div>
+        </aside>
+
+        <main class="admin-content">
+
+            <section id="dashboard" class="admin-section active">
+                <header>
+                    <h1>Visão Geral e Relatórios Financeiros</h1>
+                </header>
+
+                <div class="cards-grid financial-grid">
+                    <div class="admin-card card-blue">
+                        <h3>Faturamento Bruto Total</h3>
+                        <p id="faturamento-bruto-total">R$ 0,00</p>
+                    </div>
+                    <div class="admin-card card-blue">
+                        <h3>Faturamento Bruto Mensal</h3>
+                        <p id="faturamento-bruto-mensal">R$ 0,00</p>
+                    </div>
+                    <div class="admin-card card-green">
+                        <h3>Lucro Real Total (Líquido)</h3>
+                        <p id="lucro-liquido-total">R$ 0,00</p>
+                    </div>
+                    <div class="admin-card card-green">
+                        <h3>Lucro Real Mensal (Líquido)</h3>
+                        <p id="lucro-liquido-mensal">R$ 0,00</p>
+                    </div>
+                </div>
+
+                <div class="cards-grid">
+                    <div class="admin-card alert-danger" onclick="filtrarPedidosDashboard('atrasados')">
+                        <h3>Pedidos Atrasados</h3>
+                        <p id="qtd-atrasados">0</p>
+                        <small>Clique para ver</small>
+                    </div>
+                    <div class="admin-card alert-warning" onclick="filtrarPedidosDashboard('proximos')">
+                        <h3>Prazos Próximos</h3>
+                        <p id="qtd-proximos">0</p>
+                        <small>Clique para ver</small>
+                    </div>
+                    <div class="admin-card alert-success" onclick="filtrarPedidosDashboard('noprazo')">
+                        <h3>No Prazo</h3>
+                        <p id="qtd-noprazo">0</p>
+                        <small>Clique para ver</small>
+                    </div>
+                </div>
+
+                <div class="reports-grid">
+                    <div class="report-box">
+                        <h3><i class="fa-solid fa-star"></i> Produtos Mais Bem Avaliados</h3>
+                        <ul id="list-melhores-avaliados" class="product-list">
+                            <li>Carregando...</li>
+                        </ul>
+                    </div>
+                    <div class="report-box">
+                        <h3><i class="fa-solid fa-chart-line"></i> Mais Vendidos</h3>
+                        <ul id="list-mais-vendidos" class="product-list">
+                            <li>Carregando...</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <section id="pedidos" class="admin-section">
+                <header class="flex-header">
+                    <h1>Gestão de Pedidos</h1>
+                    <input type="text" id="search-pedido" placeholder="Pesquisar por ID ou Cliente..."
+                        class="search-input">
+                </header>
+                <div class="table-responsive">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Cliente</th>
+                                <th>Previsão Entrega</th>
+                                <th>Situação</th>
+                                <th>Valor Total</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="pedidos-tbody"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section id="produtos" class="admin-section">
+                <header class="flex-header">
+                    <h1>Gestão de Produtos</h1>
+                    <button class="btn-primary" onclick="abrirModalProduto()">+ Novo Produto</button>
+                </header>
+                <div class="table-responsive">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Imagem</th>
+                                <th>Nome</th>
+                                <th>Preço Custo</th>
+                                <th>Preço Venda</th>
+                                <th>Desconto</th>
+                                <th>Estoque</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="produtos-tbody"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section id="categorias" class="admin-section">
+                <header>
+                    <h1>Categorias</h1>
+                </header>
+
+                <div class="category-admin-layout">
+                    <article class="admin-card category-form-card">
+                        <h2>Adicionar / Editar categoria</h2>
+                        <form id="form-categoria" class="category-form">
+                            <input type="hidden" id="categoria-id">
+                            <div class="form-group">
+                                <label for="categoria-nome">Nome da categoria</label>
+                                <input type="text" id="categoria-nome" placeholder="Ex.: Eletrônicos" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="categoria-descricao">Descrição opcional</label>
+                                <textarea id="categoria-descricao" placeholder="Ex.: Produtos eletrônicos em geral"></textarea>
+                            </div>
+                            <div class="category-form-actions">
+                                <button type="submit" class="btn-primary">Salvar categoria</button>
+                                <button type="button" class="btn-secondary" id="limpar-categoria">Limpar</button>
+                            </div>
+                        </form>
+                    </article>
+
+                    <article class="admin-card category-table-card">
+                        <div class="flex-header">
+                            <h2>Categorias cadastradas</h2>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Nome</th>
+                                        <th>Descrição</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="categorias-tbody"></tbody>
+                            </table>
+                        </div>
+                        <footer class="category-pagination">
+                            <span id="categorias-pagination-info">Mostrando 1 a 5 de 5 categorias</span>
+                            <div class="category-pagination-actions">
+                                <button type="button" class="btn-secondary btn-sm">Anterior</button>
+                                <span class="current-page">1</span>
+                                <button type="button" class="btn-secondary btn-sm">Próximo</button>
+                            </div>
+                        </footer>
+                    </article>
+                </div>
+            </section>
+
+            <section id="clientes" class="admin-section">
+                <header class="flex-header">
+                    <h1>Gestão de Clientes</h1>
+                    <input type="text" id="search-cliente" placeholder="Pesquisar por Nome ou Email..."
+                        class="search-input">
+                </header>
+                <div class="table-responsive">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nome</th>
+                                <th>Email</th>
+                                <th>Qtd. Compras</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="clientes-tbody"></tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div id="modal-produto" class="modal modal-lg">
+        <div class="modal-content">
+            <span class="close" onclick="fecharModal('modal-produto')">&times;</span>
+            <h2 id="modal-produto-titulo">Adicionar Produto</h2>
+            <form id="form-produto" class="grid-form">
+                <input type="hidden" id="prod-id">
+
+                <div class="form-group full-width">
+                    <label>Imagem Principal:</label>
+                    <input type="file" id="prod-imagem-arquivo" name="imagemArquivo" accept=".png,.jpg,.jpeg,.webp,image/png,image/jpeg,image/webp" multiple>
+                    <small class="field-hint">Selecione de 2 a 5 imagens do produto. A primeira será usada como imagem principal.</small>
+                    <div class="image-preview-wrapper" id="prod-imagens-preview">
+                        <img id="prod-imagem-preview" class="prod-img-preview" src="../../assets/logo zf.png" alt="Preview da imagem do produto">
+                        <button type="button" class="btn-secondary btn-sm" id="prod-limpar-imagem">Limpar imagem</button>
+                    </div>
+                </div>
+
+                <div class="form-group full-width">
+                    <label>Nome do Produto:</label>
+                    <input type="text" id="prod-nome" required>
+                </div>
+
+                <div class="form-group full-width">
+                    <label>Descrição:</label>
+                    <textarea id="prod-descricao" placeholder="Descreva o produto" required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Preço de Custo (R$):</label>
+                    <input type="number" step="0.01" id="prod-preco-custo" placeholder="Ex: 50.00" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Preço de Venda (R$):</label>
+                    <input type="number" step="0.01" id="prod-preco" placeholder="Ex: 120.00" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Tipo de Desconto:</label>
+                    <select id="prod-tipo-desconto">
+                        <option value="porcentagem">Porcentagem (%)</option>
+                        <option value="fixo">Valor Fixo (R$)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Valor do Desconto:</label>
+                    <input type="number" step="0.01" id="prod-desconto-valor" value="0" min="0">
+                </div>
+
+                <div class="form-group">
+                    <label>Categoria Base:</label>
+                    <select id="prod-categoria" required></select>
+                </div>
+
+                <div class="form-group">
+                    <label>Marca:</label>
+                    <input type="text" id="prod-marca" placeholder="Ex: Zero Frame">
+                </div>
+
+                <div class="form-group">
+                    <label>Tipo de vitrine:</label>
+                    <select id="prod-origem">
+                        <option value="Original">Original</option>
+                        <option value="Multimarcas">Multimarcas</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Gênero/Público:</label>
+                    <select id="prod-genero">
+                        <option value="Unissex">Unissex</option>
+                        <option value="Masculino">Masculino</option>
+                        <option value="Feminino">Feminino</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Cor Principal:</label>
+                    <input type="text" id="prod-cor" placeholder="Ex: Preto, Branco">
+                </div>
+
+                <div class="form-group">
+                    <label>Exibir na Vitrine (Home):</label>
+                    <select id="prod-vitrine">
+                        <option value="Nenhum">Não exibir na Home</option>
+                        <option value="Recomendados">Produtos Recomendados</option>
+                        <option value="Originais">Originais Zero Frame</option>
+                        <option value="Multimarcas">Multimarcas</option>
+                    </select>
+                </div>
+
+                <div class="form-group full-width" style="border-top: 1px solid #ccc; padding-top: 15px;">
+                    <label>Tipo de Grade de Tamanho:</label>
+                    <select id="prod-tipo-tamanho">
+                        <option value="Unico">Tamanho Único</option>
+                        <option value="Roupa">Roupas Padrão (P, M, G...)</option>
+                        <option value="Calcado">Calçados (Numeração)</option>
+                    </select>
+                </div>
+
+                <div id="grade-roupa" class="grade-tamanho full-width" style="display:none;">
+                    <div class="checkbox-group">
+                        <label><input type="checkbox" value="PP"> PP</label>
+                        <label><input type="checkbox" value="P"> P</label>
+                        <label><input type="checkbox" value="M"> M</label>
+                        <label><input type="checkbox" value="G"> G</label>
+                        <label><input type="checkbox" value="GG"> GG</label>
+                    </div>
+                </div>
+
+                <div id="grade-calcado" class="grade-tamanho full-width" style="display:none;">
+                    <div class="checkbox-group calcados-grid"></div>
+                </div>
+
+                <div class="form-group full-width product-variations-panel">
+                    <div class="flex-header">
+                        <label>Variações do produto</label>
+                        <button type="button" class="btn-secondary btn-sm" id="adicionar-variacao">+ Adicionar variação</button>
+                    </div>
+                    <div id="variacoes-container" class="variations-container"></div>
+                    <small class="field-hint">Adicione as variações disponíveis para venda.</small>
+                </div>
+
+                <button type="submit" class="btn-primary full-width mt-3">Salvar Produto</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="modal-pedido" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="fecharModal('modal-pedido')">&times;</span>
+            <h2>Pedido #<span id="edit-pedido-id"></span></h2>
+            <form id="form-pedido">
+                <div class="form-group">
+                    <label>Situação da Entrega:</label>
+                    <select id="edit-pedido-status">
+                        <option value="Pendente">Pendente</option>
+                        <option value="Em Separacao">Em Separação</option>
+                        <option value="Enviado">Enviado</option>
+                        <option value="Entregue">Entregue</option>
+                        <option value="Cancelado">Cancelado</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Previsão de Entrega:</label>
+                    <input type="date" id="edit-pedido-previsao">
+                </div>
+                <button type="submit" class="btn-primary w-100">Atualizar Pedido</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="modal-admin" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="fecharModal('modal-admin')">&times;</span>
+            <h2>Criar Novo Administrador</h2>
+            <form id="form-admin">
+                <div class="form-group"><label>Nome:</label><input type="text" id="admin-nome" required></div>
+                <div class="form-group"><label>Email:</label><input type="email" id="admin-email" required></div>
+                <div class="form-group"><label>Senha:</label><input type="password" id="admin-senha" required></div>
+                <button type="submit" class="btn-primary w-100">Cadastrar Admin</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="../../componentes/api.js"></script>
+    <script type="module" src="./admin.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,276 @@
+﻿<!DOCTYPE html>
+<!--
+    PÁGINA DE BUSCA/PESQUISA
+    Página que exibe resultados de busca de produtos
+    Permite ao usuário pesquisar por nome de produto ou categoria
+    Inclui filtros de preço e outras opções de refinamento
+-->
+<html lang="pt-br">
+
+<head>
+    <!-- Configurações de metadados -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Estilos globais -->
+    <link rel="stylesheet" href="../../style.css">
+    <!-- Estilos do dropdown -->
+    <link rel="stylesheet" href="../../componentes/dropdown-menu/dropdown-menu.css">
+    <!-- Estilos da página de busca -->
+    <link rel="stylesheet" href="search.css">
+    <!-- Scripts -->
+    <script type="text/javascript" src="../../componentes/dropdown-menu/dropdown-menu.js" defer></script>
+    <script type="text/javascript" src="../../componentes/mobile-menu/mobile-menu.js" defer></script>
+    <script src="filter-drawer.js" defer></script>
+    <script src="../../componentes/api.js"></script>
+    <script src="../../componentes/services/produtoService.js"></script>
+    <script src="../../componentes/services/carrinhoService.js"></script>
+    <script src="../../componentes/cart-badge.js" defer></script>
+    <script src="search.js" defer></script>
+    <!-- Fonte -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
+    <!-- Ícones -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" rel="stylesheet">
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="../../assets/logo zf.png" type="image/x-icon">
+    <title>Zero Frame</title>
+</head>
+
+<body>
+
+    <header class="header">
+
+        <a href="../../index.html" class="logo-link-header">
+            <img src="../../assets/logo zf.png" alt="Zero Frame Logo" class="logo">
+        </a>
+
+        <nav class="navigation-header" id="mainNav">
+            <ul class="nav-menus-ul links">
+                <li><a href="../../pages/search/search.html?q=Originais" class="itens-nav-menus">ORIGINAIS</a></li>
+                <li><a href="../../pages/search/search.html?q=Multimarcas" class="itens-nav-menus">MULTIMARCAS</a></li>
+                <li><a href="../../pages/sobre/sobre.html" class="itens-nav-menus">SOBRE NÓS</a></li>
+            </ul>
+
+            <form action="../../pages/search/search.html" method="GET" class="search-bar-container">
+                <input type="text" name="q" placeholder="O que você está procurando?" class="search-bar"
+                    id="searchInput">
+                <button type="submit" class="search-btn"><i class="fa-solid fa-magnifying-glass"></i></button>
+            </form>
+        </nav>
+
+        <div class="header-right-actions">
+            <ul class="user-actions-ul links">
+                <li class="user-actions-li"><a href="../../pages/carrinho/carrinho.html" class="user-actions-icon"><i
+                            class="fa-solid fa-cart-shopping"></i></a>
+                </li>
+                <li class="dropdown user-actions-li">
+                    <button class="user-dropdown-icon" id="userMenuIcon"><i class="fa-solid fa-user"></i></button>
+                    <ul class="dropdown-content" id="dropdownMenu">
+                        <li class="dropdown-header">
+                            <div class="dropdown-header-text">
+                                <h3>Username</h3>
+                                <p>email@email.com</p>
+                            </div>
+                            <a href="../../pages/account-settings/account.html"><i class="fa-solid fa-gear"></i></a>
+                        </li>
+                        <hr class="hr-dropdown">
+                        <li><a href="../../pages/meus-pedidos/pedidos.html">Meus Pedidos</a></li>
+                        <li><a href="../../pages/favoritos/favoritos.html">Favoritos</a></li>
+                        <li><a href="../../pages/meus-enderecos/enderecos.html">Meus endereços</a></li>
+                        <hr class="hr-dropdown">
+                        <li><button class="theme-toggle-btn" id="toggle-button">Alternar tema</button></li>
+                        <li><a href="../../pages/suporte/suporte.html" target="_blank">Suporte</a></li>
+                        <hr class="hr-dropdown">
+                        <li><a href="#">Sair da conta <i class="fa-solid fa-arrow-right-from-bracket"></i></a></li>
+                    </ul>
+                </li>
+            </ul>
+            <button class="hamburger-btn" id="hamburgerBtn" aria-label="Abrir menu">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </div>
+
+        <div vw class="enabled">
+            <div vw-access-button class="active"></div>
+            <div vw-plugin-wrapper>
+                <div class="vw-plugin-top-wrapper"></div>
+            </div>
+        </div>
+
+    </header>
+
+
+    <main>
+
+        <h1 class="search-title">Resultados para "busca"</h1>
+
+        <!-- Barra de filtro — aparece apenas em mobile/tablet -->
+        <div class="mobile-filter-bar">
+            <button class="mobile-filter-btn" id="filterToggleBtn">
+                <i class="fa-solid fa-sliders"></i>
+                Filtrar
+                <span class="filter-active-count" id="filterCount"></span>
+            </button>
+        </div>
+
+        <!-- Backdrop escuro por trás do drawer -->
+        <div class="filter-backdrop" id="filterBackdrop"></div>
+
+        <section class="search-results-container">
+
+            <!-- Painel de filtros: sidebar no desktop, drawer no mobile -->
+            <div class="search-filters" id="searchFilters">
+
+                <!-- Cabeçalho do drawer (visível apenas no mobile) -->
+                <div class="filter-drawer-header">
+                    <h3 class="filter-drawer-title">Filtros</h3>
+                    <button class="filter-drawer-close" id="filterCloseBtn" aria-label="Fechar filtros">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+
+                <!-- Categorias de filtro com acordeão no mobile -->
+                <div class="filter-category">
+                    <button class="filter-category-toggle">
+                        <h3 class="filter-category-title">Preço</h3>
+                        <i class="fa-solid fa-chevron-down filter-chevron"></i>
+                    </button>
+                    <ul class="filter-options">
+                        <li><input type="checkbox" id="preco1"><label for="preco1">Até R$100</label></li>
+                        <li><input type="checkbox" id="preco2"><label for="preco2">R$100 - R$200</label></li>
+                        <li><input type="checkbox" id="preco3"><label for="preco3">R$200 - R$300</label></li>
+                        <li><input type="checkbox" id="preco4"><label for="preco4">Acima de R$300</label></li>
+                    </ul>
+                </div>
+
+                <div class="filter-category">
+                    <button class="filter-category-toggle">
+                        <h3 class="filter-category-title">Gênero</h3>
+                        <i class="fa-solid fa-chevron-down filter-chevron"></i>
+                    </button>
+                    <ul class="filter-options">
+                        <li><input type="checkbox" id="masculino" value="Masculino"><label for="masculino">Masculino</label></li>
+                        <li><input type="checkbox" id="feminino" value="Feminino"><label for="feminino">Feminino</label></li>
+                        <li><input type="checkbox" id="unisex" value="Unissex"><label for="unisex">Unissex</label></li>
+                    </ul>
+                </div>
+
+                <div class="filter-category">
+                    <button class="filter-category-toggle">
+                        <h3 class="filter-category-title">Categoria</h3>
+                        <i class="fa-solid fa-chevron-down filter-chevron"></i>
+                    </button>
+                    <!-- Categorias alteradas: opcoes preenchidas dinamicamente pela API em search.js. -->
+                    <ul class="filter-options" id="categoryFilterOptions">
+                        <li class="filter-loading">Carregando categorias...</li>
+                    </ul>
+                </div>
+
+                <div class="filter-category">
+                    <button class="filter-category-toggle">
+                        <h3 class="filter-category-title">Tamanho</h3>
+                        <i class="fa-solid fa-chevron-down filter-chevron"></i>
+                    </button>
+                    <ul class="filter-options filter-options-sizes">
+                        <li><input type="checkbox" id="tam-p" value="P"><label for="tam-p" class="size-label">P</label></li>
+                        <li><input type="checkbox" id="tam-m" value="M"><label for="tam-m" class="size-label">M</label></li>
+                        <li><input type="checkbox" id="tam-g" value="G"><label for="tam-g" class="size-label">G</label></li>
+                        <li><input type="checkbox" id="tam-gg" value="GG"><label for="tam-gg" class="size-label">GG</label></li>
+                    </ul>
+                </div>
+
+                <div class="filter-category">
+                    <button class="filter-category-toggle">
+                        <h3 class="filter-category-title">Cor</h3>
+                        <i class="fa-solid fa-chevron-down filter-chevron"></i>
+                    </button>
+                    <ul class="filter-options filter-options-colors">
+                        <li><input type="checkbox" id="cor-branco" value="Branco"><label for="cor-branco"><span class="color-dot" style="background:#f5f5f5;border:1px solid #ccc"></span>Branco</label></li>
+                        <li><input type="checkbox" id="cor-preto" value="Preto"><label for="cor-preto"><span class="color-dot" style="background:#1a1a1a"></span>Preto</label></li>
+                        <li><input type="checkbox" id="cor-azul" value="Azul"><label for="cor-azul"><span class="color-dot" style="background:#2563eb"></span>Azul</label></li>
+                        <li><input type="checkbox" id="cor-verde" value="Verde"><label for="cor-verde"><span class="color-dot" style="background:#16a34a"></span>Verde</label></li>
+                        <li><input type="checkbox" id="cor-vermelho" value="Vermelho"><label for="cor-vermelho"><span class="color-dot" style="background:#dc2626"></span>Vermelho</label></li>
+                        <li><input type="checkbox" id="cor-amarelo" value="Amarelo"><label for="cor-amarelo"><span class="color-dot" style="background:#ca8a04"></span>Amarelo</label></li>
+                    </ul>
+                </div>
+
+                <!-- Rodapé do drawer (visível apenas no mobile) -->
+                <div class="filter-drawer-footer">
+                    <button class="filter-clear-btn" id="filterClearBtn">Limpar filtros</button>
+                    <button class="filter-apply-btn" id="filterApplyBtn">Ver resultados</button>
+                </div>
+            </div>
+
+            <!-- linhas com os cards dos produtos, resultados da pesquisa -->
+            <div class="search-results">
+                <ul class="search-results products-container"></ul>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-zf-container">
+            <img src="../../assets/zeroframelogo-sem fundo-white.svg" alt="Zero Frame Logo" class="footer-logo">
+        </div>
+
+        <div class="line footer-link"></div>
+
+        <div class="footer-itens-container">
+
+            <div class="footer-about-container">
+                <h3 class="footer-content-title">SOBRE</h3>
+                <ul class="footer-about-list">
+                    <li><a href="../../pages/sobre/sobre.html" class="footer-link">Conheça a empresa</a></li>
+                    <li><a href="../../pages/sobre/sobre.html#fundadores" class="footer-link">Criadores</a></li>
+                </ul>
+            </div>
+
+
+
+            <div class="footer-multimarcas-container">
+                <h3 class="footer-content-title">MULTIMARCAS</h3>
+                <ul class="footer-about-list">
+                    <li><a href="../../index.html#multimarcas-em-alta" class="footer-link">Produtos em alta</a></li>
+                    <li><a href="../../pages/search/search.html?q=Multimarcas" class="footer-link">Todos os produtos</a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="footer-originais-container">
+                <h3 class="footer-content-title">ORIGINAIS</h3>
+                <ul class="footer-about-list">
+                    <li><a href="../../index.html#originais-em-alta" class="footer-link">Produtos em alta</a></li>
+                    <li><a href="../../pages/search/search.html?q=Originais" class="footer-link">Todos os produtos</a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="footer-categorias-container">
+                <h3 class="footer-content-title">CATEGORIAS</h3>
+                <ul class="footer-about-list">
+                    <li><a href="../../pages/search/search.html?q=Camisa" class="footer-link">Camisas</a></li>
+                    <li><a href="../../pages/search/search.html?q=Blusa" class="footer-link">Blusas</a></li>
+                    <li><a href="../../pages/search/search.html?q=Calça" class="footer-link">Calças</a></li>
+                    <li><a href="../../pages/search/search.html?q=Bermuda" class="footer-link">Bermudas</a></li>
+                    <li><a href="../../pages/search/search.html?q=Calça" class="footer-link">Calçados</a></li>
+                    <li><a href="../../pages/search/search.html?q=Acessório" class="footer-link">Acessórios</a></li>
+                </ul>
+            </div>
+
+        </div>
+    </footer>
+
+    
+    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+    <script>
+        new window.VLibras.Widget('https://vlibras.gov.br/app');
+    </script>
+
+</body>
+
+<script src="../../componentes/theme-toggle.js"></script>
+
+</html>
+

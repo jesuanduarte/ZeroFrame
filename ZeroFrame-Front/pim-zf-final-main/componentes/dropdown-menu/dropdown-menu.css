@@ -1,0 +1,183 @@
+/*
+  ====================================
+  ESTILOS DO MENU DROPDOWN DE USUÁRIO
+  ====================================
+  
+  Define o visual e comportamento do menu dropdown
+  que aparece ao clicar no ícone de usuário
+  Suporta tema claro e escuro
+*/
+
+:root {
+    --primary-color: #8C5A3C;
+    --secondary-color: #F5EBE0;
+    --accent-color: #201B1B;
+    --accent-secondary-color: white;
+    --text-color: black;
+    --dropdown-bg-color: #9b655d;
+    --page-font: 'Montserrat', sans-serif;
+}
+
+/* Cores para o tema escuro */
+.modoescuro {
+    --primary-color: #48312E;
+    --secondary-color: #201B1B;
+    --accent-color: #F5EBE0;
+    --text-color: white;
+    --accent-secondary-color: #9b655d;
+    --third-color: #ffc484;
+}
+
+/* ====================================
+   ESTILOS DOS ÍCONES DE AÇÃO
+   ==================================== */
+
+/* Lista de ações do usuário (carrinho, perfil, etc.) */
+.user-actions-ul {
+    font-family: var(--page-font);
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    height: 100%;
+}
+
+/* Item individual da lista de ações */
+.user-actions-li {
+    height: 100%;
+}
+
+/* Botão do ícone de usuário */
+.user-dropdown-icon {
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+}
+
+/* Ícone dentro do botão de usuário */
+.user-dropdown-icon i {
+    color: #F5EBE0;
+    font-size: 1.5rem;
+}
+
+/* Estilos de layout do botão */
+.user-dropdown-icon {
+    height: 100%;
+    padding: 0 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+}
+
+/* Classe ativa do dropdown (quando menu está aberto) */
+.active-dropdown {
+    background-color: var(--secondary-color);
+}
+
+/* Ícone quando dropdown está ativo */
+.active-dropdown i {
+    color: var(--text-color);
+}
+
+/* Efeito hover no ícone de usuário */
+.user-dropdown-icon i:hover {
+    color: var(--accent-color);
+    font-weight: 700;
+    transition: 0.3s ease-in-out;
+}
+
+/* Hover em modo escuro */
+.modoescuro .user-dropdown-icon i:hover {
+    color: var(--third-color);
+}
+
+/* ====================================
+   ESTILOS DO MENU DROPDOWN
+   ==================================== */
+
+/* Container do dropdown (para posicionamento relativo) */
+.dropdown {
+    position: relative;
+}
+
+/* Header do dropdown (informações do usuário) */
+.dropdown-header {
+    color: #F5EBE0;
+    display: flex;
+    align-items: center;
+    gap: 5rem;
+    justify-content: space-between;
+}
+
+/* Link de configurações no header */
+.dropdown-header a {
+    font-size: 1.5rem;
+    color: #F5EBE0;
+}
+
+/* Conteúdo do dropdown (menu quando aberto) */
+.dropdown-content {
+    /* Inicialmente oculto */
+    display: none;
+    position: absolute;
+    /* Posiciona abaixo do botão */
+    top: 100%;
+    right: 0;
+    border-radius: 0 0 0.5rem 0.5rem;
+    /* Sombra para profundidade */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    padding: 1rem;
+    background-color: var(--primary-color);
+    min-width: 220px;
+}
+
+/* Links dentro do dropdown */
+.dropdown-content a {
+    text-decoration: none;
+    color: #F5EBE0;
+}
+
+/* Efeito hover nos links do dropdown */
+.dropdown-content a:hover {
+    text-decoration: underline;
+}
+
+/* Separadores (linhas hr) dentro do dropdown */
+.hr-dropdown {
+    border-color: rgba(245, 235, 224, 0.25);
+    margin: 0.5rem 0;
+}
+
+/* Classe que torna o menu visível */
+.open-menu {
+    display: block;
+}
+
+/* Estado ativo do dropdown */
+.dropdown:active {
+    background-color: var(--secondary-color);
+}
+
+/* Ícone quando dropdown está ativo */
+.dropdown:active .user-actions-icon i {
+    color: var(--text-color);
+}
+
+/* ====================================
+   ESTILO DO BOTÃO DE ALTERNÂNCIA DE TEMA
+   ==================================== */
+
+/* Botão para alternar tema */
+.theme-toggle-btn {
+    color: #F5EBE0;
+    cursor: pointer;
+    font-size: 1rem;
+    font-family: var(--page-font);
+    border: none;
+    background-color: transparent;
+}
+
+/* Hover no botão de tema */
+.theme-toggle-btn:hover {
+    text-decoration: underline;
+}

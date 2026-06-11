@@ -1,0 +1,215 @@
+/* Importa os padrões de estilos */
+
+@import './styles/header.css';
+@import './styles/footer.css';
+
+:root {
+    --primary-color: #8C5A3C;
+    --secondary-color: #F5EBE0;
+    --accent-color: #201B1B;
+    --accent-secondary-color: white;
+    --text-color: black;
+    --page-font: 'Montserrat', sans-serif;
+}
+
+.modoescuro {
+    --primary-color: #48312E;
+    --secondary-color: #201B1B;
+    --accent-color: #F5EBE0;
+    --text-color: white;
+    --accent-secondary-color: #9b655d;
+    --third-color: #ffc484;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Estilos para o conteúdo principal da página */
+
+body {
+    font-family: var(--page-font);
+    background-color: var(--secondary-color);
+    color: var(--text-color);
+    transition: 1s;
+}
+
+.main-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    padding-top: 5rem;
+    padding-bottom: 2rem;
+}
+
+
+.sobre-section {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 2rem;
+}
+
+.sobre-section img {
+    margin-left: 2rem;
+    width: 40%;
+    max-width: 480px;
+    height: auto;
+    border-radius: 12px;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.sobre-text-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+    width: 60%;
+    padding: 2rem;
+    margin-left: 2rem;
+}
+
+.sobre-title {
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+
+}
+
+.sobre-description {
+    font-size: 1.1rem;
+    text-align: justify;
+    line-height: 1.5;
+    
+    font-weight: 500;
+}
+
+.sobre-highlight {
+    font-size: 1.4rem;
+    font-weight: 700;
+    line-height: 1.5;
+    margin-top: 2rem;
+
+}
+
+.criadores-section {
+    margin-top: 3rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+
+.criadores-title {
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+    color: var(--accent-color);
+}
+
+/* ====================================
+   RESPONSIVIDADE DA PÁGINA SOBRE
+   ==================================== */
+
+/* Tablet — layout horizontal mantido, tamanhos ajustados */
+@media (max-width: 1024px) {
+    .main-content {
+        padding-top: 4rem;
+        padding-bottom: 2rem;
+    }
+
+    .sobre-section {
+        gap: 1.5rem;
+        padding: 0 1.5rem;
+    }
+
+    .sobre-section img {
+        margin-left: 0;
+        width: 42%;
+        max-width: 200px;
+        height: auto;
+        border-radius: 10px;
+    }
+
+    .sobre-text-container {
+        width: 58%;
+        padding: 1.2rem;
+        margin-left: 0;
+    }
+
+    .sobre-title {
+        font-size: 2rem;
+        margin-bottom: 1.2rem;
+    }
+
+    .sobre-description {
+        font-size: 1rem;
+    }
+
+    .sobre-highlight {
+        font-size: 1.2rem;
+        margin-top: 1.2rem;
+    }
+
+    .criadores-title {
+        font-size: 2rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .criadores-section {
+        margin-top: 2rem;
+        padding: 0 1.5rem;
+    }
+}
+
+/* Mobile — colapsa para coluna */
+@media (max-width: 480px) {
+    .main-content {
+        padding-top: 4rem;
+        padding-bottom: 1.5rem;
+    }
+
+    .sobre-section {
+        flex-direction: column;
+        gap: 1rem;
+        padding: 0 1rem;
+    }
+
+    .sobre-section img {
+        width: 100%;
+        max-width: 100%;
+        border-radius: 8px;
+    }
+
+    .sobre-text-container {
+        width: 100%;
+        padding: 1rem;
+        margin-left: 0;
+    }
+
+    .sobre-title {
+        font-size: 1.5rem;
+        margin-bottom: 0.8rem;
+    }
+
+    .sobre-description {
+        font-size: 0.95rem;
+    }
+
+    .sobre-highlight {
+        font-size: 1.05rem;
+        margin-top: 0.8rem;
+    }
+
+    .criadores-title {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .criadores-section {
+        margin-top: 1.5rem;
+        padding: 0 1rem;
+    }
+}

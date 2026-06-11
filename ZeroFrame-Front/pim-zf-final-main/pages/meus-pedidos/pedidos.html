@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<!--
+    PÁGINA MEUS PEDIDOS
+    Página que exibe histórico de pedidos do usuário
+    Mostra status de entrega, rastreamento e detalhes de cada pedido
+-->
+<html lang="pt-br">
+
+<head>
+    <!-- Metadados -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Estilos -->
+    <link rel="stylesheet" href="pedidos.css">
+    <link rel="stylesheet" href="../../style.css">
+    <link rel="stylesheet" href="../../componentes/dropdown-menu/dropdown-menu.css">
+    <!-- Scripts -->
+    <script type="text/javascript" src="../../componentes/dropdown-menu/dropdown-menu.js" defer></script>
+    <script type="text/javascript" src="../../componentes/mobile-menu/mobile-menu.js" defer></script>
+    <script src="../../componentes/theme-toggle.js" defer></script>
+    <script src="../../componentes/api.js"></script>
+    <script src="../../componentes/services/carrinhoService.js"></script>
+    <script src="../../componentes/cart-badge.js" defer></script>
+    <script src="../../componentes/services/produtoService.js"></script>
+    <script src="../../componentes/services/pedidoService.js"></script>
+    <script src="pedidos.js"></script>
+    <!-- Fonte e ícones -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" rel="stylesheet">
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="../../assets/logo zf.png" type="image/x-icon">
+    <title>Meus Pedidos | Zero Frame</title>
+</head>
+
+<body>
+
+    <header class="header">
+
+        <a href="../../index.html" class="logo-link-header">
+            <img src="../../assets/logo zf.png" alt="Zero Frame Logo" class="logo">
+        </a>
+
+        <nav class="navigation-header" id="mainNav">
+            <ul class="nav-menus-ul links">
+                <li><a href="../../pages/search/search.html?q=Originais" class="itens-nav-menus">ORIGINAIS</a></li>
+                <li><a href="../../pages/search/search.html?q=Multimarcas" class="itens-nav-menus">MULTIMARCAS</a></li>
+                <li><a href="../../pages/sobre/sobre.html" class="itens-nav-menus">SOBRE NÓS</a></li>
+            </ul>
+
+            <form action="../../pages/search/search.html" method="GET" class="search-bar-container">
+                <input type="text" name="q" placeholder="O que você está procurando?" class="search-bar"
+                    id="searchInput">
+                <button type="submit" class="search-btn"><i class="fa-solid fa-magnifying-glass"></i></button>
+            </form>
+        </nav>
+
+        <div class="header-right-actions">
+            <ul class="user-actions-ul links">
+                <li class="user-actions-li"><a href="../../pages/carrinho/carrinho.html" class="user-actions-icon"><i
+                            class="fa-solid fa-cart-shopping"></i></a>
+                </li>
+                <li class="dropdown user-actions-li">
+                    <button class="user-dropdown-icon" id="userMenuIcon"><i class="fa-solid fa-user"></i></button>
+                    <ul class="dropdown-content" id="dropdownMenu">
+                        <li class="dropdown-header">
+                            <div class="dropdown-header-text">
+                                <h3>Username</h3>
+                                <p>email@email.com</p>
+                            </div>
+                            <a href="../../pages/account-settings/account.html"><i class="fa-solid fa-gear"></i></a>
+                        </li>
+                        <hr class="hr-dropdown">
+                        <li><a href="../../pages/meus-pedidos/pedidos.html">Meus Pedidos</a></li>
+                        <li><a href="../../pages/favoritos/favoritos.html">Favoritos</a></li>
+                        <li><a href="../../pages/meus-enderecos/enderecos.html">Meus endereços</a></li>
+                        <hr class="hr-dropdown">
+                        <li><button class="theme-toggle-btn" id="toggle-button">Alternar tema</button></li>
+                        <li><a href="../../pages/suporte/suporte.html" target="_blank">Suporte</a></li>
+                        <hr class="hr-dropdown">
+                        <li><a href="#">Sair da conta <i class="fa-solid fa-arrow-right-from-bracket"></i></a></li>
+                    </ul>
+                </li>
+            </ul>
+            <button class="hamburger-btn" id="hamburgerBtn" aria-label="Abrir menu">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </div>
+
+        <div vw class="enabled">
+            <div vw-access-button class="active"></div>
+            <div vw-plugin-wrapper>
+                <div class="vw-plugin-top-wrapper"></div>
+            </div>
+        </div>
+
+    </header>
+
+    <main>
+        <section class="account-hero section-container">
+            <div class="account-hero-card">
+                <h1>Meus Pedidos</h1>
+                <p>Confira o status, a entrega e os detalhes dos seus pedidos recentes.</p>
+            </div>
+        </section>
+
+        <section class="orders-section section-container">
+            <div class="section-header-container">
+                <div class="section-header">
+                    <h2 class="section-title">Pedidos recentes</h2>
+                </div>
+                <hr>
+            </div>
+
+            <div class="orders-list"></div>
+        </section>
+    </main>
+
+    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+    <script>
+        new window.VLibras.Widget('https://vlibras.gov.br/app');
+    </script>
+
+</body>
+
+</html>

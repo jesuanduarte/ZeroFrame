@@ -1,0 +1,212 @@
+/*
+  ====================================
+  ESTILO PRINCIPAL - ZERO FRAME
+  ====================================
+  
+  Arquivo de estilos globais para toda a aplicação
+  Define variáveis de cores, fontes, estilos base e tema claro/escuro
+  Importa estilos específicos de componentes (header, footer, product-card)
+  
+  CORES DO TEMA:
+  - Tema Claro: Tons quentes (marrom, bege)
+  - Tema Escuro: Tons escuros (cinza, preto)
+*/
+
+/* Importa os padrões de estilos */
+
+@import './styles/header.css';
+@import './styles/footer.css';
+@import './styles/product-card.css';
+
+/* Estilos globais e variáveis de tema */
+
+:root {
+    --primary-color: #8C5A3C;
+    --secondary-color: #F5EBE0;
+    --accent-color: #201B1B;
+    --accent-secondary-color: white;
+    --text-color: black;
+    --page-font: 'Montserrat', sans-serif;
+}
+
+.modoescuro {
+    /* Classe aplicada ao body quando modo escuro está ativo */
+    /* Altera as variáveis de cores para tons escuros */
+    --primary-color: #48312E;
+    --secondary-color: #201B1B;
+    --accent-color: #F5EBE0;
+    --text-color: white;
+    --accent-secondary-color: #9b655d;
+    --third-color: #ffc484;
+}
+
+* {
+    /* Reset global - remove margens e preenchimentos padrão */
+    margin: 0;
+    padding: 0;
+    /* box-sizing: border-box garante que padding/border não aumentem o tamanho total */
+    box-sizing: border-box;
+}
+
+/* Estilos do elemento body (corpo da página) */
+body {
+    /* Cor de fundo usando variável de tema */
+    background-color: var(--secondary-color);
+    /* Fonte padrão da página (Montserrat) */
+    font-family: var(--page-font);
+    /* Cor de texto padrão */
+    color: var(--accent-color);
+    /* Transição suave ao alternar temas */
+    transition: 0.3s ease-in-out;
+}
+
+/* Remove bullets padrão de listas */
+li {
+    list-style: none;
+}
+
+/* ====================================
+   ESTILOS DO BANNER E SEÇÕES
+   ==================================== */
+
+/* Estilo do banner principal da página inicial */
+.banner {
+    width: 100%;
+    /* Ocupa 50% da altura da viewport */
+    height: 50vh;
+}
+
+/* Espaço abaixo do header fixo para a página principal */
+main {
+    padding-top: 4rem;
+}
+
+/* Container padrão para seções de produtos */
+.section-container {
+    /* Margem superior para separação */
+    margin-top: 1.5rem;
+    align-items: center;
+    /* Padding horizontal para não ficar muito próximo das bordas */
+    padding: 0 3rem 0 3rem;
+}
+
+/* Header de cada seção (contém título e links) */
+.section-header {
+    display: flex;
+    /* Espaço entre título e link "Ver Todos" */
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    font-family: var(--page-font);
+}
+
+/* Container que envolve o header da seção */
+.section-header-container {
+    margin-bottom: 1.5rem;
+}
+
+/* Título das seções de produtos */
+.section-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.ver-todos-link {
+    /* Link "Ver Todos" dentro dos títulos das seções de produtos */
+    /* Transição suave ao passar o mouse */
+    transition: 0.3s ease-in-out;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text-color);
+    text-decoration: none;
+}
+
+/* Efeito ao passar o mouse no link "Ver Todos" */
+.ver-todos-link:hover {
+    font-weight: 800;
+    text-decoration: underline;
+    transition: 0.3s ease-in-out;
+}
+
+/* Ícone de seta no link "Ver Todos" */
+.ver-todos-arrow {
+    height: 18px;
+    width: 18px;
+}
+
+/* Container que agrupa os produtos em uma linha com scroll */
+.products-container {
+    display: flex;
+    gap: 2rem;
+    padding-bottom: 0.5rem;
+    justify-content: center;
+}
+
+/* Seção de produtos da categoria "Multimarcas" */
+.multimarcas-section {
+    margin-bottom: 2rem;
+}
+
+/* ====================================
+   RESPONSIVIDADE GERAL
+   ==================================== */
+
+/* Tablet */
+@media (max-width: 1024px) {
+    .banner {
+        height: 42vh;
+    }
+
+    .section-container {
+        padding: 0 2rem;
+        margin-top: 1.2rem;
+    }
+
+    .section-title {
+        font-size: 1.3rem;
+    }
+
+    .ver-todos-link {
+        font-size: 1.2rem;
+    }
+
+    .section-header {
+        padding: 0.8rem;
+    }
+
+    .products-container {
+        gap: 1.5rem;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .section-header-container {
+        margin-bottom: 1rem;
+    }
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+    .banner {
+        height: 28vh;
+    }
+
+    .section-container {
+        padding: 0 0.6rem;
+        margin-top: 0.8rem;
+    }
+
+    .section-title {
+        font-size: 0.95rem;
+    }
+
+    .ver-todos-link {
+        font-size: 0.85rem;
+    }
+
+    .products-container {
+        gap: 0.7rem;
+    }
+}
+

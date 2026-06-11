@@ -1,0 +1,236 @@
+@import '../../styles/header.css';
+@import '../../styles/footer.css';
+
+:root {
+   --page-font: 'Montserrat', sans-serif;
+}
+
+body{
+    font-family: 'Montserrat', sans-serif;
+}
+
+main {
+    padding: 6rem 2rem 2rem 2rem;
+    min-height: 100vh;
+}
+
+/* estilo do card do titulo */
+
+.account-hero-card {
+    background-color: var(--accent-secondary-color);
+    color: var(--accent-color);
+    border-radius: 1.5rem;
+    padding: 2rem;
+    box-shadow: 0 16px 30px rgba(0, 0, 0, 0.08);
+    max-width: 1100px;
+}
+
+.modoescuro .account-hero-card   {
+    background-color: var(--primary-color);
+}
+
+.account-hero-card h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.account-hero-card p {
+    font-size: 1.05rem;
+    line-height: 1.7;
+}
+
+/* estilo do card dos pedidos */
+
+.addresses-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+    gap: 1.5rem;
+}
+
+.address-card {
+    background-color: var(--accent-secondary-color);
+    border-radius: 1.5rem;
+    max-width: 45%;
+    padding: 1.75rem;
+    box-shadow: 0 16px 30px rgba(0, 0, 0, 0.08);
+}
+
+.h-e-label {
+    display: flex;
+    gap: 0.8rem
+}
+
+.modoescuro .address-card   {
+    background-color: var(--primary-color);
+}
+
+.address-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.address-card-header h3 {
+    margin: 0;
+    font-size: 1.5rem;
+}
+
+.address-label {
+    background-color: #f6e7d7;
+    color: var(--primary-color);
+    font-weight: 700;
+    padding: 0.4rem 0.8rem;
+    border-radius: 1200px;
+    font-size: 0.85rem;
+}
+
+.add-address-btn {
+    font-family: var(--page-font);
+    background-color: var(--primary-color);
+    color: var(--secondary-color);
+    border: none;
+    border-radius: 1rem;
+    padding: 0.85rem 1.2rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.2s ease-in-out;
+}
+
+.modoescuro .add-address-btn {
+    color: #f6e7d7
+}
+
+.modoescuro .add-address-btn:hover {
+    color: var(--primary-color)
+}
+
+.add-address-btn:hover {
+    background-color: var(--accent-color);
+}
+
+.address-edit-form {
+    display: grid;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.address-edit-form label {
+    display: grid;
+    gap: 0.35rem;
+    font-size: 0.95rem;
+    color: var(--accent-color);
+    font-weight: 600;
+}
+
+.address-edit-form input {
+    width: 100%;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    border-radius: 0.9rem;
+    padding: 0.85rem 1rem;
+    background-color: transparent;
+    color: var(--accent-color);
+}
+
+.modoescuro .address-edit-form input {
+    border-color: rgba(245, 235, 224, 0.2);
+}
+
+.address-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+    cursor: pointer;
+}
+
+.save-address,
+.cancel-address {
+    font-family: var(--page-font);
+    border: none;
+    border-radius: 0.85rem;
+    padding: 0.9rem 1.2rem;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.save-address {
+    background-color: var(--primary-color);
+    color: var(--secondary-color);
+}
+
+.modoescuro .save-address {
+    background-color: var(--accent-color);
+    color: var(--secondary-color);
+}
+
+.cancel-address {
+    background-color: transparent;
+    color: var(--accent-color);
+    border: 1px solid rgba(246, 231, 215, 0.8);
+}
+
+.address-card p {
+    color: var(--accent-color);
+    line-height: 1.6;
+    background-color: transparent;
+    padding: 0.4rem;
+    border: none;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: 0.3s ease-in-out;
+}
+
+.edit-address{
+    background-color: transparent;
+    border: none;
+    font-size: 1.5rem;
+    color: var(--accent-color);
+    cursor: pointer;
+}
+
+.edit-address:hover {
+    background-color: #f6e7d7;
+    color: var(--primary-color);
+    border-radius: 0.5rem;
+    transition: 0.3s ease-in-out;
+} 
+
+.hidden {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    main {
+        padding: 4rem 1rem 1rem 1rem;
+    }
+
+    .account-hero-card h1 {
+        font-size: 1.8rem;
+    }
+
+    .addresses-list {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    main {
+        padding: 3.8rem 0.6rem 0.6rem 0.6rem;
+    }
+
+    .account-hero-card {
+        padding: 1.2rem;
+        border-radius: 1rem;
+    }
+
+    .account-hero-card h1 {
+        font-size: 1.4rem;
+    }
+
+    .address-card {
+        padding: 1rem;
+        border-radius: 1rem;
+    }
+}

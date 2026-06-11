@@ -1,0 +1,424 @@
+/* Importa os padrões de estilos */
+
+@import './styles/header.css';
+@import './styles/footer.css';
+
+:root {
+    --primary-color: #8C5A3C;
+    --secondary-color: #F5EBE0;
+    --accent-color: #201B1B;
+    --accent-secondary-color: white;
+    --text-color: black;
+    --page-font: 'Montserrat', sans-serif;
+    --card-bg: rgba(255, 255, 255, 0.541);
+}
+
+.modoescuro {
+    --primary-color: #48312E;
+    --secondary-color: #201B1B;
+    --accent-color: #F5EBE0;
+    --text-color: white;
+    --accent-secondary-color: #9b655d;
+    --third-color: #ffc484;
+    --card-bg: rgba(43, 37, 37, 0.562);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: var(--secondary-color);
+    font-family: var(--page-font);
+    color: var(--accent-color);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    min-height: 100vh;
+    transition: 0.3s ease-in-out;
+}
+
+.modoescuro {
+    background: linear-gradient(135deg, #201B1B 0%, #2a2420 100%);
+}
+/* Main Content */
+
+.main-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 6rem 2rem 2rem 2rem;
+    min-height: calc(100vh - 4rem);
+}
+
+.suporte-container {
+    background-color: var(--card-bg);
+    border-radius: 1rem;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    padding: 3rem;
+    max-width: 1100px;
+    width: 100%;
+    transition: 0.3s ease-in-out;
+}
+
+.modoescuro .suporte-container {
+    background-color: var(--card-bg);
+}
+
+.suporte-header {
+    text-align: center;
+    margin-bottom: 3rem;
+    border-bottom: 2px solid var(--primary-color);
+    padding-bottom: 2rem;
+}
+
+.suporte-title {
+    font-size: 2.5rem;
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    transition: 0.3s ease-in-out;
+}
+
+.modoescuro .suporte-title {
+    color: var(--accent-secondary-color);
+}
+
+.suporte-subtitle {
+    font-size: 1.1rem;
+    color: var(--accent-color);
+    font-weight: 500;
+    transition: 0.3s ease-in-out;
+}
+
+.modoescuro .suporte-subtitle {
+    color: var(--accent-color);
+}
+
+/* Conteúdo */
+
+.suporte-content {
+    display: grid;
+    grid-template-columns: 1fr 1.5fr;
+    gap: 3rem;
+}
+
+/* Contact Info */
+
+.contact-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.contact-info h2 {
+    font-size: 1.5rem;
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+    transition: 0.3s ease-in-out;
+}
+
+.modoescuro .contact-info h2 {
+    color: var(--accent-secondary-color);
+}
+
+.contact-item {
+    display: flex;
+    gap: 1rem;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    background-color: rgba(140, 90, 60, 0.1);
+    transition: 0.3s ease-in-out;
+}
+
+.modoescuro .contact-item {
+    background-color: rgba(155, 101, 93, 0.2);
+}
+
+.contact-item i {
+    font-size: 1.5rem;
+    color: var(--primary-color);
+    min-width: 1.5rem;
+    transition: 0.3s ease-in-out;
+}
+
+.modoescuro .contact-item i {
+    color: var(--accent-secondary-color);
+}
+
+.contact-item h3 {
+    font-size: 1rem;
+    margin-bottom: 0.25rem;
+    color: var(--accent-color);
+    transition: 0.3s ease-in-out;
+}
+
+.modoescuro .contact-item h3 {
+    color: var(--accent-color);
+}
+
+.contact-item p {
+    font-size: 0.9rem;
+    color: var(--accent-color);
+    opacity: 0.8;
+    line-height: 1.4;
+    transition: 0.3s ease-in-out;
+}
+
+.modoescuro .contact-item p {
+    color: var(--accent-color);
+}
+
+/* Form */
+
+.suporte-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.form-group label {
+    font-weight: 600;
+    color: var(--accent-color);
+    font-size: 0.95rem;
+    transition: 0.3s ease-in-out;
+}
+
+.modoescuro .form-group label {
+    color: var(--accent-color);
+}
+
+.input-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-container input,
+.input-container select,
+.input-container textarea {
+    width: 100%;
+    padding: 0.75rem 0.75rem 0.75rem 2.5rem;
+    border: 1.5px solid var(--primary-color);
+    border-radius: 0.5rem;
+    font-family: var(--page-font);
+    font-size: 0.95rem;
+    background-color: var(--accent-secondary-color);
+    color: var(--accent-color);
+    transition: 0.3s ease-in-out;
+    outline: none;
+}
+
+.modoescuro .input-container input,
+.modoescuro .input-container select,
+.modoescuro .input-container textarea {
+    background-color: rgba(155, 101, 93, 0.15);
+    border-color: var(--accent-secondary-color);
+    color: var(--accent-color);
+}
+
+.input-container input:focus,
+.input-container select:focus,
+.input-container textarea:focus {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 3px rgba(140, 90, 60, 0.1);
+}
+
+.modoescuro .input-container input:focus,
+.modoescuro .input-container select:focus,
+.modoescuro .input-container textarea:focus {
+    box-shadow: 0 0 0 3px rgba(255, 196, 132, 0.2);
+}
+
+.input-container input::placeholder,
+.input-container select::placeholder,
+.input-container textarea::placeholder {
+    color: var(--accent-color);
+    opacity: 0.6;
+}
+
+.modoescuro .input-container input::placeholder,
+.modoescuro .input-container select::placeholder,
+.modoescuro .input-container textarea::placeholder {
+    color: var(--accent-color);
+    opacity: 0.5;
+}
+
+.input-container i {
+    position: absolute;
+    left: 0.75rem;
+    color: var(--primary-color);
+    pointer-events: none;
+    transition: 0.3s ease-in-out;
+}
+
+.modoescuro .input-container i {
+    color: var(--accent-secondary-color);
+}
+
+textarea {
+    resize: vertical;
+    min-height: 120px;
+    padding-left: 2.5rem !important;
+}
+
+.select-container select {
+    appearance: none;
+    cursor: pointer;
+    padding-right: 2.5rem !important;
+}
+
+.select-container::after {
+    content: '\f078';
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    position: absolute;
+    right: 0.75rem;
+    pointer-events: none;
+    color: var(--primary-color);
+    transition: 0.3s ease-in-out;
+}
+
+.modoescuro .select-container::after {
+    color: var(--accent-secondary-color);
+}
+
+/* Checkbox Group */
+
+.checkbox-group {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-direction: row;
+    margin-top: 1rem;
+}
+
+.checkbox-group input[type="checkbox"] {
+    width: 1.2rem;
+    height: 1.2rem;
+    cursor: pointer;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: 1.5px solid var(--primary-color) !important;
+    accent-color: var(--primary-color);
+}
+
+.checkbox-group label {
+    margin: 0;
+    cursor: pointer;
+    font-weight: 400;
+}
+
+/* Submit Button */
+
+.suporte-submit-btn {
+    padding: 1rem 2rem;
+    background: linear-gradient(135deg, var(--primary-color) 0%, #6d4630 100%);
+    color: var(--accent-secondary-color);
+    border: none;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.3s ease-in-out;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    margin-top: 1rem;
+    box-shadow: 0 4px 15px rgba(140, 90, 60, 0.3);
+}
+
+.suporte-submit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(140, 90, 60, 0.4);
+}
+
+.suporte-submit-btn:active {
+    transform: translateY(0);
+}
+
+.modoescuro .suporte-submit-btn {
+    background: linear-gradient(135deg, var(--accent-secondary-color) 0%, #c4a89e 100%);
+    color: var(--secondary-color);
+    box-shadow: 0 4px 15px rgba(255, 196, 132, 0.3);
+}
+
+.modoescuro .suporte-submit-btn:hover {
+    box-shadow: 0 6px 20px rgba(255, 196, 132, 0.4);
+}
+
+/* Responsive */
+
+@media (max-width: 768px) {
+    .suporte-container {
+        padding: 2rem;
+    }
+
+    .suporte-header {
+        margin-bottom: 2rem;
+    }
+
+    .suporte-title {
+        font-size: 1.8rem;
+    }
+
+    .suporte-content {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+
+    .main-content {
+        padding: 5rem 1rem 1rem 1rem;
+    }
+
+    .header {
+        padding: 0.3rem 1rem;
+    }
+
+    .navigation-header {
+        gap: 1rem;
+        margin-left: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .suporte-container {
+        padding: 1.5rem;
+    }
+
+    .suporte-title {
+        font-size: 1.5rem;
+    }
+
+    .suporte-subtitle {
+        font-size: 0.95rem;
+    }
+
+    .contact-info h2 {
+        font-size: 1.2rem;
+    }
+
+    .input-container input,
+    .input-container select,
+    .input-container textarea {
+        padding: 0.6rem 0.6rem 0.6rem 2.2rem;
+        font-size: 0.9rem;
+    }
+
+    .suporte-submit-btn {
+        padding: 0.8rem 1.5rem;
+        font-size: 0.9rem;
+    }
+}

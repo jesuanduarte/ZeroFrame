@@ -1,0 +1,285 @@
+/*
+  ====================================
+  ESTILOS DOS CARDS DE PRODUTOS
+  ====================================
+  
+  Define o visual dos cards de produtos mostrados nas seções
+  Suporta tema claro/escuro e efeitos interativos ao hover
+  Inclui estilos para produtos em promoção
+*/
+
+/* ====================================
+   VARIÁVEIS DE TEMA
+   ==================================== */
+
+:root {
+    --primary-color: #8C5A3C;
+    --secondary-color: #F5EBE0;
+    --accent-color: #201B1B;
+    --accent-secondary-color: white;
+    --text-color: black;
+    --page-font: 'Montserrat', sans-serif;
+}
+
+/* Cores do tema escuro */
+.modoescuro {
+    --primary-color: #48312E;
+    --secondary-color: #201B1B;
+    --accent-color: #F5EBE0;
+    --text-color: white;
+    --accent-secondary-color: #9b655d;
+    --third-color: #ffc484;
+}
+
+/* ====================================
+   CARD DE PRODUTO
+   ==================================== */
+
+/* Container principal do card */
+.product-card {
+    transition: 0.3s ease-in-out;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+    padding: 1rem;
+    width: 12vw;
+    gap: 0.4rem;
+    background-color: var(--accent-secondary-color);
+    border-radius: 1rem;
+    /* Sombra sutil */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    margin-top: 1rem;
+}
+
+/* Card em modo escuro */
+.modoescuro .product-card {
+    background-color: var(--primary-color);
+}
+
+/* Efeito ao passar mouse no card */
+.product-card:hover {
+    /* Aumenta em 10% */
+    transform: scale(1.1);
+    transition: 0.3s ease-in-out;
+    z-index: 10;
+}
+
+/* ====================================
+   INFORMAÇÕES DO PRODUTO
+   ==================================== */
+
+/* Container das informações do produto */
+.product-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    flex-grow: 1;
+}
+
+/* Imagem do produto */
+.product-image {
+  width: 100%;
+  /* Mantém proporção quadrada */
+  aspect-ratio: 1;
+  /* Garante que a imagem cubra todo o espaço */
+  object-fit: cover;
+}
+
+/* Botao restaurado para abrir as imagens extras do produto sem sair da pagina. */
+.product-gallery-button {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    z-index: 2;
+    border: none;
+    border-radius: 999px;
+    background-color: rgba(32, 27, 27, 0.86);
+    color: #fff;
+    cursor: pointer;
+    font-family: var(--page-font);
+    font-size: 0.72rem;
+    font-weight: 700;
+    line-height: 1;
+    padding: 0.45rem 0.6rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.22);
+}
+
+.product-gallery-button:hover {
+    background-color: var(--primary-color);
+}
+
+/* Modal compartilhado pelos cards; recebe somente imagens do produto clicado. */
+.product-gallery-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 9998;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    background-color: rgba(0, 0, 0, 0.72);
+}
+
+.product-gallery-modal.is-open {
+    display: flex;
+}
+
+.product-gallery-dialog {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: min(92vw, 720px);
+    min-height: min(82vh, 720px);
+}
+
+.product-gallery-image {
+    width: 100%;
+    max-height: 82vh;
+    aspect-ratio: 1 / 1;
+    object-fit: contain;
+    background-color: #fff;
+}
+
+.product-gallery-close,
+.product-gallery-nav {
+    position: absolute;
+    border: none;
+    background-color: rgba(32, 27, 27, 0.86);
+    color: #fff;
+    cursor: pointer;
+    font-family: var(--page-font);
+}
+
+.product-gallery-close {
+    top: -0.6rem;
+    right: -0.6rem;
+    width: 2.4rem;
+    height: 2.4rem;
+    border-radius: 50%;
+    font-size: 1.6rem;
+    line-height: 1;
+}
+
+.product-gallery-nav {
+    top: 50%;
+    transform: translateY(-50%);
+    width: 2.4rem;
+    height: 3.2rem;
+    border-radius: 0.4rem;
+    font-size: 2rem;
+}
+
+.product-gallery-prev {
+    left: 0.6rem;
+}
+
+.product-gallery-next {
+    right: 0.6rem;
+}
+
+.product-gallery-count {
+    position: absolute;
+    left: 50%;
+    bottom: 0.75rem;
+    transform: translateX(-50%);
+    border-radius: 999px;
+    background-color: rgba(32, 27, 27, 0.82);
+    color: #fff;
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 0.35rem 0.7rem;
+}
+
+/* Categoria do produto */
+.product-category {
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+/* Nome do produto */
+.product-name {
+    font-weight: 600;
+}
+
+/* Preço do produto */
+.product-price {
+    font-size: 1.8rem;
+    font-weight: 700;
+}
+
+/* ====================================
+   PRODUTOS EM PROMOÇÃO
+   ==================================== */
+
+/* Preço em vermelho para produtos em promoção */
+.product-sale .product-price {
+    color: #FD3737;
+}
+
+/* Preço original riscado para produtos em promoção */
+.product-sale .product-discount {
+    text-decoration: line-through;
+    font-weight: 300;
+    font-size: 1rem;
+}
+
+/* ====================================
+   RESPONSIVIDADE DOS CARDS
+   ==================================== */
+
+@media (max-width: 1024px) {
+    .product-card {
+        width: clamp(150px, 18vw, 220px);
+        padding: 0.9rem;
+    }
+
+    .product-price {
+        font-size: 1.5rem;
+    }
+
+    .product-name {
+        font-size: 0.9rem;
+    }
+
+    .product-category {
+        font-size: 0.82rem;
+    }
+
+    .product-card:hover {
+        transform: scale(1.04);
+    }
+
+    .product-gallery-button {
+        top: 0.55rem;
+        right: 0.55rem;
+        font-size: 0.68rem;
+        padding: 0.38rem 0.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .product-card {
+        width: clamp(120px, 42vw, 160px);
+        padding: 0.6rem;
+        border-radius: 0.7rem;
+    }
+
+    .product-price {
+        font-size: 1.1rem;
+    }
+
+    .product-name {
+        font-size: 0.8rem;
+    }
+
+    .product-gallery-dialog {
+        min-height: 72vh;
+    }
+
+    .product-gallery-nav {
+        width: 2rem;
+        height: 2.8rem;
+    }
+}

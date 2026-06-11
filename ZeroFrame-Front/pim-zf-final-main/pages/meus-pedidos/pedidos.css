@@ -1,0 +1,134 @@
+@import '../../styles/header.css';
+@import '../../styles/footer.css';
+
+main {
+    padding: 6rem 2rem 2rem 2rem;
+    min-height: 100vh;
+}
+
+/* estilo do card do titulo */
+
+.account-hero-card {
+    background-color: var(--accent-secondary-color);
+    color: var(--accent-color);
+    border-radius: 1.5rem;
+    padding: 2rem;
+    box-shadow: 0 16px 30px rgba(0, 0, 0, 0.08);
+    max-width: 1100px;
+}
+
+.modoescuro .account-hero-card   {
+    background-color: var(--primary-color);
+}
+
+.account-hero-card h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.account-hero-card p {
+    font-size: 1.05rem;
+    line-height: 1.7;
+}
+
+.orders-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* estilo do card dos pedidos */
+
+.order-card {
+    background-color: var(--accent-secondary-color);
+    border-radius: 1.5rem;
+    padding: 1.75rem;
+    box-shadow: 0 16px 30px rgba(0, 0, 0, 0.08);
+}
+
+.modoescuro .order-card   {
+    background-color: var(--primary-color);
+}
+
+.order-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.order-card-header h3 {
+    font-size: 1.35rem;
+    margin: 0.4rem 0 0 0;
+}
+
+.order-card-body p {
+    margin-bottom: 0.45rem;
+    color: var(--accent-color);
+    font-weight: 500;
+}
+
+.small-label {
+    font-size: 0.9rem;
+    color: var(--accent-color);
+    font-weight: 700;
+    margin-bottom: 0.35rem;
+}
+
+.order-status {
+    padding: 0.6rem 1rem;
+    border-radius: 999px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.order-status-delivered {
+    background-color: #d3f7e2;
+    color: #186b31;
+}
+
+.order-status-shipped {
+    background-color: #fff4d3;
+    color: #80610e;
+}
+
+.order-status-processing {
+    background-color: #e8e8e8;
+    color: #4c4c4c;
+}
+
+@media (max-width: 768px) {
+    main {
+        padding: 4rem 1rem 1rem 1rem;
+    }
+
+    .account-hero-card h1 {
+        font-size: 1.8rem;
+    }
+
+    .order-card-header {
+        flex-wrap: wrap;
+    }
+}
+
+@media (max-width: 480px) {
+    main {
+        padding: 3.8rem 0.6rem 0.6rem 0.6rem;
+    }
+
+    .account-hero-card {
+        padding: 1.2rem;
+        border-radius: 1rem;
+    }
+
+    .account-hero-card h1 {
+        font-size: 1.4rem;
+    }
+
+    .order-card {
+        padding: 1rem;
+        border-radius: 1rem;
+    }
+}

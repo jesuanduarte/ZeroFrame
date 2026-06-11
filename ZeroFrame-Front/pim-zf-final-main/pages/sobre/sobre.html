@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<!--
+    PÁGINA SOBRE NÓS
+    Página informativa sobre a empresa/marca Zero Frame
+    Inclui histórico, missão, valores e apresentação dos fundadores
+    Contém slider de fundadores para apresentação das pessoas
+-->
+<html lang="pt-br">
+
+<head>
+    <!-- Metadados -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Estilos -->
+    <link rel="stylesheet" href="sobre.css">
+    <link rel="stylesheet" href="../../style.css">
+    <link rel="stylesheet" href="../../componentes/dropdown-menu/dropdown-menu.css">
+    <!-- Scripts -->
+    <script type="text/javascript" src="../../componentes/dropdown-menu/dropdown-menu.js" defer></script>
+    <script type="text/javascript" src="../../componentes/mobile-menu/mobile-menu.js" defer></script>
+    <script type="text/javascript" src="../../componentes/theme-toggle.js" defer></script>
+    <script src="../../componentes/api.js"></script>
+    <script src="../../componentes/services/carrinhoService.js"></script>
+    <script src="../../componentes/cart-badge.js" defer></script>
+    <script src="./slider fundadores/slider.js" defer></script>
+
+    <!-- Slider de fundadores -->
+    <link rel="stylesheet" href="./slider fundadores/slider.css">
+    <!-- Fonte e ícones -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" rel="stylesheet">
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="../../assets/logo zf.png" type="image/x-icon">
+    <title>Zero Frame</title>
+</head>
+
+<body>
+
+    <header class="header">
+
+        <a href="../../index.html" class="logo-link-header">
+            <img src="../../assets/logo zf.png" alt="Zero Frame Logo" class="logo">
+        </a>
+
+        <nav class="navigation-header" id="mainNav">
+            <ul class="nav-menus-ul links">
+                <li><a href="../../pages/search/search.html?q=Originais" class="itens-nav-menus">ORIGINAIS</a></li>
+                <li><a href="../../pages/search/search.html?q=Multimarcas" class="itens-nav-menus">MULTIMARCAS</a></li>
+                <li><a href="../../pages/sobre/sobre.html" class="itens-nav-menus">SOBRE NÓS</a></li>
+            </ul>
+
+            <form action="../../pages/search/search.html" method="GET" class="search-bar-container">
+                <input type="text" name="q" placeholder="O que você está procurando?" class="search-bar"
+                    id="searchInput">
+                <button type="submit" class="search-btn"><i class="fa-solid fa-magnifying-glass"></i></button>
+            </form>
+        </nav>
+
+        <div class="header-right-actions">
+            <ul class="user-actions-ul links">
+                <li class="user-actions-li"><a href="../../pages/carrinho/carrinho.html" class="user-actions-icon"><i
+                            class="fa-solid fa-cart-shopping"></i></a>
+                </li>
+                <li class="dropdown user-actions-li">
+                    <button class="user-dropdown-icon" id="userMenuIcon"><i class="fa-solid fa-user"></i></button>
+                    <ul class="dropdown-content" id="dropdownMenu">
+                        <li class="dropdown-header">
+                            <div class="dropdown-header-text">
+                                <h3>Username</h3>
+                                <p>email@email.com</p>
+                            </div>
+                            <a href="../../pages/account-settings/account.html"><i class="fa-solid fa-gear"></i></a>
+                        </li>
+                        <hr class="hr-dropdown">
+                        <li><a href="../../pages/meus-pedidos/pedidos.html">Meus Pedidos</a></li>
+                        <li><a href="../../pages/favoritos/favoritos.html">Favoritos</a></li>
+                        <li><a href="../../pages/meus-enderecos/enderecos.html">Meus endereços</a></li>
+                        <hr class="hr-dropdown">
+                        <li><button class="theme-toggle-btn" id="toggle-button">Alternar tema</button></li>
+                        <li><a href="../../pages/suporte/suporte.html" target="_blank">Suporte</a></li>
+                        <hr class="hr-dropdown">
+                        <li><a href="#">Sair da conta <i class="fa-solid fa-arrow-right-from-bracket"></i></a></li>
+                    </ul>
+                </li>
+            </ul>
+            <button class="hamburger-btn" id="hamburgerBtn" aria-label="Abrir menu">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </div>
+
+        <div vw class="enabled">
+            <div vw-access-button class="active"></div>
+            <div vw-plugin-wrapper>
+                <div class="vw-plugin-top-wrapper"></div>
+            </div>
+        </div>
+
+    </header>
+
+
+    <main class="main-content">
+
+        <section class="sobre-section">
+            <img src="../../assets/zf-logo-border250.png" alt="Logo da Zero Frame">
+            <div class="sobre-text-container">
+                <h1 class="sobre-title">Sobre nós</h1>
+                <p class="sobre-description">A Zero Frame é uma marca de moda streetwear criada em São Paulo em 2025,
+                    inspirada na cultura urbana e na essência do skate dos anos 2000. Nascida em meio à movimentação da
+                    cidade, a marca carrega como base a liberdade de expressão, a criatividade e a atitude presentes nas
+                    ruas, traduzindo esses elementos em peças que refletem um estilo autêntico e
+                    contemporâneo.<br>Voltada principalmente para adolescentes e jovens adultos, a Zero Frame busca se
+                    conectar com uma geração que valoriza identidade, estilo e originalidade. A marca trabalha com
+                    roupas e acessórios de diversas marcas, trazendo variedade e tendências do universo streetwear, além
+                    de desenvolver camisetas próprias com designs exclusivos, influenciados pela estética Y2K, pelo
+                    cenário do skate e pela cultura urbana.<br>Cada peça é pensada para representar mais do que moda,
+                    mas um estilo de vida, onde o visual se torna uma forma de expressão pessoal. A loja física,
+                    localizada em São Paulo, foi criada para ser mais do que um ponto de venda, funcionando também como
+                    um espaço de encontro para pessoas que compartilham dos mesmos interesses, ideias e referências.
+                </p>
+                <p class="sobre-highlight">A Zero Frame não é apenas uma marca, mas um reflexo da cultura de rua, unindo
+                    moda, atitude e identidade em um só lugar.</p>
+            </div>
+        </section>
+
+        <section class="criadores-section" id="fundadores">
+            <h1 class="criadores-title">Fundadores</h1>
+            <div class="slider-container">
+                <button id="prev-button" class="slider-btn"><i class="fa-solid fa-caret-left"></i></button>
+
+                <div class="slider-content">
+
+                    <div class="content-container slider on">
+                        <img src="./slider fundadores/assets/gustavo.jpeg" alt="Foto do Gustavo" class="content-img">
+                        <div class="content-text-div">
+                            <div class="content-text-titles">
+                                <h1 class="content-title">Gustavo Souza</h1>
+                                <h2 class="content-subtitle">Engenharia de Software</h2>
+                            </div>
+                            <p class="content-paragraph">Estudante de Análise e Desenvolvimento de Sistemas, com interesse em Inteligência Artificial, automação de processos e tecnologia aplicada ao ambiente corporativo. Possui experiência na área administrativa, contribuindo para o desenvolvimento de uma visão voltada à otimização de tarefas e integração de sistemas. Perfil dedicado e interessado em inovação, buscando aprimorar conhecimentos em soluções inteligentes e automações.
+                            </p>
+                            <div class="fundadores-links-container">
+                                <a href="https://github.com/gu-souzza" target="__blank"><i
+                                        class="fa-brands fa-github fundadores-i"></i></a>
+                                <a href="https://www.linkedin.com/in/gustavo-souza-5837a235a/" target="__blank"><i
+                                        class="fa-brands fa-linkedin fundadores-i"></i></a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="content-container slider">
+                        <img src="./slider fundadores/assets/jesuan.png" alt="Foto do Jesuan" class="content-img">
+                        <div class="content-text-div">
+                            <div class="content-text-titles">
+                                <h1 class="content-title">Jesuan Duarte</h1>
+                                <h2 class="content-subtitle">Back-End e Banco de Dados</h2>
+                            </div>
+                            <p class="content-paragraph">Desenvolvedor em formação com foco em back-end, com experiência no desenvolvimento de sistemas utilizando C# e ASP.NET Core, aplicando arquitetura em camadas, boas práticas de software e integração de sistemas. Perfil dedicado e interessado em tecnologia, buscando constantemente aprimorar conhecimentos em segurança, experiência do usuário e desenvolvimento de aplicações modernas.
+                            </p>
+                            <div class="fundadores-links-container">
+                                <a href="https://github.com/jesuanduarte" target="__blank"><i
+                                        class="fa-brands fa-github fundadores-i"></i></a>
+                                <a href="https://www.linkedin.com/in/jesuan-duarte/" target="__blank"><i
+                                        class="fa-brands fa-linkedin fundadores-i"></i></a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="content-container slider">
+                        <img src="./slider fundadores/assets/murilo.jpg" alt="Foto do Murilo" class="content-img">
+                        <div class="content-text-div">
+                            <div class="content-text-titles">
+                                <h1 class="content-title">Murilo Cruz Rodrigues</h1>
+                                <h2 class="content-subtitle">Front End e Design UI/UX</h2>
+                            </div>
+                            <p class="content-paragraph">Desenvolvedor em início de carreira com foco em front-end, com
+                                experiência na construção de interfaces utilizando HTML, CSS e JavaScript, com atenção
+                                às boas práticas de UI/UX e responsividade. Perfil criativo e interessado em design,
+                                contribuindo para a criação de soluções modernas e funcionais.
+                            </p>
+                            <div class="fundadores-links-container">
+                                <a href="https://github.com/murilokkj" target="__blank"><i
+                                        class="fa-brands fa-github fundadores-i"></i></a>
+                                <a href="https://www.linkedin.com/in/murilo-cruz-rodrigues/" target="__blank"><i
+                                        class="fa-brands fa-linkedin fundadores-i"></i></a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="content-container slider">
+                        <img src="./slider fundadores/assets/calqui.png" alt="Foto do Pedro Calqui" class="content-img">
+                        <div class="content-text-div">
+                            <div class="content-text-titles">
+                                <h1 class="content-title">Pedro Calqui</h1>
+                                <h2 class="content-subtitle">Machine Learning e Front-End</h2>
+                            </div>
+                            <p class="content-paragraph">Profissional com foco em Inteligência Artificial aplicada a negócios, com experiência em automação de processos comerciais e desenvolvimento de agentes de IA. Atua com ferramentas como n8n, Claude, OpenClaw e Google Cloud Platform, criando soluções escaláveis e eficientes para otimização de processos. Perfil analítico e orientado a resultados, unindo visão estratégica e interesse constante por inovação tecnológica.
+                            </p>
+                            <div class="fundadores-links-container">
+                                <a href="https://github.com/pedrocalqui" target="__blank"><i
+                                        class="fa-brands fa-github fundadores-i"></i></a>
+                                <a href="https://www.linkedin.com/in/pedrocalqui/" target="__blank"><i
+                                        class="fa-brands fa-linkedin fundadores-i"></i></a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="content-container slider">
+                        <img src="./slider fundadores/assets/pedro.jpg" alt="Foto do Pedro Silva" class="content-img">
+                        <div class="content-text-div">
+                            <div class="content-text-titles">
+                                <h1 class="content-title">Pedro Silva</h1>
+                                <h2 class="content-subtitle">Back-End e Banco de Dados</h2>
+                            </div>
+                            <p class="content-paragraph">Desenvolvedor em formação com foco em desenvolvimento web e back-end, com interesse em banco de dados, Python e criação de sistemas funcionais e organizados. Perfil analítico e criativo, buscando constantemente aprender novas tecnologias e aprimorar habilidades práticas no desenvolvimento de soluções eficientes e modernas.
+                            </p>
+                            <div class="fundadores-links-container">
+                                <a href=# target="__blank"><i class="fa-brands fa-github fundadores-i"></i></a>
+                                <a href="https://www.linkedin.com/in/pedro-silva-6a6775246/" target="__blank"><i
+                                        class="fa-brands fa-linkedin fundadores-i"></i></a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="content-container slider">
+                        <img src="./slider fundadores/assets/ricardo.png" alt="Foto do Ricardo" class="content-img">
+                        <div class="content-text-div">
+                            <div class="content-text-titles">
+                                <h1 class="content-title">Ricardo Mariano</h1>
+                                <h2 class="content-subtitle">Engenharia de Software e Full-Stack</h2>
+                            </div>
+                            <p class="content-paragraph">Técnico em Informática e estudante de Análise e Desenvolvimento de Sistemas, com foco em análise de dados e desenvolvimento back-end. Possui experiência com linguagens como Python, PHP, C e C#, além de conhecimentos em bancos de dados relacionais e tecnologias front-end utilizando HTML, CSS e JavaScript. Perfil dinâmico e colaborativo, com interesse em resolução de problemas, liderança técnica e desenvolvimento de soluções eficientes.
+                            </p>
+                            <div class="fundadores-links-container">
+                                <a href="https://github.com/Ricardo-Jorge-Mariano" target="__blank"><i
+                                        class="fa-brands fa-github fundadores-i"></i></a>
+                                <a href="https://www.linkedin.com/in/ricardo-jorge-mariano-b0439733b/"
+                                    target="__blank"><i class="fa-brands fa-linkedin fundadores-i"></i></a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="content-container slider">
+                        <img src="./slider fundadores/assets/pescuma.png" alt="Foto do Vinicius Pescuma"
+                            class="content-img">
+                        <div class="content-text-div">
+                            <div class="content-text-titles">
+                                <h1 class="content-title">Vinicius Pescuma</h1>
+                                <h2 class="content-subtitle">Engenharia de Software</h2>
+                            </div>
+                            <p class="content-paragraph">Profissional da área de tecnologia com foco em automação e inteligência artificial, atuando em suporte técnico e operação de chatbots com IA. Possui experiência com processos automatizados e soluções tecnológicas voltadas ao atendimento e suporte de sistemas. Perfil analítico e proativo, com forte interesse em inovação, aprendizado contínuo e desenvolvimento de soluções modernas e eficientes.
+                            </p>
+                            <div class="fundadores-links-container">
+                                <a href=# target="__blank"><i class="fa-brands fa-github fundadores-i"></i></a>
+                                <a href="https://www.linkedin.com/in/vin%C3%ADcius-pescuma-de-moraes-8768a937b/"
+                                    target="__blank"><i class="fa-brands fa-linkedin fundadores-i"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button id="next-button" class="slider-btn"><i class="fa-solid fa-caret-right"></i></button>
+            </div>
+
+        </section>
+
+    </main>
+
+    <footer>
+        <div class="footer-zf-container">
+            <img src="../../assets/zeroframelogo-sem fundo-white.svg" alt="Zero Frame Logo" class="footer-logo">
+        </div>
+
+        <div class="line footer-link"></div>
+
+        <div class="footer-itens-container">
+
+            <div class="footer-about-container">
+                <h3 class="footer-content-title">SOBRE</h3>
+                <ul class="footer-about-list">
+                    <li><a href="./pages/sobre/sobre.html" class="footer-link">Conheça a empresa</a></li>
+                    <li><a href="./pages/sobre/sobre.html#fundadores" class="footer-link">Criadores</a></li>
+                </ul>
+            </div>
+
+
+
+            <div class="footer-multimarcas-container">
+                <h3 class="footer-content-title">MULTIMARCAS</h3>
+                <ul class="footer-about-list">
+                    <li><a href="#multimarcas-em-alta" class="footer-link">Produtos em alta</a></li>
+                    <li><a href="#" class="footer-link">Todos os produtos</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-originais-container">
+                <h3 class="footer-content-title">ORIGINAIS</h3>
+                <ul class="footer-about-list">
+                    <li><a href="#originais-em-alta" class="footer-link">Produtos em alta</a></li>
+                    <li><a href="#" class="footer-link">Todos os produtos</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-categorias-container">
+                <h3 class="footer-content-title">CATEGORIAS</h3>
+                <ul class="footer-about-list">
+                    <li><a href="#" class="footer-link">Camisas</a></li>
+                    <li><a href="#" class="footer-link">Blusas</a></li>
+                    <li><a href="#" class="footer-link">Calças</a></li>
+                    <li><a href="#" class="footer-link">Bermudas</a></li>
+                    <li><a href="#" class="footer-link">Calçados</a></li>
+                    <li><a href="#" class="footer-link">Acessórios</a></li>
+                </ul>
+            </div>
+
+        </div>
+    </footer>
+
+    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+    <script>
+        new window.VLibras.Widget('https://vlibras.gov.br/app');
+    </script>
+
+</body>
+
+</html>

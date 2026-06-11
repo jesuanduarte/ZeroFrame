@@ -1,0 +1,212 @@
+﻿<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <!-- Configurações de metadados e codificação do documento -->
+    <meta charset="UTF-8">
+    <!-- Configuração de responsividade para dispositivos móveis -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Fontes externas do Google Fonts (Montserrat) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
+    <!-- Link dos estilos dos componentes -->
+    <link rel="stylesheet" href="../../componentes/carrossel-categorias/carrossel-categorias.css">
+    <link rel="stylesheet" href="../../style.css">
+    <link rel="stylesheet" href="../../componentes/dropdown-menu/dropdown-menu.css">
+    <link rel="stylesheet" href="./account.css">
+    <!-- Ícones Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" rel="stylesheet">
+    <!-- Bibliotecas React (para carrossel de categorias) -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <!-- Scripts dos componentes -->
+    <script type="text/babel" src="../../componentes/carrossel-categorias/carrossel-categorias.js"></script>
+    <script type="text/javascript" src="../../componentes/theme-toggle.js" defer></script>
+    <script type="text/javascript" src="../../componentes/dropdown-menu/dropdown-menu.js" defer></script>
+    <script type="text/javascript" src="../../componentes/api.js" defer></script>
+    <script type="text/javascript" src="../../componentes/services/produtoService.js" defer></script>
+    <script type="text/javascript" src="../../componentes/services/carrinhoService.js" defer></script>
+    <script type="text/javascript" src="../../componentes/services/usuarioService.js" defer></script>
+    <script type="text/javascript" src="../../componentes/cart-badge.js" defer></script>
+    <script type="text/javascript" src="../../componentes/home-api.js" defer></script>
+    <script type="text/javascript" src="../../componentes/mobile-menu/mobile-menu.js" defer></script>
+    <script type="text/javascript" src="./account.js" defer></script>
+    <!-- Favicon do site -->
+    <link rel="icon" href="./assets/logo zf.png" type="image/png">
+    <title>Zero Frame</title>
+</head>
+
+<body>
+    <header class="header">
+
+        <a href="../../index.html" class="logo-link-header">
+            <img src="../../assets/logo zf.png" alt="Zero Frame Logo" class="logo">
+        </a>
+
+        <nav class="navigation-header" id="mainNav">
+            <ul class="nav-menus-ul links">
+                <li><a href="../../pages/search/search.html?q=Originais" class="itens-nav-menus">ORIGINAIS</a></li>
+                <li><a href="../../pages/search/search.html?q=Multimarcas" class="itens-nav-menus">MULTIMARCAS</a></li>
+                <li><a href="../../pages/sobre/sobre.html" class="itens-nav-menus">SOBRE NÓS</a></li>
+            </ul>
+
+            <form action="../../pages/search/search.html" method="GET" class="search-bar-container">
+                <input type="text" name="q" placeholder="O que você está procurando?" class="search-bar"
+                    id="searchInput">
+                <button type="submit" class="search-btn"><i class="fa-solid fa-magnifying-glass"></i></button>
+            </form>
+        </nav>
+
+        <div class="header-right-actions">
+            <ul class="user-actions-ul links">
+                <li class="user-actions-li"><a href="../../pages/carrinho/carrinho.html" class="user-actions-icon"><i
+                            class="fa-solid fa-cart-shopping"></i></a>
+                </li>
+                <li class="dropdown user-actions-li">
+                    <button class="user-dropdown-icon" id="userMenuIcon"><i class="fa-solid fa-user"></i></button>
+                    <ul class="dropdown-content" id="dropdownMenu">
+                        <li class="dropdown-header">
+                            <div class="dropdown-header-text">
+                                <h3>Username</h3>
+                                <p>email@email.com</p>
+                            </div>
+                            <a href="../../pages/account-settings/account.html"><i class="fa-solid fa-gear"></i></a>
+                        </li>
+                        <hr class="hr-dropdown">
+                        <li><a href="../../pages/meus-pedidos/pedidos.html">Meus Pedidos</a></li>
+                        <li><a href="../../pages/favoritos/favoritos.html">Favoritos</a></li>
+                        <li><a href="../../pages/meus-enderecos/enderecos.html">Meus endereços</a></li>
+                        <hr class="hr-dropdown">
+                        <li><button class="theme-toggle-btn" id="toggle-button">Alternar tema</button></li>
+                        <li><a href="../../pages/suporte/suporte.html" target="_blank">Suporte</a></li>
+                        <hr class="hr-dropdown">
+                        <li><a href="#">Sair da conta <i class="fa-solid fa-arrow-right-from-bracket"></i></a></li>
+                    </ul>
+                </li>
+            </ul>
+            <button class="hamburger-btn" id="hamburgerBtn" aria-label="Abrir menu">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </div>
+
+        <div vw class="enabled">
+            <div vw-access-button class="active"></div>
+            <div vw-plugin-wrapper>
+                <div class="vw-plugin-top-wrapper"></div>
+            </div>
+        </div>
+
+    </header>
+
+    <main class="account-page">
+        <section class="account-hero">
+            <div class="hero-content">
+                <span class="eyebrow">Painel do Usuário</span>
+                <h1>Configurações da Conta</h1>
+                <p>Gerencie suas informações pessoais, segurança, autenticação e preferências em um único painel elegante.</p>
+            </div>
+        </section>
+
+        <section class="account-layout">
+            <aside class="account-sidebar">
+                <div class="sidebar-brand">
+                    <div>
+                        <p>O que deseja fazer?</p>
+                    </div>
+                </div>
+
+                <nav class="account-navigation" aria-label="Navegação da conta">
+                    <button class="account-nav-item active"><i class="fa-solid fa-user"></i>Minha Conta</button>
+                    <a href="../../pages/meus-enderecos/enderecos.html" class="account-nav-item"><i class="fa-solid fa-location-dot"></i>Endereços</a>
+                    <a href="../../pages/meus-pedidos/pedidos.html" class="account-nav-item"><i class="fa-solid fa-box"></i>Pedidos</a>
+                    <a href="../../pages/favoritos/favoritos.html" class="account-nav-item"><i class="fa-solid fa-heart"></i>Favoritos</a>
+                </nav>
+
+                <button class="account-sidebar-logout" id="logout"><i class="fa-solid fa-arrow-right-from-bracket"></i>Sair</button>
+            </aside>
+
+            <div class="account-content">
+                <div class="account-grid">
+                    <article class="settings-card personal-card">
+                        <div class="card-header">
+                            <div>
+                                <span class="card-eyebrow">Informações Pessoais</span>
+                                <h2>Dados do perfil</h2>
+                            </div>
+                            <button class="btn-secondary" type="button">Editar informações</button>
+                        </div>
+                        <form id="personalInfoForm" class="form-grid">
+                            <label>
+                                <span>Nome completo</span>
+                                <input type="text" name="fullName" placeholder="Nome Completo" required>
+                            </label>
+                            <label>
+                                <span>E-mail</span>
+                                <input type="email" name="email" placeholder="email@zeroframe.com" required>
+                            </label>
+                            <label>
+                                <span>Telefone</span>
+                                <input type="tel" name="phone" placeholder="(11) 99999-9999" required>
+                            </label>
+                        </form>
+                        <div class="card-footer">
+                            <span class="field-hint">Nome, e-mail e telefone serao atualizados apenas na sua propria conta.</span>
+                            <button class="btn-primary" type="submit" form="personalInfoForm">Confirmar</button>
+                        </div>
+                    </article>
+
+                    <article class="settings-card security-card">
+                        <div class="card-header">
+                            <div>
+                                <span class="card-eyebrow">Segurança</span>
+                                <h2>Alterar senha</h2>
+                            </div>
+                        </div>
+                        <form id="securityForm" class="form-grid">
+                            <label>
+                                <span>Senha atual</span>
+                                <div class="password-input-container">
+                                    <input type="password" name="currentPassword" placeholder="Digite sua senha atual" required>
+                                    <button type="button" class="password-toggle-btn" aria-label="Mostrar senha"><i class="fa-solid fa-eye-slash"></i></button>
+                                </div>
+                            </label>
+                            <label>
+                                <span>Nova senha</span>
+                                <div class="password-input-container">
+                                    <input type="password" name="newPassword" placeholder="Mínimo 8 caracteres" required>
+                                    <button type="button" class="password-toggle-btn" aria-label="Mostrar senha"><i class="fa-solid fa-eye-slash"></i></button>
+                                </div>
+                            </label>
+                            <label>
+                                <span>Confirmar senha</span>
+                                <div class="password-input-container">
+                                    <input type="password" name="confirmPassword" placeholder="Repita a nova senha" required>
+                                    <button type="button" class="password-toggle-btn" aria-label="Mostrar senha"><i class="fa-solid fa-eye-slash"></i></button>
+                                </div>
+                            </label>
+                        </form>
+                        <div class="card-footer action-group">
+                            <button class="btn-primary" type="submit" form="securityForm">Salvar nova senha</button>
+                        </div>
+                    </article>
+
+                    
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div class="page-notice" id="pageNotice" aria-live="polite"></div>
+
+    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+    <script>
+        new window.VLibras.Widget('https://vlibras.gov.br/app');
+    </script>
+
+</body>
+
+</html>
+

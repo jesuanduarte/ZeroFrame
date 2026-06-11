@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<!--
+    PÁGINA DE SUPORTE/CONTATO
+    Página para que usuários entrem em contato com o suporte
+    Contém formulário com campos para categorizar o problema
+    Mensagens são processadas e enviadas (ou simuladas localmente)
+-->
+<html lang="pt-br">
+
+<head>
+    <!-- Metadados -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Estilos -->
+    <link rel="stylesheet" href="./suporte.css">
+    <link rel="stylesheet" href="../../style.css">
+    <link rel="stylesheet" href="../../componentes/dropdown-menu/dropdown-menu.css">
+    <!-- Scripts -->
+    <script type="text/javascript" src="../../componentes/dropdown-menu/dropdown-menu.js" defer></script>
+    <script type="text/javascript" src="../../componentes/mobile-menu/mobile-menu.js" defer></script>
+    <script src="../../componentes/api.js"></script>
+    <script src="../../componentes/services/suporteService.js"></script>
+    <script src="../../componentes/services/carrinhoService.js"></script>
+    <script src="../../componentes/cart-badge.js" defer></script>
+    <script type="text/javascript" src="suporte.js" defer></script>
+    <!-- Fonte e ícones -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" rel="stylesheet">
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="../../assets/logo zf.png" type="image/x-icon">
+    <title>Suporte - Zero Frame</title>
+</head>
+
+<body>
+
+    <header class="header">
+
+        <a href="../../index.html" class="logo-link-header">
+            <img src="../../assets/logo zf.png" alt="Zero Frame Logo" class="logo">
+        </a>
+
+        <nav class="navigation-header" id="mainNav">
+            <ul class="nav-menus-ul links">
+                <li><a href="../../pages/search/search.html?q=Originais" class="itens-nav-menus">ORIGINAIS</a></li>
+                <li><a href="../../pages/search/search.html?q=Multimarcas" class="itens-nav-menus">MULTIMARCAS</a></li>
+                <li><a href="../../pages/sobre/sobre.html" class="itens-nav-menus">SOBRE NÓS</a></li>
+            </ul>
+
+            <form action="../../pages/search/search.html" method="GET" class="search-bar-container">
+                <input type="text" name="q" placeholder="O que você está procurando?" class="search-bar"
+                    id="searchInput">
+                <button type="submit" class="search-btn"><i class="fa-solid fa-magnifying-glass"></i></button>
+            </form>
+        </nav>
+
+        <div class="header-right-actions">
+            <ul class="user-actions-ul links">
+                <li class="user-actions-li"><a href="../../pages/carrinho/carrinho.html" class="user-actions-icon"><i
+                            class="fa-solid fa-cart-shopping"></i></a>
+                </li>
+                <li class="dropdown user-actions-li">
+                    <button class="user-dropdown-icon" id="userMenuIcon"><i class="fa-solid fa-user"></i></button>
+                    <ul class="dropdown-content" id="dropdownMenu">
+                        <li class="dropdown-header">
+                            <div class="dropdown-header-text">
+                                <h3>Username</h3>
+                                <p>email@email.com</p>
+                            </div>
+                            <a href="../../pages/account-settings/account.html"><i class="fa-solid fa-gear"></i></a>
+                        </li>
+                        <hr class="hr-dropdown">
+                        <li><a href="../../pages/meus-pedidos/pedidos.html">Meus Pedidos</a></li>
+                        <li><a href="../../pages/favoritos/favoritos.html">Favoritos</a></li>
+                        <li><a href="../../pages/meus-enderecos/enderecos.html">Meus endereços</a></li>
+                        <hr class="hr-dropdown">
+                        <li><button class="theme-toggle-btn" id="toggle-button">Alternar tema</button></li>
+                        <li><a href="../../pages/suporte/suporte.html" target="_blank">Suporte</a></li>
+                        <hr class="hr-dropdown">
+                        <li><a href="#">Sair da conta <i class="fa-solid fa-arrow-right-from-bracket"></i></a></li>
+                    </ul>
+                </li>
+            </ul>
+            <button class="hamburger-btn" id="hamburgerBtn" aria-label="Abrir menu">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </div>
+
+        <div vw class="enabled">
+            <div vw-access-button class="active"></div>
+            <div vw-plugin-wrapper>
+                <div class="vw-plugin-top-wrapper"></div>
+            </div>
+        </div>
+
+    </header>
+
+    <main class="main-content">
+
+        <div class="suporte-container">
+
+            <div class="suporte-header">
+                <h1 class="suporte-title">SUPORTE</h1>
+                <p class="suporte-subtitle">Fale conosco e resolvemos seu problema</p>
+            </div>
+
+            <div class="suporte-content">
+
+                <div class="contact-info">
+                    <h2>Informações de Contato</h2>
+                    <div class="contact-item">
+                        <i class="fa-solid fa-envelope"></i>
+                        <div>
+                            <h3>Email</h3>
+                            <p>suporte@zeroframe.com</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fa-solid fa-phone"></i>
+                        <div>
+                            <h3>Telefone</h3>
+                            <p>(11) 3000-0000</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fa-solid fa-clock"></i>
+                        <div>
+                            <h3>Horário de Atendimento</h3>
+                            <p>Seg-Sex: 08:00 às 18:00</p>
+                        </div>
+                    </div>
+                </div>
+
+                <form class="suporte-form" id="suporteForm">
+
+                    <div class="form-group">
+                        <label for="nome">Nome Completo</label>
+                        <div class="input-container">
+                            <input type="text" id="nome" name="nome" placeholder="Nome completo" required>
+                            <i class="fa-solid fa-user"></i>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <div class="input-container">
+                            <input type="email" id="email" name="email" placeholder="seuemail@email.com" required>
+                            <i class="fa-solid fa-envelope"></i>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="telefone">Telefone</label>
+                        <div class="input-container">
+                            <input type="tel" id="telefone" name="telefone" placeholder="(11) 99999-9999">
+                            <i class="fa-solid fa-phone"></i>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="categoria">Categoria do Problema</label>
+                        <div class="input-container select-container">
+                            <select id="categoria" name="categoria" required>
+                                <option value="">Selecione uma categoria</option>
+                                <option value="pedido">Problema com Pedido</option>
+                                <option value="produto">Problema com Produto</option>
+                                <option value="entrega">Problema com Entrega</option>
+                                <option value="pagamento">Problema com Pagamento</option>
+                                <option value="conta">Problema com Conta</option>
+                                <option value="outro">Outro</option>
+                            </select>
+                            <i class="fa-solid fa-list"></i>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="assunto">Assunto</label>
+                        <div class="input-container">
+                            <input type="text" id="assunto" name="assunto" placeholder="Resumo do seu problema"
+                                required>
+                            <i class="fa-solid fa-heading"></i>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="mensagem">Mensagem</label>
+                        <textarea id="mensagem" name="mensagem" placeholder="Descreva detalhadamente seu problema..."
+                            rows="6" required></textarea>
+                    </div>
+
+                    <div class="form-group checkbox-group">
+                        <input type="checkbox" id="termos" name="termos" required>
+                        <label for="termos">Concordo em receber respostas por email</label>
+                    </div>
+
+                    <button type="submit" class="suporte-submit-btn">
+                        <i class="fa-solid fa-paper-plane"></i> Enviar Mensagem
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </main>
+
+    <footer>
+        <div class="footer-zf-container">
+            <img src="../../assets/zeroframelogo-sem fundo-white.svg" alt="Zero Frame Logo" class="footer-logo">
+        </div>
+
+        <div class="line footer-link"></div>
+
+        <div class="footer-itens-container">
+
+            <div class="footer-about-container">
+                <h3 class="footer-content-title">SOBRE</h3>
+                <ul class="footer-about-list">
+                    <li><a href="./pages/sobre/sobre.html" class="footer-link">Conheça a empresa</a></li>
+                    <li><a href="./pages/sobre/sobre.html#fundadores" class="footer-link">Criadores</a></li>
+                </ul>
+            </div>
+
+
+
+            <div class="footer-multimarcas-container">
+                <h3 class="footer-content-title">MULTIMARCAS</h3>
+                <ul class="footer-about-list">
+                    <li><a href="#multimarcas-em-alta" class="footer-link">Produtos em alta</a></li>
+                    <li><a href="#" class="footer-link">Todos os produtos</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-originais-container">
+                <h3 class="footer-content-title">ORIGINAIS</h3>
+                <ul class="footer-about-list">
+                    <li><a href="#originais-em-alta" class="footer-link">Produtos em alta</a></li>
+                    <li><a href="#" class="footer-link">Todos os produtos</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-categorias-container">
+                <h3 class="footer-content-title">CATEGORIAS</h3>
+                <ul class="footer-about-list">
+                    <li><a href="#" class="footer-link">Camisas</a></li>
+                    <li><a href="#" class="footer-link">Blusas</a></li>
+                    <li><a href="#" class="footer-link">Calças</a></li>
+                    <li><a href="#" class="footer-link">Bermudas</a></li>
+                    <li><a href="#" class="footer-link">Calçados</a></li>
+                    <li><a href="#" class="footer-link">Acessórios</a></li>
+                </ul>
+            </div>
+
+        </div>
+    </footer>
+
+    <script type="text/javascript" src="../../componentes/theme-toggle.js"></script>
+    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+    <script>
+        new window.VLibras.Widget('https://vlibras.gov.br/app');
+    </script>
+
+</body>
+
+</html>

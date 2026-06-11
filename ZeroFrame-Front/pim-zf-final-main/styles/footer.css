@@ -1,0 +1,154 @@
+/*
+  ====================================
+  ESTILOS DO FOOTER
+  ====================================
+  
+  Define o rodapé da aplicação
+  Contém logo, links de navegação e informações da marca
+  Suporta tema claro e escuro com transição suave
+*/
+
+/* ====================================
+   FOOTER PRINCIPAL
+   ==================================== */
+
+/* Container do footer */
+footer {
+    /* Transição suave para alterações de tema */
+    transition: 0.3s ease-in-out;
+    background-color: var(--primary-color);
+    display: flex;
+    padding: 2rem;
+}
+
+/* Container que agrupa os itens do footer */
+.footer-itens-container {
+    display: flex;
+    gap: 6rem;
+}
+
+/* Container do logo e descrição da Zero Frame */
+.footer-zf-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--secondary-color);
+}
+
+/* Logo da marca no footer */
+.footer-logo {
+    height: 8rem;
+    width: 8rem;
+}
+
+/* Texto informativo do footer */
+.footer-text {
+    text-align: center;
+}
+
+/* Links no footer */
+.footer-link {
+    color: var(--secondary-color);
+    text-decoration: none;
+    font-weight: 400;
+}
+
+/* Efeito ao passar mouse nos links */
+.footer-link:hover {
+    text-decoration: underline;
+    font-weight: 600;
+}
+
+/* Títulos das seções no footer */
+.footer-content-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--secondary-color);
+    margin-bottom: 1rem;
+}
+
+/* Linha divisória no footer */
+.line {
+    border-left: 2px solid var(--secondary-color);
+    height: 10rem;
+    margin: 0 5rem 0 2rem;
+}
+
+/* ====================================
+   TEMA ESCURO
+   ==================================== */
+
+/* Linha divisória em modo escuro */
+.modoescuro .line {
+    border-left: 2px solid var(--accent-color);
+}
+
+/* Título em modo escuro */
+.modoescuro .footer-content-title {
+    color: var(--accent-color);
+}
+
+/* Link em modo escuro */
+.modoescuro .footer-link {
+    color: var(--accent-color);
+}
+
+/* ====================================
+   LINKS DE PRODUTOS
+   ==================================== */
+
+/* Link de produto (remove decoração padrão) */
+.product-link {
+    text-decoration: none;
+    color: inherit;
+}
+
+/* ====================================
+   RESPONSIVIDADE DO FOOTER
+   ==================================== */
+
+@media (max-width: 1024px) {
+    footer {
+        flex-direction: column;
+        align-items: center;
+        padding: 2rem;
+        gap: 2rem;
+    }
+
+    .footer-zf-container {
+        flex-direction: column;
+        text-align: center;
+        gap: 0.5rem;
+    }
+
+    .footer-logo {
+        height: 6rem;
+        width: 6rem;
+    }
+
+    .line {
+        display: none;
+    }
+
+    .footer-itens-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem 4rem;
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .footer-itens-container {
+        grid-template-columns: 1fr 1fr;
+        gap: 1.2rem 1rem;
+    }
+
+    .footer-content-title {
+        font-size: 1rem;
+    }
+
+    .footer-link {
+        font-size: 0.9rem;
+    }
+}

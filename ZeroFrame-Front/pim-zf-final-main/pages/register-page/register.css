@@ -1,0 +1,253 @@
+/* Importa os padrões de estilos */
+
+@import './styles/header.css';
+
+:root {
+    --primary-color: #8C5A3C;
+    --secondary-color: #F5EBE0;
+    --accent-color: #201B1B;
+    --accent-secondary-color: white;
+    --text-color: black;
+    --page-font: 'Montserrat', sans-serif;
+}
+
+.modoescuro {
+    --primary-color: #48312E;
+    --secondary-color: #201B1B;
+    --accent-color: #F5EBE0;
+    --text-color: white;
+    --accent-secondary-color: #9b655d;
+    --third-color: #ffc484;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* coloca a imagem no background e define padroes para a pagina */
+
+body {
+    background-image: url('./assets/background-img.png');
+    background-size: cover;
+    font-family: var(--page-font);
+    color: black;   
+}
+
+/* Estilos para o conteúdo principal da página */
+
+main {
+    padding: 4rem 0 0 0;
+    height: 100vh;
+}
+
+.modoescuro h1 {
+    color: var(--secondary-color)
+}
+
+.modoescuro h2 {
+    color: var(--secondary-color)
+}
+
+
+.main-content {
+    margin: 0;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+.register-container {
+    background-color: rgba(245, 235, 224, 0.8);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem 2rem;
+    border-radius: 1rem;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    height: auto;
+    width: 35rem;
+}
+
+.register-title {
+    color: black;
+}
+
+.register-subtitle {
+    font-family: black;
+    font-weight: 500;
+}
+
+.register-form {
+    margin: 1rem 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    width: 100%;
+    align-items: center;
+}
+
+.register-form a {
+    align-self: flex-start;
+}
+
+.forgot-password-link {
+    font-family: var(--page-font);
+    font-weight: 500;
+    color: black;
+    text-decoration: none;
+}
+
+.register-input-container {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    border-radius: 0.8rem;
+    border: none;
+    width: 100%;
+    margin: 0 1rem 0 1rem;
+    height: 2.8rem;
+    background-color: #F5EBE0;
+    justify-content: center;
+}
+
+.register-input-container i {
+    color: var(--primary-color);
+    margin-left: 0.5rem;
+    font-size: 1.5rem;
+}
+
+
+.register-input {
+    font-family: var(--page-font);
+    font-weight: 500;
+    color: var(--primary-color);
+    background-color: transparent;
+    width: 100%;
+    border: none;
+    color: var(--primary-color);
+}
+
+
+.register-input::placeholder {
+    color: var(--primary-color);
+    opacity: 0.7;
+    font-weight: 600;
+}
+
+.register-input-container input:focus-visible {
+    outline: none;
+}
+
+.password-toggle-btn {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+
+}
+
+.register-button {
+    transition: 0.3s ease-in-out;
+    background-color: var(--primary-color);
+    color: #F5EBE0;
+    border-radius: 0.8rem;
+    border: none;
+    padding: 1rem 2rem;
+    width: 100%;
+    cursor: pointer;
+    font-family: var(--page-font);
+    font-weight: 600;
+    font-size: large;
+}
+
+.register-button:hover {
+    transition: 0.3s ease-in-out;
+    background-color: var(--accent-color);
+}
+
+.modoescuro .register-button:hover {
+    background-color: var(--accent-color);
+    color: var(--accent-secondary-color);
+}
+
+.login-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    gap: 0.3rem;
+    width: 100%;
+}
+
+.login-link {
+    transition: 0.3s ease-in-out;
+    font-weight: 800;
+    font-size: x-large;
+    color: black
+}
+
+.login-link:hover {
+    transition: 0.3s ease-in-out;
+    text-decoration: none;
+    color: #9b655d;
+}
+
+.logo-register {
+    height: 50vh;
+    width: auto;
+    object-fit: contain;
+}
+
+/* ====================================
+   RESPONSIVIDADE DO CADASTRO
+   ==================================== */
+
+@media (max-width: 768px) {
+    main {
+        padding: 3.5rem 0 0 0;
+        height: auto;
+        min-height: 100vh;
+    }
+
+    .main-content {
+        flex-direction: column;
+        padding: 1.5rem;
+        gap: 2rem;
+        align-items: center;
+    }
+
+    .register-container {
+        width: 100%;
+        max-width: 420px;
+        height: auto;
+        padding: 2rem 1.5rem;
+    }
+
+    .logo-register {
+        height: 25vh;
+    }
+}
+
+@media (max-width: 480px) {
+    .main-content {
+        margin-top: 2rem;
+        padding: 1rem;
+    }
+
+    .register-container {
+        padding: 1.5rem 1rem;
+        border-radius: 0.8rem;
+    }
+
+    .logo-register {
+        height: 18vh;
+    }
+
+    .register-button {
+        padding: 0.8rem 1rem;
+    }
+}
+
+

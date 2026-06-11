@@ -1,0 +1,139 @@
+.slider {
+    display: none;
+}
+
+.on {
+    display: block;
+}
+
+.slider-btn {
+    position: absolute;
+    top: 50%;
+    z-index: 3;
+    transform: translateY(-50%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--primary-color);
+    color: #F5EBE0;
+    border: none;
+    padding: 1rem 1rem;
+    cursor: pointer;
+    border-radius: 50%;
+    transition: 0.3s ease-in-out;
+}
+
+.slider-btn-prev {
+    left: 0.8rem;
+}
+
+.slider-btn-next {
+    right: 0.8rem;
+}
+
+.slider-btn:hover {
+    background-color: var(--accent-color);
+    color: var(--accent-secondary-color);
+    font-weight: 800;
+    transition: 0.3s ease-in-out;
+}
+
+.main-product-gallery {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    margin: 0 1rem;
+    width: 100%;
+    max-width: 720px;
+}
+
+.slider-stage {
+    position: relative;
+    width: 100%;
+}
+
+.slider-images {
+    width: 100%;
+}
+
+/* Miniaturas da galeria do produto atual, exibidas apenas quando ha mais de uma imagem. */
+.product-thumbnails {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.6rem;
+}
+
+.product-thumbnail {
+    width: 64px;
+    height: 64px;
+    padding: 0;
+    border: 2px solid transparent;
+    border-radius: 6px;
+    background-color: var(--accent-secondary-color);
+    cursor: pointer;
+    overflow: hidden;
+    transition: border-color 0.2s ease-in-out, transform 0.2s ease-in-out;
+}
+
+.product-thumbnail:hover,
+.product-thumbnail.selected {
+    border-color: var(--primary-color);
+    transform: translateY(-1px);
+}
+
+.product-thumbnail img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Responsividade dos botões do slider */
+@media (max-width: 1024px) {
+    .slider-btn {
+        width: 48px;
+        height: 48px;
+        font-size: 0.95rem;
+    }
+
+    .slider-btn-prev {
+        left: 0.55rem;
+    }
+
+    .slider-btn-next {
+        right: 0.55rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .slider-btn {
+        width: 40px;
+        height: 40px;
+        font-size: 0.9rem;
+    }
+
+    .main-product-gallery {
+        margin: 0;
+    }
+}
+
+@media (max-width: 480px) {
+    .slider-btn {
+        width: 34px;
+        height: 34px;
+        font-size: 0.85rem;
+    }
+
+    .slider-btn-prev {
+        left: 0.35rem;
+    }
+
+    .slider-btn-next {
+        right: 0.35rem;
+    }
+
+    .product-thumbnail {
+        width: 52px;
+        height: 52px;
+    }
+}

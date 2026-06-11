@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<!--
+    PÁGINA DE DETALHES DO PRODUTO
+    Página que exibe informações detalhadas de um produto
+    Inclui slider de imagens, descrição, preço, avaliações
+    Permite adicionar ao carrinho e aos favoritos
+-->
+<html lang="pt-br">
+
+<head>
+    <!-- Metadados -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Estilos -->
+    <link rel="stylesheet" href="./slider/slider.css">
+    <link rel="stylesheet" href="product.css">
+    <link rel="stylesheet" href="../../style.css">
+    <link rel="stylesheet" href="../../componentes/dropdown-menu/dropdown-menu.css">
+    <!-- Scripts -->
+    <script type="text/javascript" src="../../componentes/dropdown-menu/dropdown-menu.js" defer></script>
+    <script type="text/javascript" src="../../componentes/mobile-menu/mobile-menu.js" defer></script>
+    <script src="../../componentes/theme-toggle.js" defer></script>
+    <script src="../../componentes/api.js"></script>
+    <script src="../../componentes/services/produtoService.js"></script>
+    <script src="../../componentes/services/carrinhoService.js"></script>
+    <script src="../../componentes/services/avaliacaoService.js"></script>
+    <script src="../../componentes/cart-badge.js" defer></script>
+    <script src="./product-api.js"></script>
+    <script src="./slider/slider.js" defer></script>
+    <!-- Fonte e ícones -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" rel="stylesheet">
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="../../assets/logo zf.png" type="image/x-icon">
+    <title>Zero Frame</title>
+</head>
+
+<body>
+
+    <header class="header">
+
+        <a href="../../index.html" class="logo-link-header">
+            <img src="../../assets/logo zf.png" alt="Zero Frame Logo" class="logo">
+        </a>
+
+        <nav class="navigation-header" id="mainNav">
+            <ul class="nav-menus-ul links">
+                <li><a href="../../pages/search/search.html?q=Originais" class="itens-nav-menus">ORIGINAIS</a></li>
+                <li><a href="../../pages/search/search.html?q=Multimarcas" class="itens-nav-menus">MULTIMARCAS</a></li>
+                <li><a href="../../pages/sobre/sobre.html" class="itens-nav-menus">SOBRE NÓS</a></li>
+            </ul>
+
+            <form action="../../pages/search/search.html" method="GET" class="search-bar-container">
+                <input type="text" name="q" placeholder="O que você está procurando?" class="search-bar"
+                    id="searchInput">
+                <button type="submit" class="search-btn"><i class="fa-solid fa-magnifying-glass"></i></button>
+            </form>
+        </nav>
+
+        <div class="header-right-actions">
+            <ul class="user-actions-ul links">
+                <li class="user-actions-li"><a href="../../pages/carrinho/carrinho.html" class="user-actions-icon"><i
+                            class="fa-solid fa-cart-shopping"></i></a>
+                </li>
+                <li class="dropdown user-actions-li">
+                    <button class="user-dropdown-icon" id="userMenuIcon"><i class="fa-solid fa-user"></i></button>
+                    <ul class="dropdown-content" id="dropdownMenu">
+                        <li class="dropdown-header">
+                            <div class="dropdown-header-text">
+                                <h3>Username</h3>
+                                <p>email@email.com</p>
+                            </div>
+                            <a href="../../pages/account-settings/account.html"><i class="fa-solid fa-gear"></i></a>
+                        </li>
+                        <hr class="hr-dropdown">
+                        <li><a href="../../pages/meus-pedidos/pedidos.html">Meus Pedidos</a></li>
+                        <li><a href="../../pages/favoritos/favoritos.html">Favoritos</a></li>
+                        <li><a href="../../pages/meus-enderecos/enderecos.html">Meus endereços</a></li>
+                        <hr class="hr-dropdown">
+                        <li><button class="theme-toggle-btn" id="toggle-button">Alternar tema</button></li>
+                        <li><a href="../../pages/suporte/suporte.html" target="_blank">Suporte</a></li>
+                        <hr class="hr-dropdown">
+                        <li><a href="#">Sair da conta <i class="fa-solid fa-arrow-right-from-bracket"></i></a></li>
+                    </ul>
+                </li>
+            </ul>
+            <button class="hamburger-btn" id="hamburgerBtn" aria-label="Abrir menu">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </div>
+
+        <div vw class="enabled">
+            <div vw-access-button class="active"></div>
+            <div vw-plugin-wrapper>
+                <div class="vw-plugin-top-wrapper"></div>
+            </div>
+        </div>
+
+    </header>
+
+
+
+    <main>
+
+        <section class="main-product-section">
+
+            <div class="main-product-image-container">
+                <!-- Galeria alterada: mantem a imagem principal no layout atual e adiciona miniaturas dinamicas. -->
+                <div class="main-product-gallery">
+                    <div class="slider-stage">
+                        <button id="prev-button" class="slider-btn slider-btn-prev" aria-label="Imagem anterior"><i class="fa-solid fa-caret-left"></i></button>
+                        <div class="slider-images">
+                            <img id="product-main-image" src="" alt="Imagem do Produto"
+                                class="main-product-image">
+                        </div>
+                        <button id="next-button" class="slider-btn slider-btn-next" aria-label="Próxima imagem"><i class="fa-solid fa-caret-right"></i></button>
+                    </div>
+                    <div class="product-thumbnails" aria-label="Miniaturas do produto"></div>
+                </div>
+            </div>
+
+            <div class="main-product-info-container">
+                <p class="main-product-category"></p>
+                <h1 class="main-product-title"></h1>
+                <p class="main-product-rating">
+                    <i class="fa-solid fa-star"></i>
+                </p>
+                <div class="sizes">
+                    <p class="sizes-title">Tamanhos:</p>
+                    <div class="size-options">
+                        <button class="size-option">P</button>
+                        <button class="size-option">M</button>
+                        <button class="size-option">G</button>
+                        <button class="size-option">GG</button>
+                    </div>
+                </div>
+
+                <h2 class="main-product-price"></h2>
+                <p class="main-product-price-method"></p>
+                <div class="main-product-actions">
+                    <button class="main-buy-btn">Comprar</button>
+                    <button class="main-add-to-cart-btn">
+                        <i class="fa-solid fa-cart-plus"></i>
+                        <p class="add-to-cart-text">Adicionar ao carrinho</p>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <section class="product-reviews-section section-container">
+            <div class="section-header-container">
+                <div class="section-header">
+                    <h2 class="section-title">AVALIAÇÕES</h2>
+                </div>
+                <hr>
+            </div>
+
+            <div class="reviews-summary" aria-live="polite"></div>
+            <form class="review-form">
+                <label>
+                    Nota
+                    <select name="nota" required>
+                        <option value="5">5 estrelas</option>
+                        <option value="4">4 estrelas</option>
+                        <option value="3">3 estrelas</option>
+                        <option value="2">2 estrelas</option>
+                        <option value="1">1 estrela</option>
+                    </select>
+                </label>
+                <label>
+                    Comentário
+                    <textarea name="comentario" maxlength="500" placeholder="Conte o que achou do produto"></textarea>
+                </label>
+                <button type="submit" class="main-buy-btn">Enviar avaliação</button>
+            </form>
+            <div class="reviews-list"></div>
+        </section>
+
+        <section class="originais-section section-container" id="originais-em-alta">
+
+            <div class="section-header-container">
+                <div class="section-header">
+                    <h2 class="section-title">ORIGINAIS ZERO FRAME</h2>
+                    <a href="../../pages/search/search.html?q=Originais" class="ver-todos-link">VER TODOS
+                        <i class="fa-solid fa-up-right-from-square"></i>
+                    </a>
+                </div>
+                <hr>
+            </div>
+
+            <ul class="products-container"></ul>
+
+        </section>
+
+        <section class="multimarcas-section section-container">
+
+            <div class="section-header-container">
+                <div class="section-header" id="multimarcas-em-alta">
+                    <h2 class="section-title">MULTIMARCAS</h2>
+                    <a href="../../pages/search/search.html?q=Multimarcas" class="ver-todos-link">VER TODOS
+                        <i class="fa-solid fa-up-right-from-square"></i>
+                    </a>
+                </div>
+                <hr>
+            </div>
+
+            <ul class="products-container"></ul>
+
+        </section>
+
+
+    </main>
+
+    <footer>
+        <div class="footer-zf-container">
+            <img src="../../assets/zeroframelogo-sem fundo-white.svg" alt="Zero Frame Logo" class="footer-logo">
+        </div>
+
+        <div class="line footer-link"></div>
+
+        <div class="footer-itens-container">
+
+            <div class="footer-about-container">
+                <h3 class="footer-content-title">SOBRE</h3>
+                <ul class="footer-about-list">
+                    <li><a href="./pages/sobre/sobre.html" class="footer-link">Conheça a empresa</a></li>
+                    <li><a href="./pages/sobre/sobre.html#fundadores" class="footer-link">Criadores</a></li>
+                </ul>
+            </div>
+
+
+
+            <div class="footer-multimarcas-container">
+                <h3 class="footer-content-title">MULTIMARCAS</h3>
+                <ul class="footer-about-list">
+                    <li><a href="#multimarcas-em-alta" class="footer-link">Produtos em alta</a></li>
+                    <li><a href="#" class="footer-link">Todos os produtos</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-originais-container">
+                <h3 class="footer-content-title">ORIGINAIS</h3>
+                <ul class="footer-about-list">
+                    <li><a href="#originais-em-alta" class="footer-link">Produtos em alta</a></li>
+                    <li><a href="#" class="footer-link">Todos os produtos</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-categorias-container">
+                <h3 class="footer-content-title">CATEGORIAS</h3>
+                <ul class="footer-about-list">
+                    <li><a href="#" class="footer-link">Camisas</a></li>
+                    <li><a href="#" class="footer-link">Blusas</a></li>
+                    <li><a href="#" class="footer-link">Calças</a></li>
+                    <li><a href="#" class="footer-link">Bermudas</a></li>
+                    <li><a href="#" class="footer-link">Calçados</a></li>
+                    <li><a href="#" class="footer-link">Acessórios</a></li>
+                </ul>
+            </div>
+
+        </div>
+    </footer>
+
+    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+    <script>
+        new window.VLibras.Widget('https://vlibras.gov.br/app');
+    </script>
+
+</body>
+
+</html>

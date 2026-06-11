@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<!-- 
+    PÁGINA PRINCIPAL - ZERO FRAME
+    Página inicial da loja Zero Frame - plataforma de e-commerce de roupas e acessórios
+    Exibe produtos recomendados e originais da marca
+    Inclui header com navegação, busca e menu de usuário
+-->
+<html lang="pt-br">
+
+<head>
+    <!-- Configurações de metadados e codificação do documento -->
+    <meta charset="UTF-8">
+    <!-- Configuração de responsividade para dispositivos móveis -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Link dos estilos dos componentes -->
+    <link rel="stylesheet" href="./componentes/carrossel-categorias/carrossel-categorias.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="./componentes/dropdown-menu/dropdown-menu.css">
+    <!-- Fontes externas do Google Fonts (Montserrat) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
+    <!-- Ícones Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" rel="stylesheet">
+    <!-- Bibliotecas React (para carrossel de categorias) -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <!-- Scripts dos componentes -->
+    <script type="text/babel" src="./componentes/carrossel-categorias/carrossel-categorias.js"></script>
+    <script type="text/javascript" src="./componentes/theme-toggle.js" defer></script>
+    <script type="text/javascript" src="./componentes/dropdown-menu/dropdown-menu.js" defer></script>
+    <script type="text/javascript" src="./componentes/api.js" defer></script>
+    <script type="text/javascript" src="./componentes/services/produtoService.js" defer></script>
+    <script type="text/javascript" src="./componentes/services/carrinhoService.js" defer></script>
+    <script type="text/javascript" src="./componentes/cart-badge.js" defer></script>
+    <script type="text/javascript" src="./componentes/home-api.js" defer></script>
+    <script type="text/javascript" src="./componentes/mobile-menu/mobile-menu.js" defer></script>
+    <!-- Favicon do site -->
+    <link rel="icon" href="./assets/logo zf.png" type="image/png">
+    <title>Zero Frame</title>
+</head>
+
+<body>
+
+    <header class="header">
+
+        <a href="#" class="logo-link-header">
+            <img src="./assets/logo zf.png" alt="Zero Frame Logo" class="logo">
+        </a>
+
+        <nav class="navigation-header" id="mainNav">
+            <ul class="nav-menus-ul links">
+                <li><a href="./pages/search/search.html?q=Originais" class="itens-nav-menus">ORIGINAIS</a></li>
+                <li><a href="./pages/search/search.html?q=Multimarcas" class="itens-nav-menus">MULTIMARCAS</a></li>
+                <li><a href="./pages/sobre/sobre.html" class="itens-nav-menus">SOBRE NÓS</a></li>
+            </ul>
+
+            <form action="./pages/search/search.html" method="GET" class="search-bar-container">
+                <input type="text" name="q" placeholder="O que você está procurando?" class="search-bar"
+                    id="searchInput">
+                <button type="submit" class="search-btn"><i class="fa-solid fa-magnifying-glass"></i></button>
+            </form>
+        </nav>
+
+        <div class="header-right-actions">
+            <ul class="user-actions-ul links">
+                <li class="user-actions-li"><a href="./pages/carrinho/carrinho.html" class="user-actions-icon"><i
+                            class="fa-solid fa-cart-shopping"></i></a>
+                </li>
+                <li class="dropdown user-actions-li">
+                    <button class="user-dropdown-icon" id="userMenuIcon"><i class="fa-solid fa-user"></i></button>
+                    <ul class="dropdown-content" id="dropdownMenu">
+                        <li class="dropdown-header">
+                            <div class="dropdown-header-text">
+                                <h3>Username</h3>
+                                <p>email@email.com</p>
+                            </div>
+                            <a href="./pages/account-settings/account.html"><i class="fa-solid fa-gear"></i></a>
+                        </li>
+                        <hr class="hr-dropdown">
+                        <li><a href="./pages/meus-pedidos/pedidos.html">Meus Pedidos</a></li>
+                        <li><a href="./pages/favoritos/favoritos.html">Favoritos</a></li>
+                        <li><a href="./pages/meus-enderecos/enderecos.html">Meus endereços</a></li>
+                        <hr class="hr-dropdown">
+                        <li><button class="theme-toggle-btn" id="toggle-button">Alternar tema</button></li>
+                        <li><a href="./pages/suporte/suporte.html" target="_blank">Suporte</a></li>
+                        <hr class="hr-dropdown">
+                        <li><a href="#">Sair da conta <i class="fa-solid fa-arrow-right-from-bracket"></i></a></li>
+                    </ul>
+                </li>
+            </ul>
+            <button class="hamburger-btn" id="hamburgerBtn" aria-label="Abrir menu">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </div>
+
+        <div vw class="enabled">
+            <div vw-access-button class="active"></div>
+            <div vw-plugin-wrapper>
+                <div class="vw-plugin-top-wrapper"></div>
+            </div>
+        </div>
+
+    </header>
+
+    <main>
+
+        <img src="assets/banner.png" alt="Banner Zero Frame" class="banner">
+
+        <section class="recomendados-section section-container">
+
+            <div class="section-header-container">
+                <div class="section-header">
+                    <h2 class="section-title">PRODUTOS RECOMENDADOS</h2>
+                </div>
+                <hr>
+            </div>
+
+            <ul class="products-container"></ul>
+
+
+        </section>
+
+        <section class="originais-section section-container" id="originais-em-alta">
+
+            <div class="section-header-container">
+                <div class="section-header">
+                    <h2 class="section-title">ORIGINAIS ZERO FRAME</h2>
+                    <a href="./pages/search/search.html?q=Originais" class="ver-todos-link">VER TODOS
+                        <i class="fa-solid fa-up-right-from-square"></i>
+                    </a>
+                </div>
+                <hr>
+            </div>
+
+            <ul class="products-container"></ul>
+
+        </section>
+
+        <section class="multimarcas-section section-container">
+
+            <div class="section-header-container">
+                <div class="section-header" id="multimarcas-em-alta">
+                    <h2 class="section-title">MULTIMARCAS</h2>
+                    <a href="./pages/search/search.html?q=Multimarcas" class="ver-todos-link">VER TODOS
+                        <i class="fa-solid fa-up-right-from-square"></i>
+                    </a>
+                </div>
+                <hr>
+            </div>
+
+            <ul class="products-container">
+
+            </ul>
+
+        </section>
+
+        <div class="multimarcas-section section-container">
+
+            <div class="section-header-container">
+                <div class="section-header">
+                    <h2 class="section-title">CATEGORIAS</h2>
+                </div>
+                <hr>
+            </div>
+
+            <div class="categories-carrossel">
+                <button class="nav-arrow arrow-left" onclick="changeSlide(-1)">&#10094;</button>
+
+                <div class="slider-wrapper" id="slider">
+                    <div class="card active" onclick="clickToSlide(0)">
+                        <img src="./assets/Imagens Carrossel/calcados.png">
+                        <div class="card-info">
+                            <h3 class="category-title">Calçados</h3>
+                            <a href="./pages/search/search.html?q=Calçado" class="btn-link">Ver todos</a>
+                        </div>
+                    </div>
+                    <div class="card" onclick="clickToSlide(1)">
+                        <img src="./assets/Imagens Carrossel/bermudas.jpg">
+                        <div class="card-info">
+                            <h3 class="category-title">Bermudas</h3>
+                            <a href="./pages/search/search.html?q=Bermudas" class="btn-link">Ver todos</a>
+                        </div>
+                    </div>
+                    <div class="card" onclick="clickToSlide(2)">
+                        <img src="./assets/Imagens Carrossel/blusas.jpg">
+                        <div class="card-info">
+                            <h3 class="category-title">Blusas</h3>
+                            <a href="./pages/search/search.html?q=Blusas" class="btn-link">Ver todos</a>
+                        </div>
+                    </div>
+                    <div class="card" onclick="clickToSlide(3)">
+                        <img src="./assets/Imagens Carrossel/calcas.png">
+                        <div class="card-info">
+                            <h3 class="category-title">Calças</h3>
+                            <a href="./pages/search/search.html?q=Calça" class="btn-link">Ver todos</a>
+                        </div>
+                    </div>
+                    <div class="card" onclick="clickToSlide(4)">
+                        <img src="./assets/Imagens Carrossel/camisas.png">
+                        <div class="card-info">
+                            <h3 class="category-title">Camisas</h3>
+                            <a href="./pages/search/search.html?q=Camisa" class="btn-link">Ver todos</a>
+                        </div>
+                    </div>
+                    <div class="card" onclick="clickToSlide(5)">
+                        <img src="./assets/Imagens Carrossel/acessorios.png">
+                        <div class="card-info">
+                            <h3 class="category-title">Acessórios</h3>
+                            <a href="./pages/search/search.html?q=Acessórios" class="btn-link">Ver todos</a>
+                        </div>
+                    </div>
+
+                </div>
+
+                <button class="nav-arrow arrow-right" onclick="changeSlide(1)">&#10095;</button>
+            </div>
+        </div>
+
+    </main>
+
+    <footer>
+        <div class="footer-zf-container">
+            <img src="assets/zeroframelogo-sem fundo-white.svg" alt="Zero Frame Logo" class="footer-logo">
+        </div>
+
+        <div class="line footer-link"></div>
+
+        <div class="footer-itens-container">
+
+            <div class="footer-about-container">
+                <h3 class="footer-content-title">SOBRE</h3>
+                <ul class="footer-about-list">
+                    <li><a href="./pages/sobre/sobre.html" class="footer-link">Conheça a empresa</a></li>
+                    <li><a href="./pages/sobre/sobre.html#fundadores" class="footer-link">Criadores</a></li>
+                </ul>
+            </div>
+
+
+
+            <div class="footer-multimarcas-container">
+                <h3 class="footer-content-title">MULTIMARCAS</h3>
+                <ul class="footer-about-list">
+                    <li><a href="#multimarcas-em-alta" class="footer-link">Produtos em alta</a></li>
+                    <li><a href="./pages/search/search.html?q=Multimarcas" class="footer-link">Todos os produtos</a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="footer-originais-container">
+                <h3 class="footer-content-title">ORIGINAIS</h3>
+                <ul class="footer-about-list">
+                    <li><a href="#originais-em-alta" class="footer-link">Produtos em alta</a></li>
+                    <li><a href="./pages/search/search.html?q=Originais" class="footer-link">Todos os produtos</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-categorias-container">
+                <h3 class="footer-content-title">CATEGORIAS</h3>
+                <ul class="footer-about-list">
+                    <li><a href="./pages/search/search.html?q=Camisa" class="footer-link">Camisas</a></li>
+                    <li><a href="./pages/search/search.html?q=Blusa" class="footer-link">Blusas</a></li>
+                    <li><a href="./pages/search/search.html?q=Calça" class="footer-link">Calças</a></li>
+                    <li><a href="./pages/search/search.html?q=Bermuda" class="footer-link">Bermudas</a></li>
+                    <li><a href="./pages/search/search.html?q=Calça" class="footer-link">Calçados</a></li>
+                    <li><a href="./pages/search/search.html?q=Acessório" class="footer-link">Acessórios</a></li>
+                </ul>
+            </div>
+
+        </div>
+    </footer>
+
+    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+    <script>
+        new window.VLibras.Widget('https://vlibras.gov.br/app');
+    </script>
+
+</body>
+
+</html>
