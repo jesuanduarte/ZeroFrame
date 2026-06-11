@@ -117,6 +117,7 @@ O sistema está dividido em camadas:
 O Entity Framework Core é utilizado como ORM para mapear as entidades C# para tabelas no banco de dados.
 
 <h2>Relacionamentos do Banco de Dados</h2>
+## Diagrama das Entidades
 
 <p align="center">
   <img src="./assets/Relacionamentos%20do%20Banco.png" width="1000"/>
