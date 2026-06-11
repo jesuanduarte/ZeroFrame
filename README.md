@@ -120,7 +120,7 @@ O Entity Framework Core é utilizado como ORM para mapear as entidades C# para t
 ## Diagrama das Entidades
 
 <p align="center">
-  <img src="./assets/Relacionamentos%20do%20Banco.png" width="1000"/>
+  <img src="./assets/![Diagrama das entidades](assets/fluxogrma%20das%20entidades.png)" width="1000"/>
 </p>
 
 ## Documentação da API
