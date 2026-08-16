@@ -71,7 +71,7 @@ A API utiliza Arquitetura em Camadas, separando responsabilidades e facilitando 
 ZeroFrame
 │
 ├── ZeroFrame.API
-│
+
 ├── ZeroFrame.Application
 │
 ├── ZeroFrame.Domain
