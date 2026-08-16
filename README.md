@@ -69,16 +69,11 @@ A API recebe as requisições realizadas pelo front-end, valida os dados, execut
 A API utiliza Arquitetura em Camadas, separando responsabilidades e facilitando a manutenção e evolução da aplicação.
 
 ZeroFrame
-│
-├── ZeroFrame.API
-
-├── ZeroFrame.Application
-│
-├── ZeroFrame.Domain
-│
-├── ZeroFrame.Infra.Data
-│
-└── ZeroFrame.Infra.IoC
+ZeroFrame.API
+ZeroFrame.Application
+ZeroFrame.Domain
+ZeroFrame.Infra.Data
+ZeroFrame.Infra.IoC
 
 ZeroFrame.API
 
@@ -710,9 +705,5 @@ Durante o desenvolvimento foram trabalhados conceitos como:
 O projeto busca representar não apenas operações CRUD, mas também fluxos e regras de negócio presentes em aplicações reais de e-commerce.
 
 ---
-
-👨‍💻 Autor
-
-Jesuan do Amaral Duarte
 
 Projeto desenvolvido para fins acadêmicos, aprendizado e portfólio profissional.
