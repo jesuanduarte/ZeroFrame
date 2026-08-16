@@ -47,18 +47,25 @@ O usuário não possui acesso direto ao banco de dados.
 O fluxo principal da aplicação ocorre da seguinte forma:
 
 Usuário
+
    ↓
 Front-end
+
    ↓
 HTTP / JSON
+
    ↓
 ZeroFrame API
+
    ↓
 Regras de Negócio
+
    ↓
 Entity Framework Core
+
    ↓
 SQL Server
+
 
 A API recebe as requisições realizadas pelo front-end, valida os dados, executa as regras de negócio e utiliza o Entity Framework Core para acessar o banco de dados.
 
