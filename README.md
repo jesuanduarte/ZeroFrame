@@ -47,22 +47,35 @@ O usuário não possui acesso direto ao banco de dados.
 O fluxo principal da aplicação ocorre da seguinte forma:
 
 Usuário
+   
+
    ↓
+
+
 Front-end
 
+   
    ↓
+
 HTTP / JSON
 
-   ↓
+   
+    ↓
+
 ZeroFrame API
 
-   ↓
+     
+    ↓
+
 Regras de Negócio
 
-   ↓
+    
+    ↓
+
 Entity Framework Core
 
-   ↓
+  
+    ↓
 SQL Server
 
 
