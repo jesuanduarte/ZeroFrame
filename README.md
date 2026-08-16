@@ -47,7 +47,6 @@ O usuário não possui acesso direto ao banco de dados.
 O fluxo principal da aplicação ocorre da seguinte forma:
 
 Usuário
-
    ↓
 Front-end
 
@@ -76,10 +75,22 @@ A API recebe as requisições realizadas pelo front-end, valida os dados, execut
 A API utiliza Arquitetura em Camadas, separando responsabilidades e facilitando a manutenção e evolução da aplicação.
 
 ZeroFrame
+
+
 ZeroFrame.API
+
+
 ZeroFrame.Application
+
+
+
 ZeroFrame.Domain
+
+
+
 ZeroFrame.Infra.Data
+
+
 ZeroFrame.Infra.IoC
 
 ZeroFrame.API
