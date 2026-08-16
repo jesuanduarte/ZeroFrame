@@ -69,7 +69,6 @@ ZeroFrame API
 
 Regras de Negócio
 
-    
     ↓
 
 Entity Framework Core
